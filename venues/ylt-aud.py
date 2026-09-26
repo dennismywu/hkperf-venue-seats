@@ -64,7 +64,20 @@ finish({
                          address_zh="香港新界元朗體育路9號", district="Yuen Long", address_name="Yuen Long Theatre"),
     "layout": {
         "seat_1_side": "left",
-        "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. No row I in the stalls; no row BI in the balcony. Row Y holds only the four wheelchair spaces, under the two ends of row X.",
+        "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. No row I in the stalls; no row BI in the balcony. Row Y holds only the four wheelchair spaces, under the two ends of row X. The Left Box and Right Box (rows BA-BD, counted in the balcony) are on the side walls beside stalls rows K-O: two boxes each side, each of two short rows along the wall; numbering runs from the stage end of the left box round to the stage end of the right box.",
+        "banks": [
+            {"id": "stalls", "side": "front", "rows": [r["row"] for r in stalls], "seat_1": "left"},
+            {"id": "left-box-front", "side": "left", "rows": [{"row": "BA", "block": 1}, {"row": "BB", "block": 1}],
+             "seat_1": "upstage", "level_with": "K"},
+            {"id": "left-box-back", "side": "left", "rows": [{"row": "BC", "block": 1}, {"row": "BD", "block": 1}],
+             "seat_1": "upstage", "level_with": "N"},
+            {"id": "right-box-front", "side": "right", "rows": [{"row": "BA", "block": 2}, {"row": "BB", "block": 2}],
+             "seat_1": "downstage", "level_with": "K"},
+            {"id": "right-box-back", "side": "right", "rows": [{"row": "BC", "block": 2}, {"row": "BD", "block": 2}],
+             "seat_1": "downstage", "level_with": "N"},
+            {"id": "balcony", "side": "front", "rows": [r["row"] for r in balcony if r["row"] not in ("BA", "BB", "BC", "BD")],
+             "seat_1": "left"},
+        ],
     },
     "marks": {
         "W": "Wheelchair seat (box prints W; numbers given in the legend where printed)",

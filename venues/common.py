@@ -101,7 +101,10 @@ def check_banks(doc):
         assert "after" not in b or (b["side"] != "front" and b["after"] in fronts), f"bank {b['id']}: after {b.get('after')!r}"
         assert "beside" not in b or (b["side"] != "front" and run == "across" and b["beside"] in fronts and "after" not in b), \
             f"bank {b['id']}: beside {b.get('beside')!r} needs a front bank and rows running across"
-        assert b["side"] == "front" or "after" in b or "beside" in b or b.get("align", "downstage") in BANK_ALIGN, f"bank {b['id']}: align"
+        front_rows = {(r if isinstance(r, str) else r["row"]) for f in banks if f["side"] == "front" for r in f["rows"]}
+        assert "level_with" not in b or (b["side"] != "front" and b["level_with"] in front_rows
+                                         and not {"after", "beside"} & set(b)), f"bank {b['id']}: level_with {b.get('level_with')!r}"
+        assert b["side"] == "front" or {"after", "beside", "level_with"} & set(b) or b.get("align", "downstage") in BANK_ALIGN, f"bank {b['id']}: align"
         for ref in b["rows"]:
             name = ref if isinstance(ref, str) else ref["row"]
             assert name in rows, f"bank {b['id']}: no row {name}"

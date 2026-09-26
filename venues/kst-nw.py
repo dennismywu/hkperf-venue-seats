@@ -97,6 +97,19 @@ finish({
     "layout": {
         "seat_1_side": "left",
         "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. Three blocks per row in the stalls and balcony; each block keeps its own number range (1-12, 13-26, 27-38 in the stalls; 1-9, 10-23, 24-31 in the balcony), so short rows start or end part-way. No rows I, O.",
+        "banks": [
+            {"id": "stalls-centre", "side": "front", "rows": [{"row": r["row"], "block": 2} for r in stalls], "seat_1": "left"},
+            {"id": "stalls-left", "side": "left", "rows": [{"row": r["row"], "block": 1} for r in stalls], "rows_run": "across",
+             "seat_1": "left", "beside": "stalls-centre"},
+            {"id": "stalls-right", "side": "right", "rows": [{"row": r["row"], "block": 3} for r in stalls], "rows_run": "across",
+             "seat_1": "left", "beside": "stalls-centre"},
+            {"id": "balcony-centre", "side": "front", "rows": [{"row": r["row"], "block": 2 if len(r["blocks"]) == 3 else 1} for r in balcony],
+             "seat_1": "left"},
+            {"id": "balcony-left", "side": "left", "rows": [{"row": r["row"], "block": 1} for r in balcony if len(r["blocks"]) == 3],
+             "rows_run": "across", "seat_1": "left", "beside": "balcony-centre"},
+            {"id": "balcony-right", "side": "right", "rows": [{"row": r["row"], "block": 3} for r in balcony if len(r["blocks"]) == 3],
+             "rows_run": "across", "seat_1": "left", "beside": "balcony-centre"},
+        ],
     },
     "marks": {
         "W": "Seat suitable for audience on wheel chairs (box prints W, no number)",

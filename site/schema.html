@@ -224,6 +224,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     <tr><td><code>rows_run</code></td><td>side banks: <code>along</code> the side (upright; default) or <code>across</code> (level, facing the stage)</td></tr>
     <tr><td><code>in_line</code></td><td>upright side rows that follow one another down a wall, rather than sit side by side</td></tr>
     <tr><td><code>after</code></td><td>side banks against the walls after a front bank, e.g. boxes between stalls and balcony</td></tr>
+    <tr><td><code>level_with</code></td><td>side banks against a side wall, starting level with a named row of a front bank, e.g. boxes beside the stalls</td></tr>
     <tr><td><code>beside</code></td><td>side banks whose rows sit level with the same rows of a front bank, across the aisle</td></tr>
     <tr><td><code>align</code></td><td>other side banks: level with the stage's front (<code>downstage</code>) or back (<code>upstage</code>), beside the front banks (<code>house</code>), or along the room (<code>room</code>)</td></tr>
   </table></div>
@@ -315,8 +316,9 @@ LAYOUT RULES
      one another down the wall instead. With rows_run "across" each row is level, one behind another.
    - seat_1 says which end seat 1 is at: left/right for level rows, downstage/upstage for upright rows
      (downstage = the end nearer the front audience).
-   - after: the bank sits against the side walls after the named front bank. beside: each row sits
-     level with the same row of the named front bank, across the aisle; rows it lacks continue below.
+   - after: the bank sits against the side walls after the named front bank. level_with: it sits against
+     the side wall, starting level with the named row of a front bank. beside: each row sits level with
+     the same row of the named front bank, across the aisle; rows it lacks continue below.
    - align (other side banks): downstage = level with the stage's front, upstage = with its back,
      house = beside the front banks from their first row, room = centred along the whole room.
    Keep the order and neighbours exactly; distances are free.

@@ -80,7 +80,291 @@
  },
  "layout": {
   "seat_1_side": "left",
-  "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. Three blocks per row in the stalls and balcony; each block keeps its own number range (1-12, 13-26, 27-38 in the stalls; 1-9, 10-23, 24-31 in the balcony), so short rows start or end part-way. No rows I, O."
+  "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. Three blocks per row in the stalls and balcony; each block keeps its own number range (1-12, 13-26, 27-38 in the stalls; 1-9, 10-23, 24-31 in the balcony), so short rows start or end part-way. No rows I, O.",
+  "banks": [
+   {
+    "id": "stalls-centre",
+    "side": "front",
+    "rows": [
+     {
+      "row": "A",
+      "block": 2
+     },
+     {
+      "row": "B",
+      "block": 2
+     },
+     {
+      "row": "C",
+      "block": 2
+     },
+     {
+      "row": "D",
+      "block": 2
+     },
+     {
+      "row": "E",
+      "block": 2
+     },
+     {
+      "row": "F",
+      "block": 2
+     },
+     {
+      "row": "G",
+      "block": 2
+     },
+     {
+      "row": "H",
+      "block": 2
+     },
+     {
+      "row": "J",
+      "block": 2
+     },
+     {
+      "row": "K",
+      "block": 2
+     },
+     {
+      "row": "L",
+      "block": 2
+     },
+     {
+      "row": "M",
+      "block": 2
+     },
+     {
+      "row": "N",
+      "block": 2
+     },
+     {
+      "row": "P",
+      "block": 2
+     },
+     {
+      "row": "Q",
+      "block": 2
+     },
+     {
+      "row": "R",
+      "block": 2
+     }
+    ],
+    "seat_1": "left"
+   },
+   {
+    "id": "stalls-left",
+    "side": "left",
+    "rows": [
+     {
+      "row": "A",
+      "block": 1
+     },
+     {
+      "row": "B",
+      "block": 1
+     },
+     {
+      "row": "C",
+      "block": 1
+     },
+     {
+      "row": "D",
+      "block": 1
+     },
+     {
+      "row": "E",
+      "block": 1
+     },
+     {
+      "row": "F",
+      "block": 1
+     },
+     {
+      "row": "G",
+      "block": 1
+     },
+     {
+      "row": "H",
+      "block": 1
+     },
+     {
+      "row": "J",
+      "block": 1
+     },
+     {
+      "row": "K",
+      "block": 1
+     },
+     {
+      "row": "L",
+      "block": 1
+     },
+     {
+      "row": "M",
+      "block": 1
+     },
+     {
+      "row": "N",
+      "block": 1
+     },
+     {
+      "row": "P",
+      "block": 1
+     },
+     {
+      "row": "Q",
+      "block": 1
+     },
+     {
+      "row": "R",
+      "block": 1
+     }
+    ],
+    "rows_run": "across",
+    "seat_1": "left",
+    "beside": "stalls-centre"
+   },
+   {
+    "id": "stalls-right",
+    "side": "right",
+    "rows": [
+     {
+      "row": "A",
+      "block": 3
+     },
+     {
+      "row": "B",
+      "block": 3
+     },
+     {
+      "row": "C",
+      "block": 3
+     },
+     {
+      "row": "D",
+      "block": 3
+     },
+     {
+      "row": "E",
+      "block": 3
+     },
+     {
+      "row": "F",
+      "block": 3
+     },
+     {
+      "row": "G",
+      "block": 3
+     },
+     {
+      "row": "H",
+      "block": 3
+     },
+     {
+      "row": "J",
+      "block": 3
+     },
+     {
+      "row": "K",
+      "block": 3
+     },
+     {
+      "row": "L",
+      "block": 3
+     },
+     {
+      "row": "M",
+      "block": 3
+     },
+     {
+      "row": "N",
+      "block": 3
+     },
+     {
+      "row": "P",
+      "block": 3
+     },
+     {
+      "row": "Q",
+      "block": 3
+     },
+     {
+      "row": "R",
+      "block": 3
+     }
+    ],
+    "rows_run": "across",
+    "seat_1": "left",
+    "beside": "stalls-centre"
+   },
+   {
+    "id": "balcony-centre",
+    "side": "front",
+    "rows": [
+     {
+      "row": "AA",
+      "block": 2
+     },
+     {
+      "row": "BB",
+      "block": 2
+     },
+     {
+      "row": "CC",
+      "block": 2
+     },
+     {
+      "row": "DD",
+      "block": 1
+     }
+    ],
+    "seat_1": "left"
+   },
+   {
+    "id": "balcony-left",
+    "side": "left",
+    "rows": [
+     {
+      "row": "AA",
+      "block": 1
+     },
+     {
+      "row": "BB",
+      "block": 1
+     },
+     {
+      "row": "CC",
+      "block": 1
+     }
+    ],
+    "rows_run": "across",
+    "seat_1": "left",
+    "beside": "balcony-centre"
+   },
+   {
+    "id": "balcony-right",
+    "side": "right",
+    "rows": [
+     {
+      "row": "AA",
+      "block": 3
+     },
+     {
+      "row": "BB",
+      "block": 3
+     },
+     {
+      "row": "CC",
+      "block": 3
+     }
+    ],
+    "rows_run": "across",
+    "seat_1": "left",
+    "beside": "balcony-centre"
+   }
+  ]
  },
  "marks": {
   "W": "Seat suitable for audience on wheel chairs (box prints W, no number)",
