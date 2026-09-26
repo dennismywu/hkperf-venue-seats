@@ -1,0 +1,20 @@
+# systemd unit for the site's own GoatCounter (usage statistics for code.denniswu.org).
+# Install: see deploy/goatcounter/README.md.
+[Unit]
+Description=GoatCounter (usage statistics for code.denniswu.org)
+After=network.target
+
+[Service]
+User=goatcounter
+Group=goatcounter
+WorkingDirectory=/var/lib/goatcounter
+ExecStart=/usr/local/bin/goatcounter serve -listen=127.0.0.1:8081 -tls=http -automigrate -db=sqlite+/var/lib/goatcounter/goatcounter.sqlite3
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/goatcounter
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

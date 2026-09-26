@@ -40,7 +40,39 @@ Pit rows are inferred: LCSD states the seats lost, not the rows. Each file says 
   JSON or CSV;
 - credits, and a note on the map itself that it is a schematic, not the venue's seat plan.
 
-To run it locally, serve the repository root and open `/app/`:
+"Plan with this configuration" opens the planner with the viewer's current settings.
+
+## Planner
+
+`app/planner.html` is for working figures that people may not want to share, so it keeps nothing:
+
+- **Consent first.** It opens behind a statement of how it treats what you enter; nothing loads until you
+  agree. Because nothing is stored, it asks again on every visit.
+- **Nothing sent, nothing stored.** No cookies, no browser storage, no uploads. Close or reload the page and
+  the plan is gone, unless you download it: a plan file (JSON, or CSV to read) is saved on your own device
+  and can be opened in the planner again.
+- **Configuration from the viewer.** The viewer passes its settings in the URL fragment (`#c=…`), which
+  browsers never send to the server. Only the seats counted in that configuration can be planned.
+
+What it does:
+
+- select seats by clicking, Ctrl/⌘-click, a dragged box, or a row letter;
+- put the selection into price categories (name, price, colour), or mark it **Blocked / Not for Sale**;
+- mark seats **Reserved / Not for Public** (e.g. sponsors, guests): they keep their price category, stay in
+  the ballpark, show with a dashed border on the map and in their own column of the ballpark table;
+- show the ballpark gross, the average ticket price and each category's share;
+- a simple gap analysis: target revenue and expected sell-through → shortfall or surplus, the sell-through
+  needed, and the average price needed on all sellable seats or on the seats not yet priced;
+- names on seats, with a People view of who sits where and a list.
+
+## Usage statistics
+
+The viewer, the project page and the planner (only after its consent) count page views and named
+interface events, such as `planner-category-added`, with a self-hosted GoatCounter: no cookies, no IP
+addresses kept, never anything a visitor types or selects. `app/analytics.js` does nothing until
+`goatcounter` is set in `app/config.js`; `deploy/goatcounter/` has the set-up.
+
+To run the viewer and planner locally, serve the repository root and open `/app/`:
 
 ```bash
 python3 -m http.server 8770
@@ -126,7 +158,10 @@ and publishing.
 
 ## License
 
-- **Code**: MIT, see [LICENSE](LICENSE).
+- **Code**: MIT, see [LICENSE](LICENSE), except the planner.
+- **Planner** (`app/planner.html`): [PolyForm Noncommercial 1.0.0](LICENSE-PLANNER.md). Using the hosted
+  planner is free for anyone, including businesses; commercial use of the planner's code needs written
+  permission.
 - **Seat lists** (`data/`): this project's own contribution is licensed under
   [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), see [LICENSE-DATA](LICENSE-DATA).
   Keep the credit line and sources recorded in each file. Neither licence grants rights LCSD holds in

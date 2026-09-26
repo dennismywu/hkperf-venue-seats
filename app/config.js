@@ -4,4 +4,6 @@ window.SEATS_CONFIG = {
   repo: "https://github.com/dennismywu/hkperf-venue-seats",
   branch: "main",
   site: "https://code.denniswu.org/hkperf-venue-seats/",
+  // usage statistics (page views and named events only): the site's own GoatCounter
+  goatcounter: "https://stats.denniswu.org/count",
 };

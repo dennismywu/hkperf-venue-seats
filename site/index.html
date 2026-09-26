@@ -64,6 +64,7 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
       mark, checked against the venue's own totals, with a viewer that counts seats for each layout.</p>
     <div class="actions">
       <a class="btn primary" href="viewer/">Open the viewer</a>
+      <a class="btn" href="viewer/planner.html">Open the planner</a>
       <a class="btn" id="repo-link" href="#" rel="noopener">Source and data on GitHub</a>
     </div>
   </header>
@@ -88,6 +89,9 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
         legroom). No seat positions, images or copies of any plan.</p></div>
       <div class="card"><h3>Checked against LCSD</h3><p>Every part of house is counted and must match the total LCSD prints;
         every orchestra-pit option must match LCSD's stated seats lost. The build fails otherwise.</p></div>
+      <div class="card"><h3>A planner that keeps nothing</h3><p>Take a configuration from the viewer into the planner:
+        price categories, a ballpark gross and average ticket price, a simple gap analysis against your target,
+        and names on seats. Everything stays in your browser; save your plan as a file on your own device.</p></div>
       <div class="card"><h3>A viewer for configurations</h3><p>Choose a pit, which seat types to count and which parts of
         house are open; each option shows the seats it adds or removes. Download the seat list or your
         configuration as JSON or CSV.</p></div>
@@ -116,13 +120,16 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
   </section>
 
   <footer>
+    <span id="stats-note"></span>
     Seat facts compiled from seating plans and technical information published by the Leisure and Cultural
-    Services Department, HKSAR Government. Code: MIT. Seat lists: this project's contribution under
+    Services Department, HKSAR Government. Code: MIT; planner code: PolyForm Noncommercial 1.0.0 (the
+    hosted planner is free for anyone to use). Seat lists: this project's contribution under
     <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.
   </footer>
 </div>
 
 <script src="viewer/config.js"></script>
+<script src="viewer/analytics.js"></script>
 <script>
 const CONFIG = window.SEATS_CONFIG || {};
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -156,6 +163,9 @@ async function venues() {
   }
 }
 venues();
+startStats();
+if (statsEnabled) document.getElementById("stats-note").textContent =
+  "Visits are counted with GoatCounter on this site's own server: no cookies, no personal data. ";
 </script>
 </body>
 </html>

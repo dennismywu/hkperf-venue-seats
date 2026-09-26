@@ -4,63 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HK Venue Seats</title>
+<link rel="stylesheet" href="common.css">
 <style>
-:root {
-  --bg: #f7f6f3; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a65; --line: #d9d7d0; --soft: #efeee9;
-  --seat: #ffffff; --seat-line: #3a3a36; --seat-ink: #3a3a36;
-  --w: #2f6fb3; --w-bg: #e3eefa; --x: #9a9892; --x-bg: #eeede9; --r: #b86a12; --r-bg: #fbefdf; --l-bg: #d3d2cc;
-  --acc: #16796f; --acc-bg: #e1f1ee; --ok: #2e7d4f; --bad: #b3261e; --hover: #1d1d1b;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936; --soft: #2a2a27;
-    --seat: #262624; --seat-line: #b9b7b0; --seat-ink: #d6d4cd;
-    --w: #7fb2ea; --w-bg: #1d2e42; --x: #7c7a74; --x-bg: #2a2a28; --r: #e8a656; --r-bg: #3a2a15; --l-bg: #4a4944;
-    --acc: #5fc4b8; --acc-bg: #173a36; --ok: #6fcf97; --bad: #f28b82; --hover: #ffffff;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936; --soft: #2a2a27;
-  --seat: #262624; --seat-line: #b9b7b0; --seat-ink: #d6d4cd;
-  --w: #7fb2ea; --w-bg: #1d2e42; --x: #7c7a74; --x-bg: #2a2a28; --r: #e8a656; --r-bg: #3a2a15; --l-bg: #4a4944;
-  --acc: #5fc4b8; --acc-bg: #173a36; --ok: #6fcf97; --bad: #f28b82; --hover: #ffffff;
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink);
-  font: 14px/1.45 system-ui, -apple-system, "PingFang HK", "Noto Sans HK", sans-serif; }
-.wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
-header { padding-top: 20px; padding-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: end; justify-content: space-between; }
-h1 { font-size: 20px; margin: 0 0 2px; font-weight: 650; }
-.sub { color: var(--muted); }
-select, button { font: inherit; color: var(--ink); }
-select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); max-width: 100%; }
-
-/* key figures: pinned while scrolling */
-.keybar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent);
-  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
-.keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; padding-top: 10px; padding-bottom: 10px; }
-.key { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; min-width: 0; }
-.key b { display: block; font-size: 20px; line-height: 1.2; font-variant-numeric: tabular-nums; }
-.key span { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.key.main { background: var(--acc-bg); border-color: var(--acc); grid-column: span 2; }
-.key.main b { font-size: 26px; color: var(--acc); }
-.key .ok { color: var(--ok); } .key .neg { color: var(--bad); }
-.key.flash b { animation: flash .5s ease; }
-@keyframes flash { from { opacity: .3; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .key.flash b { animation: none; } }
-
 .layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; padding-top: 16px; align-items: start; }
 @media (max-width: 880px) { .layout { grid-template-columns: 1fr; } }
-@media (max-width: 600px) {
-  /* one compact row that scrolls sideways, so the pinned strip stays short */
-  .keys { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; gap: 6px; padding-top: 8px; padding-bottom: 8px; }
-  .key { padding: 4px 8px; } .key b { font-size: 16px; } .key.main { grid-column: auto; } .key.main b { font-size: 20px; }
-  .key span { font-size: 11px; }
-}
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
-.card { scroll-margin-top: calc(var(--keys-h, 80px) + 12px); }
-.card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 0 0 12px; font-weight: 650; }
-
 /* configuration panel */
 .controls { position: sticky; top: calc(var(--keys-h, 80px) + 12px); }
 @media (max-width: 880px) { .controls { position: static; } }
@@ -88,50 +35,11 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .seg small, .opt small { color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .opt { display: flex; align-items: center; gap: 8px; padding: 5px 0; cursor: pointer; font-size: 13px; }
 .opt svg { flex: none; }
-.switch { appearance: none; flex: none; width: 30px; height: 18px; border-radius: 9px; background: var(--line); position: relative; cursor: pointer; margin: 0; transition: background .15s; }
-.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--panel); transition: transform .15s; box-shadow: 0 1px 2px rgb(0 0 0 / .25); }
-.switch:checked { background: var(--acc); } .switch:checked::after { transform: translateX(12px); }
-.switch:focus-visible, .seg input:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
 .hint { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
 .hint.ok { color: var(--ok); }
 .reset { margin-top: 10px; width: 100%; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); cursor: pointer; font-size: 13px; }
 .reset:disabled { opacity: .5; cursor: default; }
-
-/* map */
-.tools { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
-.tools button { font-size: 12px; padding: 3px 10px; border-radius: 6px; cursor: pointer; border: 1px solid var(--line); background: var(--bg); }
-.swatch { display: inline-flex; align-items: center; gap: 5px; margin-right: 12px; }
-#map { overflow-x: auto; margin-top: 12px; }
-#map svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-#map.zoomed svg { max-width: none; }
-.seat rect { fill: var(--seat); stroke: var(--seat-line); stroke-width: 1; }
-.seat text { fill: var(--seat-ink); font-size: 7.5px; text-anchor: middle; dominant-baseline: central; font-variant-numeric: tabular-nums; pointer-events: none; }
-.seat.W rect { fill: var(--w-bg); stroke: var(--w); } .seat.W text { fill: var(--w); font-weight: 700; }
-.seat.X rect { fill: var(--x-bg); stroke: var(--x); } .seat.X text { fill: var(--x); }
-.seat.X line { stroke: var(--x); stroke-width: 1; pointer-events: none; }
-.seat.R rect { fill: var(--r-bg); stroke: var(--r); } .seat.R .inner { fill: none; stroke: var(--r); stroke-width: .8; }
-.seat.R text { fill: var(--r); }
-.seat.L rect { fill: var(--l-bg); }
-.seat.off { opacity: .22; } .seat.off rect { stroke-dasharray: 2.5 1.5; }
-.seat:hover rect, .seat:focus rect { stroke: var(--hover); stroke-width: 2; }
-.seat:focus { outline: none; }
-.pitband { display: none; } .pitband.on { display: inline; }
-.pitband rect { fill: none; stroke: var(--r); stroke-dasharray: 4 3; }
-.pitband text { fill: var(--r); font-size: 11px; font-weight: 650; dominant-baseline: central; }
-.blockedarea { fill: var(--ink); }
-.standing rect { fill: none; stroke: var(--muted); stroke-dasharray: 2 2; }
-.standing text { fill: var(--muted); font-size: 7.5px; text-anchor: middle; dominant-baseline: central; }
-.standing.on rect { stroke: var(--acc); stroke-dasharray: none; fill: var(--acc-bg); } .standing.on text { fill: var(--acc); }
-.rowlabel { fill: var(--muted); font-size: 10px; font-weight: 600; dominant-baseline: central; }
-.zonelabel { fill: var(--ink); font-size: 13px; font-weight: 650; text-anchor: middle; }
-.zonelabel.off { fill: var(--muted); text-decoration: line-through; }
-.stage { fill: var(--bg); stroke: var(--line); }
-.disclaimer rect { fill: var(--bg); stroke: var(--line); }
-.disclaimer text { fill: var(--ink); font-size: 10px; }
-.disclaimer .lead { font-weight: 700; }
-.disclaimer a text { fill: var(--acc); text-decoration: underline; }
-.stagetext { fill: var(--muted); font-size: 11px; text-anchor: middle; dominant-baseline: central; letter-spacing: .1em; }
-.note { color: var(--muted); font-size: 12px; }
+.to-planner { margin-top: 12px; width: 100%; justify-content: center; }
 
 /* facts */
 .below { display: grid; gap: 16px; padding-top: 16px; padding-bottom: 32px; }
@@ -150,29 +58,10 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .dlrow .what { flex: 1 1 260px; min-width: 0; }
 .dlrow .what b { display: block; font-size: 13.5px; }
 .dlrow .what span { color: var(--muted); font-size: 12.5px; }
-.btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 7px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: inherit; font-size: 13px; text-decoration: none; cursor: pointer; white-space: nowrap; }
-.btn.primary { background: var(--acc); border-color: var(--acc); color: var(--panel); }
-.btn:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
-.tag { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 4px; background: var(--r-bg); color: var(--r); font-weight: 600; }
-.tag.ok { background: var(--acc-bg); color: var(--ok); }
 .rule { font-size: 12.5px; color: var(--muted); margin: 12px 0 0; }
-table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
-th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
-th { color: var(--muted); font-weight: 600; font-size: 12px; }
-td.num { text-align: right; }
-.tablewrap { overflow-x: auto; }
 details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .07em; font-weight: 650; }
 .sources { margin: 0; padding-left: 18px; font-size: 13px; }
 .sources li { margin-bottom: 8px; } .sources a { color: inherit; word-break: break-all; }
-#tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); padding: 6px 9px; border-radius: 6px; font-size: 12px; max-width: 280px; display: none; z-index: 10; }
-#tip b { font-size: 13px; }
-#tip .off { color: color-mix(in srgb, var(--bg) 70%, var(--bad)); }
-footer.site { border-top: 1px solid var(--line); margin-top: 8px; padding: 20px 0 36px; font-size: 13px; color: var(--muted); }
-footer.site h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; font-weight: 650; margin: 0 0 8px; }
-footer.site p { margin: 0 0 8px; max-width: 820px; }
-footer.site a { color: inherit; }
-footer.site .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
-.err { color: var(--bad); }
 </style>
 </head>
 <body>
@@ -211,6 +100,9 @@ footer.site .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 1
     </div>
     <p class="hint" id="hint"></p>
     <button class="reset" id="reset" type="button">Reset to the printed configuration</button>
+    <a class="btn primary to-planner" id="to-planner" href="planner.html">Plan with this configuration →</a>
+    <p class="hint">Opens the planner: price categories, ballpark totals and names on seats, all kept in your
+      browser.</p>
   </aside>
 
   <section class="card" aria-label="Seat map">
@@ -266,6 +158,8 @@ footer.site .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 1
       <a href="https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural" rel="noopener">DATA.GOV.HK</a>.</p>
     <p>HK Venue Seats is an independent project. It is not affiliated with or endorsed by LCSD. The seat map is a
       schematic drawn from the seat list; it is not the venue's seat plan. Check with the venue before relying on it.</p>
+    <p id="stats-note" hidden>Visits and the use of features (for example “downloaded CSV”) are counted with GoatCounter
+      on this site's own server: no cookies, no personal data, never your choices.</p>
     <div class="meta">
       <span>© 2026 Dennis Wu</span>
       <span>Code: MIT</span>
@@ -278,6 +172,8 @@ footer.site .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 1
 <div id="tip"></div>
 
 <script src="config.js"></script>
+<script src="seatmap.js"></script>
+<script src="analytics.js"></script>
 <script>
 const DATA = "../data/";
 const CONFIG = window.SEATS_CONFIG || {};
@@ -285,42 +181,9 @@ for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo]]
   const a = document.getElementById(id);
   url ? (a.href = url) : (a.hidden = true);
 }
-const MARK_NAMES = { W: "Wheelchair spaces", X: "Management seats", R: "Restricted sightline", L: "Limited legroom" };
-const MARK_ONE = { W: "Wheelchair space", X: "Management seat", R: "Restricted sightline", L: "Limited legroom" };
-// The printed totals count wheelchair, restricted and limited-legroom seats and leave management seats out.
-const DEFAULT_MARKS = { W: true, X: false, R: true, L: true };
-const S = 15, GAP = 2, BLOCK_GAP = 14, ROW_GAP = 5, LABEL_W = 30, ZONE_GAP = 34;
-const $ = id => document.getElementById(id);
-const NS = "http://www.w3.org/2000/svg";
-const el = (tag, attrs = {}, parent) => {
-  const e = document.createElementNS(NS, tag);
-  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
-  if (parent) parent.appendChild(e);
-  return e;
-};
-const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const link = u => u ? `<a href="${esc(u)}">${esc(u)}</a>` : "URL not recorded";
-const seatsOf = row => row.blocks.flatMap(b => b.seats);
-// a seat's mark is one or more letters, e.g. "R" or "RL"
-const markOf = (row, s) => row.marks?.[s] || "";
-const letters = mark => [...mark];
-const fmt = n => n.toLocaleString("en");
-const pitsFor = (doc, row) => (doc.orchestra_pits || []).filter(p => p.rows_removed.includes(row));
 
 let doc = null;
 let state = null;
-const defaults = d => ({
-  pit: -1,
-  marks: Object.fromEntries(Object.keys(d.marks || {}).map(m => [m, DEFAULT_MARKS[m] ?? true])),
-  zones: Object.fromEntries(d.zones.map(z => [z.name, true])),
-  standing: false,
-});
-
-async function getJSON(path) {
-  const r = await fetch(path);
-  if (!r.ok) throw new Error(`${path}: HTTP ${r.status}`);
-  return r.json();
-}
 
 async function init() {
   let venues;
@@ -331,7 +194,7 @@ async function init() {
   const want = new URLSearchParams(location.search).get("venue");
   if (want && venues.some(v => v.id === want)) sel.value = want;
   sel.hidden = venues.length < 2;
-  sel.onchange = () => { history.replaceState(null, "", `?venue=${sel.value}`); load(venues.find(v => v.id === sel.value)); };
+  sel.onchange = () => { history.replaceState(null, "", `?venue=${sel.value}`); load(venues.find(v => v.id === sel.value)); track("viewer-venue-changed"); };
   new ResizeObserver(() => document.documentElement.style.setProperty("--keys-h", $("keybar").offsetHeight + "px")).observe($("keybar"));
   load(venues.find(v => v.id === sel.value));
 }
@@ -341,6 +204,19 @@ async function load(v) {
   doc = await getJSON(DATA + v.file);
   venueFile = v.file;
   state = defaults(doc);
+  // a configuration handed over in the URL fragment (e.g. back from the planner)
+  const m = location.hash.match(/^#c=([\w-]+)/);
+  if (m) {
+    try {
+      const c = decodeConfig(m[1]);
+      if (c.venue === doc.venue.id) state = {
+        pit: Number.isInteger(c.pit) && doc.orchestra_pits?.[c.pit] ? c.pit : -1,
+        marks: Object.fromEntries(Object.keys(state.marks).map(k => [k, typeof c.marks?.[k] === "boolean" ? c.marks[k] : state.marks[k]])),
+        zones: Object.fromEntries(Object.keys(state.zones).map(k => [k, typeof c.zones?.[k] === "boolean" ? c.zones[k] : true])),
+        standing: !!c.standing,
+      };
+    } catch (e) { /* ignore a damaged link; keep the printed configuration */ }
+  }
   $("tip").style.display = "none";
   $("title").textContent = doc.venue.name_en;
   $("subtitle").textContent = doc.venue.name_zh + (doc.source.plan_code ? ` · plan ${doc.source.plan_code}` : "");
@@ -358,15 +234,7 @@ async function load(v) {
 
 // ---------------------------------------------------------------- what counts
 
-function excluded(zone, row, mark, st = state) {
-  // Returns the reason a seat is left out of configuration st, or "" when it counts.
-  if (!st.zones[zone]) return `${zone} closed`;
-  const pit = doc.orchestra_pits?.[st.pit];
-  if (pit?.rows_removed.includes(row)) return `${pit.name} in use`;
-  const off = letters(mark).find(m => !st.marks[m]);
-  if (off) return `${MARK_NAMES[off]} not counted`;
-  return "";
-}
+const excluded = (zone, row, mark, st = state) => excludedIn(doc, st, zone, row, mark);
 
 function tally(st = state) {
   const t = { total: 0, zones: {}, marks: { W: 0, X: 0, R: 0, L: 0 }, off: 0 };
@@ -524,6 +392,7 @@ function update(flash = true) {
   document.querySelectorAll("#map .zonelabel").forEach(z => z.classList.toggle("off", !state.zones[z.dataset.zone]));
   document.querySelector("#map .standing")?.classList.toggle("on", state.standing);
   $("dl-config-note").textContent = configSummary(t);
+  $("to-planner").href = `planner.html?venue=${encodeURIComponent(doc.venue.id)}#c=${encodeConfig({ venue: doc.venue.id, ...state })}`;
   refreshEffects(t);
   const def = isDefault();
   $("reset").disabled = def;
@@ -535,161 +404,10 @@ function update(flash = true) {
 
 // ---------------------------------------------------------------- map
 
-function seatGlyph(g, x, y, mark, label) {
-  el("rect", { x, y, width: S, height: S, rx: 2 }, g);
-  if (mark.includes("R")) el("rect", { class: "inner", x: x + 2.2, y: y + 2.2, width: S - 4.4, height: S - 4.4, rx: 1 }, g);
-  if (mark.includes("X")) { el("line", { x1: x + 2, y1: y + 2, x2: x + S - 2, y2: y + S - 2 }, g); el("line", { x1: x + S - 2, y1: y + 2, x2: x + 2, y2: y + S - 2 }, g); }
-  const t = el("text", { x: x + S / 2, y: y + S / 2 + .5 }, g);
-  t.textContent = mark.includes("W") ? "W" : label;
-  if (label.length > 2) t.setAttribute("font-size", "6");
-}
+function draw() { $("map").replaceChildren(drawSeatMap(doc)); }
 
-function rowLayout(row, rightFirst) {
-  // Blocks in drawn order, left to right (the file lists them from seat 1's side). Each block's
-  // items are its seats plus any blocked slots, which follow the seats in number order.
-  let blocks = row.blocks.map(b => ({
-    side: b.side, area: b.area,
-    items: [...b.seats.map(id => ({ id })), ...(b.blocked?.skipped_numbers || []).map(id => ({ id, blocked: true }))],
-  }));
-  if (rightFirst) { blocks.reverse(); blocks.forEach(b => b.items.reverse()); }
-  return blocks;
-}
-
-function blockWidth(b) { return b.items.length * S + (b.items.length - 1) * GAP; }
-
-// Space between two blocks: room for any seat numbers missing between them (e.g. Y 1-2 · Y 34-35
-// lines up under the ends of row X), otherwise an aisle.
-function between(a, b) {
-  const p = +a.items.at(-1).id, n = +b.items[0].id;
-  const missing = Number.isInteger(p) && Number.isInteger(n) ? Math.abs(n - p) - 1 : 0;
-  return missing > 0 ? GAP + missing * (S + GAP) : BLOCK_GAP;
-}
-
-// Split text into lines of at most n characters, at spaces.
-function wrap(text, n) {
-  const out = [];
-  let line = "";
-  for (const w of text.split(" ")) {
-    if (line && (line + " " + w).length > n) { out.push(line); line = w; }
-    else line = line ? line + " " + w : w;
-  }
-  if (line) out.push(line);
-  return out;
-}
-
-function rowWidth(bl) { return bl.reduce((a, b, i) => a + blockWidth(b) + (i ? between(bl[i - 1], b) : 0), 0); }
-
-function draw() {
-  const rightFirst = (doc.layout?.seat_1_side || "right") === "right";
-  // width of the widest row (centred rows); side blocks push to the edges of this width
-  let maxW = 0;
-  for (const z of doc.zones) for (const r of z.rows) {
-    const bl = rowLayout(r, rightFirst);
-    if (!bl.some(b => b.side)) maxW = Math.max(maxW, rowWidth(bl));
-  }
-  const W = maxW + LABEL_W * 2 + 8;
-  const svg = el("svg", { role: "img", "aria-label": `Seat schematic for ${doc.venue.name_en}` });
-  let y = 4;
-  const stageW = Math.min(260, maxW * .45);
-  el("rect", { class: "stage", x: (W - stageW) / 2, y, width: stageW, height: 30, rx: 3 }, svg);
-  el("text", { class: "stagetext", x: W / 2, y: y + 15 }, svg).textContent = "STAGE 舞台";
-  y += 30 + 22;
-  const x0 = LABEL_W + 4;
-  const rowY = {};
-
-  for (const z of doc.zones) {
-    const zl = el("text", { class: "zonelabel", x: W / 2, y: y + 4 }, svg);
-    zl.textContent = `${z.name} ${z.name_zh || ""}`.trim();
-    zl.dataset.zone = z.name;
-    y += 16;
-    for (const row of z.rows) {
-      const bl = rowLayout(row, rightFirst);
-      let xs;
-      if (bl.some(b => b.side)) {
-        xs = bl.map(b => b.side === "left" ? x0 : b.side === "right" ? x0 + maxW - blockWidth(b) : x0 + (maxW - blockWidth(b)) / 2);
-      } else {
-        let x = x0 + (maxW - rowWidth(bl)) / 2;
-        xs = bl.map((b, i) => { if (i) x += between(bl[i - 1], b); const at = x; x += blockWidth(b); return at; });
-      }
-      const minX = Math.min(...xs), maxX = Math.max(...bl.map((b, i) => xs[i] + blockWidth(b)));
-      el("text", { class: "rowlabel", x: minX - 6, y: y + S / 2, "text-anchor": "end" }, svg).textContent = row.row;
-      el("text", { class: "rowlabel", x: maxX + 6, y: y + S / 2, "text-anchor": "start" }, svg).textContent = row.row;
-      const inPits = pitsFor(doc, row.row).map(p => p.name).join(", ");
-      bl.forEach((b, i) => b.items.forEach(({ id: s, blocked }, j) => {
-        if (blocked) {
-          if (j && b.items[j - 1].blocked) return;          // one filled area per run of blocked slots
-          let k = j; while (b.items[k + 1]?.blocked) k++;
-          const r = el("rect", { class: "blockedarea", x: xs[i] + j * (S + GAP), y, width: (k - j + 1) * (S + GAP) - GAP, height: S, rx: 1 }, svg);
-          el("title", {}, r).textContent = `${row.row}: solid area where ${b.items.slice(j, k + 1).map(t => t.id).join(", ")} would be (not seats)`;
-          return;
-        }
-        const mark = markOf(row, s);
-        const g = el("g", { class: `seat ${letters(mark).join(" ")}`, tabindex: 0 }, svg);
-        Object.assign(g.dataset, { mark, row: row.row, seat: s, zone: z.name });
-        if (row.inferred_numbers?.[s]) g.dataset.inferred = row.inferred_numbers[s];
-        if (row.note) g.dataset.note = row.note;
-        if (b.area) g.dataset.area = b.area;
-        if (inPits) g.dataset.pits = inPits;
-        seatGlyph(g, xs[i] + j * (S + GAP), y, mark, s);
-      }));
-      rowY[row.row] = y;
-      y += S + ROW_GAP;
-    }
-    y += ZONE_GAP;
-  }
-  (doc.orchestra_pits || []).forEach((pit, i) => {
-    const ys = pit.rows_removed.map(r => rowY[r]);
-    const top = Math.min(...ys), bottom = Math.max(...ys) + S;
-    const band = el("g", { class: "pitband" }, svg);
-    band.dataset.pit = i;
-    el("rect", { x: 2, y: top - 3, width: W - 4, height: bottom - top + 6, rx: 4 }, band);
-    el("text", { x: 10, y: (top + bottom) / 2 }, band).textContent = pit.name;
-  });
-  if (doc.standing?.places?.length) {
-    const places = doc.standing.places, n = places.length;
-    y -= ZONE_GAP - 10;
-    const w = n * S + (n - 1) * GAP;
-    let x = x0 + (maxW - w) / 2;
-    const g = el("g", { class: "standing" }, svg);
-    (rightFirst ? [...places].reverse() : places).forEach(pl => {
-      el("rect", { x, y, width: S, height: S, rx: 7 }, g);
-      el("text", { x: x + S / 2, y: y + S / 2 + .5 }, g).textContent = pl;
-      x += S + GAP;
-    });
-    el("text", { class: "rowlabel", x: W / 2, y: y + S + 10, "text-anchor": "middle" }, svg).textContent = "Standing";
-    y += S + 24 + ZONE_GAP;
-  }
-  // Disclaimer inside the drawing, so it stays with any screenshot of the map.
-  y = y - ZONE_GAP + 14;
-  const lines = wrap("This map is drawn from the seat data published with it: a machine-assisted reading of the rows " +
-    "and seats of the venue. It is not the actual seat plan. For the actual seat plan, refer to the version " +
-    "published by LCSD:", Math.floor((W - 24) / 5.1));
-  const box = el("g", { class: "disclaimer" }, svg);
-  const boxH = (lines.length + 2) * 13 + 10;
-  el("rect", { x: 2, y, width: W - 4, height: boxH, rx: 4 }, box);
-  el("text", { class: "lead", x: 12, y: y + 16 }, box).textContent = "Not the venue's seat plan";
-  lines.forEach((l, i) => { el("text", { x: 12, y: y + 16 + (i + 1) * 13 }, box).textContent = l; });
-  const a = el("a", { href: doc.source.url, target: "_blank", rel: "noopener" }, box);
-  el("text", { x: 12, y: y + 16 + (lines.length + 1) * 13 }, a).textContent = doc.source.url;
-  y += boxH + ZONE_GAP;
-  const H = y - ZONE_GAP + 4;
-  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  svg.setAttribute("width", W); svg.setAttribute("height", H);
-  $("map").replaceChildren(svg);
-}
 
 // ---------------------------------------------------------------- facts
-
-// "W1, W2, 3–44, W3, W4": consecutive numbers collapse to a range, other labels stay as they are
-function runs(seats) {
-  const out = [];
-  for (const s of seats) {
-    const n = /^\d+$/.test(s) ? +s : NaN, last = out[out.length - 1];
-    if (!isNaN(n) && last && last.to === n - 1) last.to = n;
-    else out.push(isNaN(n) ? { label: s } : { from: n, to: n });
-  }
-  return out.map(r => r.label ?? (r.from === r.to ? r.from : `${r.from}–${r.to}`)).join(", ");
-}
 
 function rowSpan(rows) { return rows.length > 1 ? `${rows[0].row}–${rows.at(-1).row}` : rows[0]?.row || ""; }
 
@@ -876,11 +594,11 @@ function downloads() {
   const csvFile = venueFile.replace(/\.json$/, ".csv"), gitCSV = gitURL(csvFile);
   $("dl-src-git-csv").hidden = !gitCSV;
   if (gitCSV) $("dl-src-git-csv").href = gitCSV;
-  $("dl-src").onclick = () => saveJSON(doc, venueFile);
+  $("dl-src").onclick = () => { saveJSON(doc, venueFile); track("viewer-download-seatlist-json"); };
   // the seat-list CSV is built with the JSON and published beside it; download that exact file
-  $("dl-src-csv").onclick = async () => save(await (await fetch(DATA + csvFile)).blob(), csvFile);
-  $("dl-config").onclick = () => saveJSON(configJSON(), `${doc.venue.id}-configuration.json`);
-  $("dl-config-csv").onclick = () => save(new Blob([configCSV()], { type: "text/csv" }), `${doc.venue.id}-configuration.csv`);
+  $("dl-src-csv").onclick = async () => { save(await (await fetch(DATA + csvFile)).blob(), csvFile); track("viewer-download-seatlist-csv"); };
+  $("dl-config").onclick = () => { saveJSON(configJSON(), `${doc.venue.id}-configuration.json`); track("viewer-download-configuration-json"); };
+  $("dl-config-csv").onclick = () => { save(new Blob([configCSV()], { type: "text/csv" }), `${doc.venue.id}-configuration.csv`); track("viewer-download-configuration-csv"); };
 }
 
 // ---------------------------------------------------------------- tooltip
@@ -914,6 +632,9 @@ $("zoom").onclick = () => {
   $("zoom").textContent = z ? "Fit to width" : "Actual size";
 };
 
+$("to-planner").addEventListener("click", () => track("viewer-to-planner"));
+startStats();
+$("stats-note").hidden = !statsEnabled;
 init();
 </script>
 </body>
