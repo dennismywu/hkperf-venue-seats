@@ -59,7 +59,7 @@ h2 { font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: v
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
 .card h3 { margin: 0 0 6px; font-size: 15px; }
 .card p { margin: 0; color: var(--ink); font-size: 14px; }
-.card a.lic { display: inline-block; margin-top: 6px; font-weight: 600; }
+.card a.lic, .card a.gh { display: inline-block; margin-top: 6px; font-weight: 600; }
 .tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
 th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -143,6 +143,21 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
       repository's <a id="readme-link" href="#" rel="noopener">README</a>.</p>
   </section>
 
+  <section aria-labelledby="contrib-h">
+    <h2 id="contrib-h">Contribute</h2>
+    <div class="cols">
+      <div class="card"><h3>Report a correction</h3><p>A row, seat number or mark that does not match LCSD's plan, or a
+        plan LCSD has revised: open an issue with the venue, the row and a link to the plan.
+        <a class="gh" data-path="/issues/new" href="#" rel="noopener">Open an issue</a></p></div>
+      <div class="card"><h3>Suggest a venue</h3><p>Name the venue and link to the seating plan its operator publishes.
+        Only operators' own published plans are used, never ticketing data or others' seat maps.
+        <a class="gh" data-path="/issues" href="#" rel="noopener">Issues on GitHub</a></p></div>
+      <div class="card"><h3>Improve the code or data</h3><p>Pull requests are welcome. The README explains how a venue
+        script is written and checked against the printed totals.
+        <a class="gh" data-path="/pulls" href="#" rel="noopener">Pull requests</a></p></div>
+    </div>
+  </section>
+
   <section aria-labelledby="lic-h">
     <h2 id="lic-h">Licences</h2>
     <div class="cols">
@@ -181,9 +196,10 @@ if (repo) {
   document.getElementById("repo-link").href = repo;
   document.getElementById("readme-link").href = `${repo}#readme`;
   document.querySelectorAll("a.lic").forEach(a => a.href = `${repo}/blob/${branch}/${a.dataset.file}`);
+  document.querySelectorAll("a.gh").forEach(a => a.href = repo + a.dataset.path);
 } else {
   document.getElementById("repo-link").hidden = true;
-  document.querySelectorAll("a.lic").forEach(a => a.remove());
+  document.querySelectorAll("a.lic, a.gh").forEach(a => a.remove());
 }
 
 async function venues() {

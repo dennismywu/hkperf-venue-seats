@@ -194,6 +194,7 @@ dialog.small { max-width: 460px; }
   <div>
     <h1 id="title">Planner</h1>
     <div class="sub" id="subtitle"></div>
+    <div class="byline">HK Venue Seats · by <a class="byline-link" href="../">Dennis Wu</a></div>
   </div>
   <a class="btn" id="back" href="index.html">← Back to the viewer</a>
 </header>
@@ -287,6 +288,7 @@ dialog.small { max-width: 460px; }
       <span>Seat lists: <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a></span>
       <a id="foot-site" href="#" rel="noopener">Project page</a>
       <a id="foot-repo" href="#" rel="noopener">Source on GitHub</a>
+      <a id="foot-issues" href="#" rel="noopener">Report a correction</a>
     </div>
   </footer>
 </div>
@@ -315,7 +317,8 @@ let nextCat = 1;
 let seatsByKey = new Map();       // seat key -> {zone, row, seat, mark, g}
 
 if (CONFIG.repo) $("foot-planner-licence").href = `${CONFIG.repo}/blob/${CONFIG.branch || "main"}/LICENSE-PLANNER.md`;
-for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo]]) {
+document.querySelectorAll(".byline-link").forEach(a => { if (CONFIG.site) a.href = CONFIG.site; });
+for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo], ["foot-issues", CONFIG.repo && CONFIG.repo + "/issues"]]) {
   const a = document.getElementById(id);
   url ? (a.href = url) : (a.hidden = true);
 }

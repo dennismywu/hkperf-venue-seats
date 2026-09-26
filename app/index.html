@@ -69,6 +69,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
   <div>
     <h1 id="title">HK Venue Seats</h1>
     <div class="sub" id="subtitle">Loading…</div>
+    <div class="byline">HK Venue Seats · by <a class="byline-link" href="../">Dennis Wu</a></div>
   </div>
   <select id="venue" aria-label="Venue"></select>
 </header>
@@ -165,6 +166,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
       <span>Seat lists: <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a> (this project's contribution)</span>
       <a id="foot-site" href="#" rel="noopener">Project page</a>
       <a id="foot-repo" href="#" rel="noopener">Source on GitHub</a>
+      <a id="foot-issues" href="#" rel="noopener">Report a correction</a>
     </div>
   </footer>
 </div>
@@ -176,7 +178,8 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
 <script>
 const DATA = "../data/";
 const CONFIG = window.SEATS_CONFIG || {};
-for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo]]) {
+document.querySelectorAll(".byline-link").forEach(a => { if (CONFIG.site) a.href = CONFIG.site; });
+for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo], ["foot-issues", CONFIG.repo && CONFIG.repo + "/issues"]]) {
   const a = document.getElementById(id);
   url ? (a.href = url) : (a.hidden = true);
 }
