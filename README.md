@@ -67,9 +67,10 @@ What it does:
 
 ## Usage statistics
 
-The viewer, the project page and the planner (only after its consent) count page views and named
-interface events, such as `planner-category-added`, with a self-hosted GoatCounter: no cookies, no IP
-addresses kept, never anything a visitor types or selects. `app/analytics.js` does nothing until
+Every page counts page views, and named interface events such as `planner-category-added` (in the
+planner only after its consent), with a self-hosted GoatCounter: no cookies, no IP addresses kept, never
+anything a visitor types or selects. Each page's footer says so, and using the site means agreeing to it;
+`site/privacy.html` gives the detail. The web server's logs keep no IP addresses either. `app/analytics.js` does nothing until
 `goatcounter` is set in `app/config.js`; `deploy/goatcounter/` has the set-up.
 
 To run the viewer and planner locally, serve the repository root and open `/app/`:

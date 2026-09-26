@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy and usage · HK Venue Seats</title>
+<meta name="description" content="What HK Venue Seats counts about visits, what it never collects, and how the planner keeps nothing.">
+<style>
+:root { --bg: #f7f6f3; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a65; --line: #d9d7d0; --acc: #16796f; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936; --acc: #5fc4b8; }
+}
+:root[data-theme="dark"] { --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936; --acc: #5fc4b8; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, -apple-system, "PingFang HK", "Noto Sans HK", sans-serif; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 36px 16px 48px; }
+a { color: var(--acc); }
+h1 { font-size: 28px; margin: 0 0 6px; }
+h2 { font-size: 17px; margin: 28px 0 8px; }
+.sub { color: var(--muted); margin: 0 0 20px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; }
+ul { padding-left: 20px; } li { margin-bottom: 6px; }
+footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p><a href="./">← HK Venue Seats</a></p>
+  <h1>Privacy and usage</h1>
+  <p class="sub">code.denniswu.org · HK Venue Seats. Last updated 26 September 2026.</p>
+
+  <div class="card">
+    <p><b>In short:</b> this site counts visits anonymously, on its own server. It sets no cookies, keeps no IP
+      addresses or other personal data, and never records what you type or choose. The planner keeps nothing at
+      all. By using the site, you agree to this anonymous counting.</p>
+  </div>
+
+  <h2>What is counted</h2>
+  <p>Every page of this site counts visits with <a href="https://www.goatcounter.com" rel="noopener">GoatCounter</a>,
+    run on this site's own server (stats.denniswu.org). For each page view it records:</p>
+  <ul>
+    <li>the page (its address on this site) and its title;</li>
+    <li>the page you came from (referrer), if your browser sends it;</li>
+    <li>the type of browser and operating system, the screen size and the browser's language;</li>
+    <li>the country, looked up from your IP address, which is then discarded and never stored;</li>
+    <li>a temporary, anonymous visit identifier (not a cookie), so one visit is not counted twice.</li>
+  </ul>
+  <p>It also counts which features are used, by name only: for example “downloaded CSV”, “category added”,
+    “plan downloaded”. These names never include any value: no seats, prices, names, targets or anything else you
+    enter or select.</p>
+
+  <h2>What is never collected</h2>
+  <ul>
+    <li>No cookies and no browser storage, for statistics or anything else.</li>
+    <li>No IP addresses are stored, by the statistics or by the web server's logs.</li>
+    <li>No names, email addresses, accounts or sign-ins.</li>
+    <li>Nothing you type or choose in the viewer or the planner.</li>
+    <li>No advertising or third-party tracking; nothing is shared with or sold to anyone.</li>
+  </ul>
+
+  <h2>The planner</h2>
+  <p>The planner runs entirely in your browser. What you enter there (price categories, prices, targets, people's
+    names, which seats you choose) is never sent to the server and never stored. It disappears when you close or
+    reload the page, unless you download your plan, which saves a file on your own device. The planner asks you to
+    agree to these terms each time you open it, because it keeps no record that you did.</p>
+
+  <h2>Server logs</h2>
+  <p>The web server keeps ordinary access and error logs, to keep the site running. They record the time, the page
+    requested and the response, but not your IP address.</p>
+
+  <h2>Questions</h2>
+  <p>Ask through the project's repository:
+    <a id="repo" href="https://github.com/dennismywu/hkperf-venue-seats" rel="noopener">github.com/dennismywu/hkperf-venue-seats</a>.</p>
+
+  <footer>© 2026 Dennis Wu. HK Venue Seats is an independent project, not affiliated with or endorsed by LCSD.</footer>
+</div>
+<script src="viewer/config.js"></script>
+<script src="viewer/analytics.js"></script>
+<script>startStats();</script>
+</body>
+</html>

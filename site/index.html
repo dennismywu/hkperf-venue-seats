@@ -164,8 +164,10 @@ async function venues() {
 }
 venues();
 startStats();
-if (statsEnabled) document.getElementById("stats-note").textContent =
-  "Visits are counted with GoatCounter on this site's own server: no cookies, no personal data. ";
+if (statsEnabled) document.getElementById("stats-note").innerHTML =
+  "<b>Anonymous usage statistics.</b> This site counts visits and which features are used, with GoatCounter on its " +
+  "own server: no cookies, no IP addresses or other personal data, never what you type or choose. By using the site " +
+  "you agree to this. <a href=\"privacy.html\">Privacy and usage</a>.<br>";
 </script>
 </body>
 </html>

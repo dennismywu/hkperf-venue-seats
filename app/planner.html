@@ -218,6 +218,7 @@ dialog.consent::backdrop { background: rgb(0 0 0 / .45); }
     <p id="credit-venue"></p>
     <p>HK Venue Seats is an independent project, not affiliated with or endorsed by LCSD. The planner keeps
       everything you enter in this page only; nothing is sent or stored.</p>
+    <p id="stats-note" hidden><b>Anonymous usage statistics.</b> This site counts visits and which features are used, with GoatCounter on its own server: no cookies, no IP addresses or other personal data, never what you type or choose. By using the site you agree to this. <a class="privacy-link" href="#">Privacy and usage</a></p>
     <div class="meta">
       <span>© 2026 Dennis Wu</span>
       <span>Free to use here, for anyone. Planner code: <a id="foot-planner-licence" href="https://polyformproject.org/licenses/noncommercial/1.0.0" rel="noopener">PolyForm Noncommercial 1.0.0</a> (commercial reuse of the code by permission)</span>
@@ -260,15 +261,18 @@ for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo]]
 // ---------------------------------------------------------------- consent first
 
 $("consent-stats").innerHTML = statsEnabled
-  ? `<b>Usage statistics.</b> The site counts page visits and which planner features are used (for example
-     “category added”, “plan downloaded”) with GoatCounter on its own server: no cookies, no IP addresses kept,
-     and never anything you type or choose.`
+  ? `<b>Anonymous usage statistics.</b> Like the rest of the site, this page's visits are counted, and once you agree,
+     which planner features are used (by name only, e.g. “category added”, “plan downloaded”), with GoatCounter on
+     the site's own server: no cookies, no IP addresses kept, never anything you type or choose.
+     <a class="privacy-link" href="#">Privacy and usage</a>`
   : `<b>No usage statistics</b> are collected on this page at present.`;
+$("stats-note").hidden = !statsEnabled;
+document.querySelectorAll(".privacy-link").forEach(a => CONFIG.site ? (a.href = CONFIG.site + "privacy.html") : a.remove());
+startStats();   // anonymous page view, as on every page; feature events can only follow agreement
 $("agree").onchange = () => { $("accept").disabled = !$("agree").checked; };
 $("accept").onclick = () => {
   $("consent").close();
   $("app").classList.remove("gated");
-  startStats();
   track("planner-consent-agreed");
   init();
 };

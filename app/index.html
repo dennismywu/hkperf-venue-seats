@@ -158,8 +158,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
       <a href="https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural" rel="noopener">DATA.GOV.HK</a>.</p>
     <p>HK Venue Seats is an independent project. It is not affiliated with or endorsed by LCSD. The seat map is a
       schematic drawn from the seat list; it is not the venue's seat plan. Check with the venue before relying on it.</p>
-    <p id="stats-note" hidden>Visits and the use of features (for example “downloaded CSV”) are counted with GoatCounter
-      on this site's own server: no cookies, no personal data, never your choices.</p>
+    <p id="stats-note" hidden><b>Anonymous usage statistics.</b> This site counts visits and which features are used, with GoatCounter on its own server: no cookies, no IP addresses or other personal data, never what you type or choose. By using the site you agree to this. <a class="privacy-link" href="#">Privacy and usage</a></p>
     <div class="meta">
       <span>© 2026 Dennis Wu</span>
       <span>Code: MIT</span>
@@ -635,6 +634,7 @@ $("zoom").onclick = () => {
 $("to-planner").addEventListener("click", () => track("viewer-to-planner"));
 startStats();
 $("stats-note").hidden = !statsEnabled;
+document.querySelectorAll(".privacy-link").forEach(a => CONFIG.site ? (a.href = CONFIG.site + "privacy.html") : a.remove());
 init();
 </script>
 </body>
