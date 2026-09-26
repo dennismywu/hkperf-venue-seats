@@ -173,9 +173,10 @@ to the public. This project keeps its exposure low:
 - **Only facts are published.** Rows, seat numbers, counts and printed marks; no layout.
 - **Every venue is credited.** Each file records its sources, the plan's SHA-256 and a credit line.
 
-A list of facts is lower risk, but not risk-free under Hong Kong law. The intended step before a wide
-launch is to ask LCSD (enquiries@lcsd.gov.hk) for permission, or for them to host the data themselves.
-This is not legal advice.
+A list of facts is lower risk, but not risk-free under Hong Kong law. The risk is judged low enough to
+publish without asking first: only facts are published, each with its source and credit. LCSD was told
+about the project on 26 September 2026, at its launch, and is welcome to ask for any change or removal, or to host the
+data itself, at enquiries@lcsd.gov.hk. Any such request will be acted on. This is not legal advice.
 
 ## Contributing
 
