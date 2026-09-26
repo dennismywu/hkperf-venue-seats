@@ -3,8 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HK Venue Seats</title>
-<meta name="description" content="Open seat lists for Hong Kong performing-arts venues: every row, seat number and printed mark, checked against LCSD's own totals, with a viewer for each hall.">
+<title>Hong Kong Performing Arts Venues Seat Configuration</title>
+<meta name="description" content="Seat configurations for Hong Kong performing-arts venues as open data, read from LCSD's published seating plans and checked against the venue totals, with a viewer that renders each hall and an open-source planner that keeps nothing.">
+<meta name="author" content="Dennis Wu">
+<link rel="author" href="https://www.denniswu.com/biography-english/">
+<link rel="canonical" href="https://code.denniswu.org/hkperf-venue-seats/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="HK Venue Seats">
+<meta property="og:title" content="Hong Kong Performing Arts Venues Seat Configuration">
+<meta property="og:description" content="Seat configurations for Hong Kong performing-arts venues as open data, read from LCSD's published seating plans and checked against the venue totals, with a viewer that renders each hall and an open-source planner that keeps nothing.">
+<meta property="og:url" content="https://code.denniswu.org/hkperf-venue-seats/">
+<meta property="og:image" content="https://code.denniswu.org/hkperf-venue-seats/social.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The HK Venue Seats viewer showing a venue's seat map, configuration panel and seat counts.">
+<meta property="og:locale" content="en_HK">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hong Kong Performing Arts Venues Seat Configuration">
+<meta name="twitter:description" content="Seat configurations for Hong Kong performing-arts venues as open data, read from LCSD's published seating plans and checked against the venue totals, with a viewer that renders each hall and an open-source planner that keeps nothing.">
+<meta name="twitter:image" content="https://code.denniswu.org/hkperf-venue-seats/social.png">
+<meta name="twitter:image:alt" content="The HK Venue Seats viewer showing a venue's seat map, configuration panel and seat counts.">
 <style>
 :root {
   --bg: #f7f6f3; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a65; --line: #d9d7d0;
@@ -28,7 +46,8 @@ a { color: var(--acc); }
 header { padding: 48px 0 28px; }
 .eyebrow { color: var(--muted); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; margin: 0 0 8px; }
 h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; margin: 0 0 12px; font-weight: 700; letter-spacing: -.01em; }
-.lede { font-size: 17px; max-width: 680px; margin: 0 0 22px; }
+.lede { font-size: 17px; max-width: 680px; margin: 0 0 10px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 22px; }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .btn { display: inline-flex; align-items: center; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line);
   background: var(--panel); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
@@ -40,6 +59,7 @@ h2 { font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: v
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
 .card h3 { margin: 0 0 6px; font-size: 15px; }
 .card p { margin: 0; color: var(--ink); font-size: 14px; }
+.card a.lic { display: inline-block; margin-top: 6px; font-weight: 600; }
 .tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
 th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -58,10 +78,14 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
 <body>
 <div class="wrap">
   <header>
-    <p class="eyebrow">code.denniswu.org · open data</p>
-    <h1>HK Venue Seats</h1>
-    <p class="lede">Open seat lists for Hong Kong performing-arts venues: every row, seat number and printed
-      mark, checked against the venue's own totals, with a viewer that counts seats for each layout.</p>
+    <p class="eyebrow">HK Venue Seats · open data and open source</p>
+    <h1>Hong Kong Performing Arts Venues Seat Configuration</h1>
+    <p class="lede">Seat configurations for Hong Kong's performing-arts venues, built as open data: every row,
+      seat number and printed mark is read from the seating plans LCSD publishes, and each part of house and
+      orchestra-pit option is checked against the venue's own totals. A <b>viewer</b> renders the data for each
+      hall and counts the seats for any configuration, and an <b>open-source planner</b> lays out price
+      categories, reserved seats and names in your browser, keeping nothing.</p>
+    <p class="byline">By <a href="https://www.denniswu.com/biography-english/" rel="author noopener">Dennis Wu</a></p>
     <div class="actions">
       <a class="btn primary" href="viewer/">Open the viewer</a>
       <a class="btn" href="viewer/planner.html">Open the planner</a>
@@ -119,12 +143,30 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
       repository's <a id="readme-link" href="#" rel="noopener">README</a>.</p>
   </section>
 
+  <section aria-labelledby="lic-h">
+    <h2 id="lic-h">Licences</h2>
+    <div class="cols">
+      <div class="card"><h3>Seat data · CC BY 4.0</h3><p>The seat lists in <code>data/</code> (JSON and CSV), as this
+        project's own contribution, under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">Creative
+        Commons Attribution 4.0</a>. Keep the credit line and sources in each file.
+        <a class="lic" data-file="LICENSE-DATA" href="#" rel="noopener">LICENSE-DATA</a></p></div>
+      <div class="card"><h3>Code · MIT</h3><p>The viewer, the build scripts and the extraction tools, under the
+        <a href="https://opensource.org/license/mit" rel="noopener">MIT License</a>.
+        <a class="lic" data-file="LICENSE" href="#" rel="noopener">LICENSE</a></p></div>
+      <div class="card"><h3>Planner code · PolyForm Noncommercial 1.0.0</h3><p>The planner's source is open to read,
+        change and share for noncommercial purposes; commercial use of the code needs written permission. Using the
+        planner on this site is free for anyone, businesses included.
+        <a class="lic" data-file="LICENSE-PLANNER.md" href="#" rel="noopener">LICENSE-PLANNER.md</a></p></div>
+    </div>
+    <p class="note">Neither licence grants any rights LCSD holds in its seating plans; those remain LCSD's.</p>
+  </section>
+
   <footer>
     <span id="stats-note"></span>
+    A project by <a href="https://www.denniswu.com/biography-english/" rel="author noopener">Dennis Wu</a>.
     Seat facts compiled from seating plans and technical information published by the Leisure and Cultural
-    Services Department, HKSAR Government. Code: MIT; planner code: PolyForm Noncommercial 1.0.0 (the
-    hosted planner is free for anyone to use). Seat lists: this project's contribution under
-    <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.
+    Services Department, HKSAR Government. Seat data: CC BY 4.0 · code: MIT · planner code: PolyForm
+    Noncommercial 1.0.0 (<a href="#lic-h">licences</a>).
   </footer>
 </div>
 
@@ -138,8 +180,10 @@ const repo = CONFIG.repo, branch = CONFIG.branch || "main";
 if (repo) {
   document.getElementById("repo-link").href = repo;
   document.getElementById("readme-link").href = `${repo}#readme`;
+  document.querySelectorAll("a.lic").forEach(a => a.href = `${repo}/blob/${branch}/${a.dataset.file}`);
 } else {
   document.getElementById("repo-link").hidden = true;
+  document.querySelectorAll("a.lic").forEach(a => a.remove());
 }
 
 async function venues() {

@@ -176,6 +176,19 @@ dialog.small { max-width: 460px; }
   </form>
 </dialog>
 
+<dialog class="consent small" id="leavedlg" aria-labelledby="leave-h">
+  <form class="in" method="dialog">
+    <h2 id="leave-h">Leave the planner?</h2>
+    <p class="sub">Your plan has changes that are not saved. The planner keeps nothing, so if you leave now they
+      are lost. To keep them, save the plan as a file on your device first.</p>
+    <div class="actions" style="margin-top:14px">
+      <button class="btn" value="cancel" type="submit" formnovalidate>Stay</button>
+      <button class="btn" id="leave-save" type="button">Save plan…</button>
+      <button class="btn primary" id="leave-go" type="button">Leave without saving</button>
+    </div>
+  </form>
+</dialog>
+
 <div id="app" class="gated">
 <header class="wrap">
   <div>
@@ -354,6 +367,7 @@ async function init() {
   legend();
   draw();
   render();
+  markSaved();
 }
 
 function sanitize(c) {
@@ -912,6 +926,7 @@ $("save-go").onclick = async () => {
   try {
     const out = protect ? await lockPlan(plan, $("pass1").value) : plan;
     save(new Blob([JSON.stringify(out, null, 1)], { type: "application/json" }), `${doc.venue.id}-plan${protect ? "-protected" : ""}.json`);
+    markSaved(plan);                               // a save without names still leaves the names unsaved
     track(protect ? "planner-plan-saved-protected" : withNames && names.size ? "planner-plan-saved-with-names" : "planner-plan-saved");
     $("pass1").value = $("pass2").value = "";
     $("savedlg").close();
@@ -971,10 +986,32 @@ $("upload").onchange = async () => {
     note.textContent = `Opened ${file.name}.` + (skipped ? ` ${skipped} seat(s) are not in this configuration and were left out.` : "");
     track("planner-upload");
     render();
+    markSaved();
   } catch (e) {
     note.textContent = `Could not open ${file.name}: ${e.message}.`;
   }
 };
+
+// ---------------------------------------------------------------- leaving with unsaved work
+// Work is unsaved when the plan differs from the one last opened or saved. Leaving (closing, reloading,
+// going back to the viewer) then asks first, since the planner keeps nothing.
+let savedPrint = null, leaving = false;
+const planPrint = plan => JSON.stringify({ ...plan, saved: null });
+const unsaved = () => savedPrint !== null && planPrint(planJSON()) !== savedPrint;
+function markSaved(plan = planJSON()) { savedPrint = planPrint(plan); }
+addEventListener("beforeunload", e => {
+  if (leaving || !unsaved()) return;
+  e.preventDefault();
+  e.returnValue = "";                              // the browser shows its own "leave site?" prompt
+});
+$("back").addEventListener("click", e => {
+  if (!unsaved()) return;
+  e.preventDefault();
+  const href = $("back").href;
+  $("leave-go").onclick = () => { leaving = true; track("planner-left-unsaved"); location.href = href; };
+  $("leave-save").onclick = () => { $("leavedlg").close(); $("dl-json").click(); };
+  $("leavedlg").showModal();
+});
 
 // ---------------------------------------------------------------- tooltip and zoom
 
