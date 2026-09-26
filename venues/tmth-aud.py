@@ -8,7 +8,7 @@ counts do not match the printed totals.
 
 Usage: python venues/tmth-aud.py
 """
-from common import CREDIT, LCSD, finish, location, rng, row
+from common import CREDIT, LCSD, aisle_banks, finish, location, rng, row
 
 TECH_SHEET = {
     "publisher": LCSD,
@@ -82,7 +82,8 @@ finish({
                          address_zh="香港新界屯門屯喜路3號", district="Tuen Mun", address_name="Tuen Mun Town Hall"),
     "layout": {
         "seat_1_side": "left",
-        "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and numbering runs on through three blocks. The stalls include a row I; the upper stalls run P-Z then ZA-ZC; the balcony runs BB-BM (no BA). Row BM has no centre block.",
+        "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and numbering runs on through three blocks. The stalls include a row I; the upper stalls run P-Z then ZA-ZC; the balcony runs BB-BM (no BA). Row BM has no centre block. The plan prints the row labels in the aisles.",
+        "banks": aisle_banks(("stalls", stalls), ("upper", upper), ("balcony", balcony)),
     },
     "marks": {
         "W": "Seat suitable for audience on wheelchairs (box prints W, no number)",

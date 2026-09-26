@@ -7,7 +7,7 @@ renders (sha256 in source). Writes data/stth-aud.json; fails if the counts do no
 
 Usage: python venues/stth-aud.py
 """
-from common import CREDIT, LCSD, finish, location, rng, row
+from common import CREDIT, LCSD, aisle_banks, finish, location, rng, row
 
 TECH_SHEET = {
     "publisher": LCSD,
@@ -74,7 +74,8 @@ finish({
                          address_zh="香港新界沙田源禾路1號", district="Sha Tin", address_name="Sha Tin Town Hall"),
     "layout": {
         "seat_1_side": "left",
-        "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. Three straight blocks per row. The stalls include a row I; the upper stalls run P-Z then ZA-ZC; the balcony starts at BB and includes BI.",
+        "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. Three straight blocks per row. The stalls include a row I; the upper stalls run P-Z then ZA-ZC; the balcony starts at BB and includes BI. The plan prints the row labels in the aisles.",
+        "banks": aisle_banks(("stalls", stalls), ("upper", upper), ("balcony", balcony)),
     },
     "marks": {
         "W": "Seat suitable for audience on wheelchairs (grey box printed W, no number)",

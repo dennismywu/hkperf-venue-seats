@@ -82,6 +82,24 @@ def bank_of(doc):
     return out
 
 
+def aisle_banks(*parts):
+    """Banks for halls whose rows run left block · centre block · right block (seat 1 at the left),
+    with the row labels in the aisles. parts: (id prefix, rows) per part of house. Rows without a
+    centre block keep their end blocks level with the rows before them."""
+    banks = []
+    for prefix, rows in parts:
+        centre = f"{prefix}-centre"
+        banks += [
+            {"id": centre, "side": "front", "rows": [{"row": r["row"], "block": 2} for r in rows if len(r["blocks"]) == 3],
+             "seat_1": "left"},
+            {"id": f"{prefix}-left", "side": "left", "rows": [{"row": r["row"], "block": 1} for r in rows],
+             "rows_run": "across", "seat_1": "left", "beside": centre},
+            {"id": f"{prefix}-right", "side": "right", "rows": [{"row": r["row"], "block": len(r["blocks"])} for r in rows if len(r["blocks"]) > 1],
+             "rows_run": "across", "seat_1": "left", "beside": centre},
+        ]
+    return banks
+
+
 def check_banks(doc):
     """layout.banks, when given, must place every block of every row exactly once."""
     banks = doc.get("layout", {}).get("banks")
