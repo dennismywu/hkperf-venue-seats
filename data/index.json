@@ -1,0 +1,9 @@
+{
+ "venues": [
+  {"id": "ktt-aud", "name_en": "Kwai Tsing Theatre Auditorium", "name_zh": "葵青劇院 演藝廳", "file": "ktt-aud.json"},
+  {"id": "ylt-aud", "name_en": "Yuen Long Theatre Auditorium", "name_zh": "元朗劇院 演藝廳", "file": "ylt-aud.json"},
+  {"id": "hkch-th", "name_en": "Hong Kong City Hall Theatre", "name_zh": "香港大會堂 劇院", "file": "hkch-th.json"},
+  {"id": "stth-aud", "name_en": "Sha Tin Town Hall Auditorium", "name_zh": "沙田大會堂 演奏廳", "file": "stth-aud.json"},
+  {"id": "ekcc-hall", "name_en": "East Kowloon Cultural Centre, The Hall", "name_zh": "東九文化中心 劇院", "file": "ekcc-hall.json"}
+ ]
+}

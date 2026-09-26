@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HK Venue Seats</title>
+<meta name="description" content="Open seat lists for Hong Kong performing-arts venues: every row, seat number and printed mark, checked against LCSD's own totals, with a viewer for each hall.">
+<style>
+:root {
+  --bg: #f7f6f3; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a65; --line: #d9d7d0;
+  --acc: #16796f; --acc-bg: #e1f1ee; --r: #b86a12; --r-bg: #fbefdf;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936;
+    --acc: #5fc4b8; --acc-bg: #173a36; --r: #e8a656; --r-bg: #3a2a15;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936;
+  --acc: #5fc4b8; --acc-bg: #173a36; --r: #e8a656; --r-bg: #3a2a15;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.55 system-ui, -apple-system, "PingFang HK", "Noto Sans HK", sans-serif; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+a { color: var(--acc); }
+header { padding: 48px 0 28px; }
+.eyebrow { color: var(--muted); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; margin: 0 0 8px; }
+h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; margin: 0 0 12px; font-weight: 700; letter-spacing: -.01em; }
+.lede { font-size: 17px; max-width: 680px; margin: 0 0 22px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--panel); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.btn.primary { background: var(--acc); border-color: var(--acc); color: var(--panel); }
+.btn:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+section { padding: 22px 0; border-top: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; font-weight: 650; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.card h3 { margin: 0 0 6px; font-size: 15px; }
+.card p { margin: 0; color: var(--ink); font-size: 14px; }
+.tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { color: var(--muted); font-size: 12px; font-weight: 600; }
+td.num { text-align: right; font-weight: 650; }
+td small { display: block; color: var(--muted); }
+.links a { margin-right: 10px; white-space: nowrap; }
+.note { color: var(--muted); font-size: 13px; }
+.tag { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 4px; background: var(--r-bg); color: var(--r); font-weight: 600; }
+ul.plain { margin: 0; padding-left: 18px; }
+ul.plain li { margin-bottom: 6px; }
+footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">code.denniswu.org · open data</p>
+    <h1>HK Venue Seats</h1>
+    <p class="lede">Open seat lists for Hong Kong performing-arts venues: every row, seat number and printed
+      mark, checked against the venue's own totals, with a viewer that counts seats for each layout.</p>
+    <div class="actions">
+      <a class="btn primary" href="viewer/">Open the viewer</a>
+      <a class="btn" id="repo-link" href="#" rel="noopener">Source and data on GitHub</a>
+    </div>
+  </header>
+
+  <section aria-labelledby="venues-h">
+    <h2 id="venues-h">Venues</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Venue</th><th class="num">Seats</th><th>Areas</th><th>With orchestra pit</th><th>Links</th></tr></thead>
+        <tbody id="venues"><tr><td colspan="5" class="note">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">Seat totals are those printed on each plan. Pit rows are inferred: LCSD states the seats
+      lost, not the rows, and each file shows the arithmetic.</p>
+  </section>
+
+  <section aria-labelledby="what-h">
+    <h2 id="what-h">What it is</h2>
+    <div class="cols">
+      <div class="card"><h3>Facts, not drawings</h3><p>For each hall: its areas, rows, seat numbers in blocks,
+        and the marks the plan prints (wheelchair spaces, management seats, restricted sightline, limited
+        legroom). No seat positions, images or copies of any plan.</p></div>
+      <div class="card"><h3>Checked against LCSD</h3><p>Every area is counted and must match the total LCSD prints;
+        every orchestra-pit option must match LCSD's stated seats lost. The build fails otherwise.</p></div>
+      <div class="card"><h3>A viewer for layouts</h3><p>Choose a pit, which seat types to count and which areas are
+        open. The key figures follow, next to LCSD's own figure. Download the seat list or your layout as JSON.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="src-h">
+    <h2 id="src-h">Sources</h2>
+    <ul class="plain">
+      <li>Seating plans published by the Leisure and Cultural Services Department (LCSD), read directly.</li>
+      <li>Capacity statements on LCSD's own pages and technical-information sheets for each venue, quoted with
+        URL and version.</li>
+      <li>Addresses and coordinates from LCSD's open data on <a href="https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural" rel="noopener">DATA.GOV.HK</a>.</li>
+      <li>Never ticketing or box-office data, and never seat maps compiled by others.</li>
+    </ul>
+    <p class="note">LCSD claims copyright in its plans and in compilations of data on its site
+      (<a href="https://www.lcsd.gov.hk/en/notice.html" rel="noopener">notice</a>). This project publishes only
+      facts about each hall and credits LCSD in every file. This is not legal advice.</p>
+  </section>
+
+  <section aria-labelledby="use-h">
+    <h2 id="use-h">Use the data</h2>
+    <p>Each venue is one JSON file (schema <code>hkperf-venue-seats/seatlist@0.2</code>), listed in
+      <code>data/index.json</code>. The format, the counting rule and how a venue is added are described in the
+      repository's <a id="readme-link" href="#" rel="noopener">README</a>.</p>
+  </section>
+
+  <footer>
+    Seat facts compiled from seating plans and technical information published by the Leisure and Cultural
+    Services Department, HKSAR Government. Code: MIT. Seat lists: this project's contribution under
+    <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.
+  </footer>
+</div>
+
+<script src="viewer/config.js"></script>
+<script>
+const CONFIG = window.SEATS_CONFIG || {};
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = n => Number(n).toLocaleString("en");
+const repo = CONFIG.repo, branch = CONFIG.branch || "main";
+if (repo) {
+  document.getElementById("repo-link").href = repo;
+  document.getElementById("readme-link").href = `${repo}#readme`;
+} else {
+  document.getElementById("repo-link").hidden = true;
+}
+
+async function venues() {
+  const tbody = document.getElementById("venues");
+  try {
+    const index = await (await fetch("data/index.json")).json();
+    const docs = await Promise.all(index.venues.map(v => fetch(`data/${v.file}`).then(r => r.json()).then(d => [v, d])));
+    tbody.innerHTML = docs.map(([v, d]) => {
+      const t = d.printed_totals;
+      const areas = d.zones.length > 1 ? d.zones.map(z => `${esc(z.name)} ${fmt(t[z.name])}`).join(" · ") : "one area";
+      const pits = (d.orchestra_pits || []).map(p => `${esc(p.name)}: ${fmt(p.total_with_pit)} <small>rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))} <span class="tag">inferred</span></small>`).join("") || `<small>no seats lost</small>`;
+      const standing = d.standing?.places?.length ? `<small>+ ${d.standing.places.length} standing</small>` : "";
+      const git = repo ? `<a href="${esc(`${repo}/blob/${branch}/data/${v.file}`)}" rel="noopener">JSON</a>` : "";
+      return `<tr><td><b>${esc(d.venue.name_en)}</b><small>${esc(d.venue.name_zh)} · ${esc(d.location?.district || d.location?.address_en || "")}</small></td>` +
+        `<td class="num">${fmt(t.Total)}${standing}</td><td>${areas}</td><td>${pits}</td>` +
+        `<td class="links"><a href="viewer/?venue=${encodeURIComponent(v.id)}">View</a>${git}<a href="${esc(d.source.url)}" rel="noopener">Plan (LCSD)</a></td></tr>`;
+    }).join("");
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="5" class="note">Could not load the venue list. Open this page over HTTP.</td></tr>`;
+  }
+}
+venues();
+</script>
+</body>
+</html>

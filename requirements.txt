@@ -1,0 +1,5 @@
+pymupdf>=1.24
+pillow>=10
+numpy>=1.26
+scipy>=1.11
+pyobjc-framework-Vision>=10  # macOS only: OCR via Apple Vision

@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HK Venue Seats</title>
+<style>
+:root {
+  --bg: #f7f6f3; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a65; --line: #d9d7d0; --soft: #efeee9;
+  --seat: #ffffff; --seat-line: #3a3a36; --seat-ink: #3a3a36;
+  --w: #2f6fb3; --w-bg: #e3eefa; --x: #9a9892; --x-bg: #eeede9; --r: #b86a12; --r-bg: #fbefdf; --l-bg: #d3d2cc;
+  --acc: #16796f; --acc-bg: #e1f1ee; --ok: #2e7d4f; --bad: #b3261e; --hover: #1d1d1b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936; --soft: #2a2a27;
+    --seat: #262624; --seat-line: #b9b7b0; --seat-ink: #d6d4cd;
+    --w: #7fb2ea; --w-bg: #1d2e42; --x: #7c7a74; --x-bg: #2a2a28; --r: #e8a656; --r-bg: #3a2a15; --l-bg: #4a4944;
+    --acc: #5fc4b8; --acc-bg: #173a36; --ok: #6fcf97; --bad: #f28b82; --hover: #ffffff;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936; --soft: #2a2a27;
+  --seat: #262624; --seat-line: #b9b7b0; --seat-ink: #d6d4cd;
+  --w: #7fb2ea; --w-bg: #1d2e42; --x: #7c7a74; --x-bg: #2a2a28; --r: #e8a656; --r-bg: #3a2a15; --l-bg: #4a4944;
+  --acc: #5fc4b8; --acc-bg: #173a36; --ok: #6fcf97; --bad: #f28b82; --hover: #ffffff;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "PingFang HK", "Noto Sans HK", sans-serif; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+header { padding-top: 20px; padding-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: end; justify-content: space-between; }
+h1 { font-size: 20px; margin: 0 0 2px; font-weight: 650; }
+.sub { color: var(--muted); }
+select, button { font: inherit; color: var(--ink); }
+select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); max-width: 100%; }
+
+/* key figures: pinned while scrolling */
+.keybar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+.keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+.key { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; min-width: 0; }
+.key b { display: block; font-size: 20px; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.key span { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.key.main { background: var(--acc-bg); border-color: var(--acc); grid-column: span 2; }
+.key.main b { font-size: 26px; color: var(--acc); }
+.key .ok { color: var(--ok); } .key .neg { color: var(--bad); }
+.key.flash b { animation: flash .5s ease; }
+@keyframes flash { from { opacity: .3; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .key.flash b { animation: none; } }
+
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 16px; padding-top: 16px; align-items: start; }
+@media (max-width: 880px) { .layout { grid-template-columns: 1fr; } }
+@media (max-width: 600px) {
+  /* one compact row that scrolls sideways, so the pinned strip stays short */
+  .keys { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; gap: 6px; padding-top: 8px; padding-bottom: 8px; }
+  .key { padding: 4px 8px; } .key b { font-size: 16px; } .key.main { grid-column: auto; } .key.main b { font-size: 20px; }
+  .key span { font-size: 11px; }
+}
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.card { scroll-margin-top: calc(var(--keys-h, 80px) + 12px); }
+.card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 0 0 12px; font-weight: 650; }
+
+/* layout panel */
+.controls { position: sticky; top: calc(var(--keys-h, 80px) + 12px); }
+@media (max-width: 880px) { .controls { position: static; } }
+.group { padding: 10px 0; border-top: 1px solid var(--line); }
+.group:first-of-type { border-top: 0; padding-top: 0; }
+.group h3 { font-size: 13px; margin: 0 0 8px; font-weight: 650; }
+.seg { display: flex; flex-direction: column; gap: 4px; }
+.seg label { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 7px; cursor: pointer; font-size: 13px; }
+.seg label:has(input:checked) { border-color: var(--acc); background: var(--acc-bg); }
+.seg input { accent-color: var(--acc); margin: 0; }
+.seg small, .opt small { color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.opt { display: flex; align-items: center; gap: 8px; padding: 5px 0; cursor: pointer; font-size: 13px; }
+.opt svg { flex: none; }
+.switch { appearance: none; flex: none; width: 30px; height: 18px; border-radius: 9px; background: var(--line); position: relative; cursor: pointer; margin: 0; transition: background .15s; }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--panel); transition: transform .15s; box-shadow: 0 1px 2px rgb(0 0 0 / .25); }
+.switch:checked { background: var(--acc); } .switch:checked::after { transform: translateX(12px); }
+.switch:focus-visible, .seg input:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.hint { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+.hint.ok { color: var(--ok); }
+.reset { margin-top: 10px; width: 100%; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); cursor: pointer; font-size: 13px; }
+.reset:disabled { opacity: .5; cursor: default; }
+
+/* map */
+.tools { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.tools button { font-size: 12px; padding: 3px 10px; border-radius: 6px; cursor: pointer; border: 1px solid var(--line); background: var(--bg); }
+.swatch { display: inline-flex; align-items: center; gap: 5px; margin-right: 12px; }
+#map { overflow-x: auto; margin-top: 12px; }
+#map svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+#map.zoomed svg { max-width: none; }
+.seat rect { fill: var(--seat); stroke: var(--seat-line); stroke-width: 1; }
+.seat text { fill: var(--seat-ink); font-size: 7.5px; text-anchor: middle; dominant-baseline: central; font-variant-numeric: tabular-nums; pointer-events: none; }
+.seat.W rect { fill: var(--w-bg); stroke: var(--w); } .seat.W text { fill: var(--w); font-weight: 700; }
+.seat.X rect { fill: var(--x-bg); stroke: var(--x); } .seat.X text { fill: var(--x); }
+.seat.X line { stroke: var(--x); stroke-width: 1; pointer-events: none; }
+.seat.R rect { fill: var(--r-bg); stroke: var(--r); } .seat.R .inner { fill: none; stroke: var(--r); stroke-width: .8; }
+.seat.R text { fill: var(--r); }
+.seat.L rect { fill: var(--l-bg); }
+.seat.off { opacity: .22; } .seat.off rect { stroke-dasharray: 2.5 1.5; }
+.seat:hover rect, .seat:focus rect { stroke: var(--hover); stroke-width: 2; }
+.seat:focus { outline: none; }
+.pitband { display: none; } .pitband.on { display: inline; }
+.pitband rect { fill: none; stroke: var(--r); stroke-dasharray: 4 3; }
+.pitband text { fill: var(--r); font-size: 11px; font-weight: 650; dominant-baseline: central; }
+.blockedarea { fill: var(--ink); }
+.standing rect { fill: none; stroke: var(--muted); stroke-dasharray: 2 2; }
+.standing text { fill: var(--muted); font-size: 7.5px; text-anchor: middle; dominant-baseline: central; }
+.standing.on rect { stroke: var(--acc); stroke-dasharray: none; fill: var(--acc-bg); } .standing.on text { fill: var(--acc); }
+.rowlabel { fill: var(--muted); font-size: 10px; font-weight: 600; dominant-baseline: central; }
+.zonelabel { fill: var(--ink); font-size: 13px; font-weight: 650; text-anchor: middle; }
+.zonelabel.off { fill: var(--muted); text-decoration: line-through; }
+.stage { fill: var(--bg); stroke: var(--line); }
+.stagetext { fill: var(--muted); font-size: 11px; text-anchor: middle; dominant-baseline: central; letter-spacing: .1em; }
+.note { color: var(--muted); font-size: 12px; }
+
+/* facts */
+.below { display: grid; gap: 16px; padding-top: 16px; padding-bottom: 32px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; margin: 0; }
+.fact { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); margin: 0; min-width: 0; }
+.fact dt { font-size: 12px; color: var(--muted); font-weight: 600; }
+.fact dd { margin: 0; }
+.fact .v { font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.fact .d { font-size: 12.5px; color: var(--ink); margin-top: 2px; overflow-wrap: anywhere; }
+.fact .s { font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+.fact.wide { grid-column: span 2; }
+@media (max-width: 560px) { .fact.wide { grid-column: auto; } }
+.fact a { color: var(--acc); }
+.dl { display: grid; gap: 10px; }
+.dlrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.dlrow .what { flex: 1 1 260px; min-width: 0; }
+.dlrow .what b { display: block; font-size: 13.5px; }
+.dlrow .what span { color: var(--muted); font-size: 12.5px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 7px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: inherit; font-size: 13px; text-decoration: none; cursor: pointer; white-space: nowrap; }
+.btn.primary { background: var(--acc); border-color: var(--acc); color: var(--panel); }
+.btn:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.tag { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 4px; background: var(--r-bg); color: var(--r); font-weight: 600; }
+.tag.ok { background: var(--acc-bg); color: var(--ok); }
+.rule { font-size: 12.5px; color: var(--muted); margin: 12px 0 0; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; }
+td.num { text-align: right; }
+.tablewrap { overflow-x: auto; }
+details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .07em; font-weight: 650; }
+.sources { margin: 0; padding-left: 18px; font-size: 13px; }
+.sources li { margin-bottom: 8px; } .sources a { color: inherit; word-break: break-all; }
+#tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); padding: 6px 9px; border-radius: 6px; font-size: 12px; max-width: 280px; display: none; z-index: 10; }
+#tip b { font-size: 13px; }
+#tip .off { color: color-mix(in srgb, var(--bg) 70%, var(--bad)); }
+footer { color: var(--muted); font-size: 12px; padding-bottom: 32px; }
+.err { color: var(--bad); }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div>
+    <h1 id="title">HK Venue Seats</h1>
+    <div class="sub" id="subtitle">Loading…</div>
+  </div>
+  <select id="venue" aria-label="Venue"></select>
+</header>
+
+<div class="keybar" id="keybar">
+  <div class="wrap keys" id="keys" aria-live="polite"></div>
+</div>
+
+<main class="wrap layout">
+  <aside class="card controls" aria-labelledby="layout-h">
+    <h2 id="layout-h">Layout</h2>
+    <div class="group" id="g-pit">
+      <h3>Orchestra pit</h3>
+      <div class="seg" role="radiogroup" aria-label="Orchestra pit" id="pitopts"></div>
+    </div>
+    <div class="group" id="g-marks">
+      <h3>Count these seats</h3>
+      <div id="markopts"></div>
+    </div>
+    <div class="group" id="g-zones">
+      <h3>Areas open</h3>
+      <div id="zoneopts"></div>
+    </div>
+    <div class="group" id="g-standing">
+      <h3>Standing</h3>
+      <div id="standopt"></div>
+    </div>
+    <p class="hint" id="hint"></p>
+    <button class="reset" id="reset" type="button">Reset to the printed layout</button>
+  </aside>
+
+  <section class="card" aria-label="Seat map">
+    <div class="tools">
+      <div>
+        <span class="swatch"><svg width="17" height="17" viewBox="-1 -1 17 17"><g class="seat"><rect x="0" y="0" width="15" height="15" rx="2"/></g></svg>Counted</span>
+        <span class="swatch"><svg width="17" height="17" viewBox="-1 -1 17 17"><g class="seat off"><rect x="0" y="0" width="15" height="15" rx="2"/></g></svg>Not counted in this layout</span>
+      </div>
+      <button id="zoom" type="button">Actual size</button>
+    </div>
+    <div id="map"></div>
+    <p class="note" id="layoutnote"></p>
+  </section>
+</main>
+
+<div class="wrap below">
+  <section class="card" aria-labelledby="facts-h">
+    <h2 id="facts-h">Facts from the plan</h2>
+    <dl class="facts" id="facts"></dl>
+    <p class="rule" id="rule"></p>
+  </section>
+  <section class="card" aria-labelledby="dl-h">
+    <h2 id="dl-h">Download</h2>
+    <div class="dl">
+      <div class="dlrow">
+        <div class="what"><b>Seat list (source data)</b><span id="dl-src-note">The published seat list for this venue, kept in the git repository.</span></div>
+        <a class="btn primary" id="dl-src-git" href="#" rel="noopener">JSON on GitHub</a>
+        <button class="btn" id="dl-src" type="button">Download this copy</button>
+      </div>
+      <div class="dlrow">
+        <div class="what"><b>Current layout</b><span id="dl-layout-note"></span></div>
+        <button class="btn primary" id="dl-layout" type="button">Download JSON</button>
+      </div>
+    </div>
+  </section>
+  <section class="card">
+    <details>
+      <summary>Rows</summary>
+      <div class="tablewrap" style="margin-top:10px"><table id="rows"></table></div>
+    </details>
+  </section>
+  <section class="card">
+    <h2>Sources</h2>
+    <ol class="sources" id="sources"></ol>
+  </section>
+  <footer id="credit"></footer>
+</div>
+<div id="tip"></div>
+
+<script src="config.js"></script>
+<script>
+const DATA = "../data/";
+const CONFIG = window.SEATS_CONFIG || {};
+const MARK_NAMES = { W: "Wheelchair spaces", X: "Management seats", R: "Restricted sightline", L: "Limited legroom" };
+const MARK_ONE = { W: "Wheelchair space", X: "Management seat", R: "Restricted sightline", L: "Limited legroom" };
+// The printed totals count wheelchair, restricted and limited-legroom seats and leave management seats out.
+const DEFAULT_MARKS = { W: true, X: false, R: true, L: true };
+const S = 15, GAP = 2, BLOCK_GAP = 14, ROW_GAP = 5, LABEL_W = 30, ZONE_GAP = 34;
+const $ = id => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs = {}, parent) => {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (parent) parent.appendChild(e);
+  return e;
+};
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const link = u => u ? `<a href="${esc(u)}">${esc(u)}</a>` : "URL not recorded";
+const seatsOf = row => row.blocks.flatMap(b => b.seats);
+// a seat's mark is one or more letters, e.g. "R" or "RL"
+const markOf = (row, s) => row.marks?.[s] || "";
+const letters = mark => [...mark];
+const fmt = n => n.toLocaleString("en");
+const pitsFor = (doc, row) => (doc.orchestra_pits || []).filter(p => p.rows_removed.includes(row));
+
+let doc = null;
+let state = null;
+const defaults = d => ({
+  pit: -1,
+  marks: Object.fromEntries(Object.keys(d.marks || {}).map(m => [m, DEFAULT_MARKS[m] ?? true])),
+  zones: Object.fromEntries(d.zones.map(z => [z.name, true])),
+  standing: false,
+});
+
+async function getJSON(path) {
+  const r = await fetch(path);
+  if (!r.ok) throw new Error(`${path}: HTTP ${r.status}`);
+  return r.json();
+}
+
+async function init() {
+  let venues;
+  try { venues = (await getJSON(DATA + "index.json")).venues; }
+  catch (e) { $("subtitle").innerHTML = `<span class="err">Could not load data/index.json. Serve the repo root over HTTP (e.g. <code>python -m http.server</code>) and open /app/.</span>`; return; }
+  const sel = $("venue");
+  for (const v of venues) sel.add(new Option(`${v.name_en} · ${v.name_zh}`, v.id));
+  const want = new URLSearchParams(location.search).get("venue");
+  if (want && venues.some(v => v.id === want)) sel.value = want;
+  sel.hidden = venues.length < 2;
+  sel.onchange = () => { history.replaceState(null, "", `?venue=${sel.value}`); load(venues.find(v => v.id === sel.value)); };
+  new ResizeObserver(() => document.documentElement.style.setProperty("--keys-h", $("keybar").offsetHeight + "px")).observe($("keybar"));
+  load(venues.find(v => v.id === sel.value));
+}
+
+let venueFile = null;
+async function load(v) {
+  doc = await getJSON(DATA + v.file);
+  venueFile = v.file;
+  state = defaults(doc);
+  $("tip").style.display = "none";
+  $("title").textContent = doc.venue.name_en;
+  $("subtitle").textContent = doc.venue.name_zh + (doc.source.plan_code ? ` · plan ${doc.source.plan_code}` : "");
+  document.title = `${doc.venue.name_en} · HK Venue Seats`;
+  controls();
+  draw();
+  facts();
+  table();
+  sources();
+  downloads();
+  $("layoutnote").textContent = doc.layout?.note || "";
+  $("credit").textContent = `${doc.source.credit} This page draws a schematic from the seat list; it is not the venue's plan.`;
+  update(false);
+}
+
+// ---------------------------------------------------------------- what counts
+
+function excluded(zone, row, mark) {
+  // Returns the reason a seat is left out of the current layout, or "" when it counts.
+  if (!state.zones[zone]) return `${zone} closed`;
+  const pit = doc.orchestra_pits?.[state.pit];
+  if (pit?.rows_removed.includes(row)) return `${pit.name} in use`;
+  const off = letters(mark).find(m => !state.marks[m]);
+  if (off) return `${MARK_NAMES[off]} not counted`;
+  return "";
+}
+
+function tally() {
+  const t = { total: 0, zones: {}, marks: { W: 0, X: 0, R: 0, L: 0 }, off: 0 };
+  for (const z of doc.zones) {
+    t.zones[z.name] = 0;
+    for (const r of z.rows) for (const s of seatsOf(r)) {
+      const m = markOf(r, s);
+      if (excluded(z.name, r.row, m)) { t.off++; continue; }
+      t.total++; t.zones[z.name]++;
+      for (const l of letters(m)) t.marks[l]++;
+    }
+  }
+  t.standing = state.standing ? (doc.standing?.places?.length || 0) : 0;
+  return t;
+}
+
+const isDefault = () => JSON.stringify(state) === JSON.stringify(defaults(doc));
+
+// ---------------------------------------------------------------- layout panel
+
+function glyph(mark) {
+  const svg = el("svg", { width: S + 2, height: S + 2, viewBox: `-1 -1 ${S + 2} ${S + 2}`, "aria-hidden": "true" });
+  seatGlyph(el("g", { class: `seat ${letters(mark).join(" ")}` }, svg), 0, 0, mark, "1");
+  return svg;
+}
+
+function switchRow(labelNodes, count, checked, onchange) {
+  const lab = document.createElement("label");
+  lab.className = "opt";
+  const cb = document.createElement("input");
+  cb.type = "checkbox"; cb.className = "switch"; cb.setAttribute("role", "switch"); cb.checked = checked;
+  cb.onchange = () => onchange(cb.checked);
+  lab.append(cb, ...labelNodes);
+  const sm = document.createElement("small"); sm.textContent = count; lab.append(sm);
+  return lab;
+}
+
+function controls() {
+  const all = doc.zones.flatMap(z => z.rows);
+  const markCount = m => all.reduce((a, r) => a + Object.values(r.marks || {}).filter(x => x.includes(m)).length, 0);
+
+  const pits = doc.orchestra_pits || [];
+  $("g-pit").hidden = !pits.length;
+  $("pitopts").innerHTML = [{ name: "Not in use", i: -1 }, ...pits.map((p, i) => ({ ...p, i }))].map(p =>
+    `<label><input type="radio" name="pit" value="${p.i}" ${p.i === state.pit ? "checked" : ""}> ${esc(p.name)}` +
+    `${p.i >= 0 ? `<small>rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))} · −${p.seats_removed}</small>` : ""}</label>`).join("");
+  $("pitopts").querySelectorAll("input").forEach(inp => inp.onchange = () => { state.pit = +inp.value; update(); });
+
+  const marks = $("markopts");
+  marks.replaceChildren();
+  for (const m of Object.keys(doc.marks || {}))
+    marks.append(switchRow([glyph(m), MARK_NAMES[m] || m], markCount(m), state.marks[m], on => { state.marks[m] = on; update(); }));
+
+  $("g-zones").hidden = doc.zones.length < 2;
+  const zones = $("zoneopts");
+  zones.replaceChildren();
+  for (const z of doc.zones) {
+    const n = z.rows.reduce((a, r) => a + seatsOf(r).length, 0);
+    zones.append(switchRow([`${z.name} ${z.name_zh || ""}`.trim()], `${fmt(n)} boxes`, state.zones[z.name], on => { state.zones[z.name] = on; update(); }));
+  }
+
+  const st = doc.standing?.places?.length;
+  $("g-standing").hidden = !st;
+  $("standopt").replaceChildren(...(st ? [switchRow(["Add standing places"], st, state.standing, on => { state.standing = on; update(); })] : []));
+}
+
+$("reset").onclick = () => { state = defaults(doc); controls(); update(); };
+
+// ---------------------------------------------------------------- key figures
+
+function keys(t, flash) {
+  // compare with LCSD's own figure for this configuration: the printed total, or the pit total
+  const pit = doc.orchestra_pits?.[state.pit];
+  const printed = pit ? pit.total_with_pit : doc.printed_totals?.Total;
+  const what = pit ? `LCSD figure with ${pit.name}` : "printed total";
+  const diff = t.total - printed;
+  const items = [
+    ["main", fmt(t.total) + (t.standing ? ` <small style="font-size:14px">+ ${t.standing} standing</small>` : ""), "Seats in this layout"],
+    ...doc.zones.length > 1 ? doc.zones.map(z => ["", state.zones[z.name] ? fmt(t.zones[z.name]) : "closed", z.name]) : [],
+    ...Object.keys(doc.marks || {}).filter(m => m === "W").map(m => ["", state.marks[m] ? fmt(t.marks[m]) : "0", MARK_NAMES[m]]),
+    ["", diff === 0 ? `<span class="ok">= ${fmt(printed)}</span>` : `<span class="${diff < 0 ? "neg" : ""}">${diff > 0 ? "+" : "−"}${fmt(Math.abs(diff))}</span>`,
+      diff === 0 ? `Matches ${what}` : `vs ${what} ${fmt(printed)}`],
+    ["", fmt(t.off), "Seat boxes not counted"],
+  ];
+  $("keys").innerHTML = items.map(([c, v, l]) => `<div class="key ${c}${flash ? " flash" : ""}"><b>${v}</b><span>${esc(l)}</span></div>`).join("");
+}
+
+// ---------------------------------------------------------------- apply state
+
+function update(flash = true) {
+  const t = tally();
+  keys(t, flash);
+  for (const g of document.querySelectorAll("#map .seat")) {
+    const why = excluded(g.dataset.zone, g.dataset.row, g.dataset.mark);
+    g.classList.toggle("off", !!why);
+    why ? (g.dataset.off = why) : delete g.dataset.off;
+  }
+  document.querySelectorAll("#map .pitband").forEach(b => b.classList.toggle("on", +b.dataset.pit === state.pit));
+  document.querySelectorAll("#map .zonelabel").forEach(z => z.classList.toggle("off", !state.zones[z.dataset.zone]));
+  document.querySelector("#map .standing")?.classList.toggle("on", state.standing);
+  $("dl-layout-note").textContent = layoutSummary(t);
+  const def = isDefault();
+  $("reset").disabled = def;
+  $("hint").className = "hint" + (def ? " ok" : "");
+  $("hint").textContent = def
+    ? `Printed layout: ${fmt(doc.printed_totals.Total)} seats, management seats not counted.`
+    : "Faded seats on the map are not counted.";
+}
+
+// ---------------------------------------------------------------- map
+
+function seatGlyph(g, x, y, mark, label) {
+  el("rect", { x, y, width: S, height: S, rx: 2 }, g);
+  if (mark.includes("R")) el("rect", { class: "inner", x: x + 2.2, y: y + 2.2, width: S - 4.4, height: S - 4.4, rx: 1 }, g);
+  if (mark.includes("X")) { el("line", { x1: x + 2, y1: y + 2, x2: x + S - 2, y2: y + S - 2 }, g); el("line", { x1: x + S - 2, y1: y + 2, x2: x + 2, y2: y + S - 2 }, g); }
+  const t = el("text", { x: x + S / 2, y: y + S / 2 + .5 }, g);
+  t.textContent = mark.includes("W") ? "W" : label;
+  if (label.length > 2) t.setAttribute("font-size", "6");
+}
+
+function rowLayout(row, rightFirst) {
+  // Blocks in drawn order, left to right (the file lists them from seat 1's side). Each block's
+  // items are its seats plus any blocked slots, which follow the seats in number order.
+  let blocks = row.blocks.map(b => ({
+    side: b.side, area: b.area,
+    items: [...b.seats.map(id => ({ id })), ...(b.blocked?.skipped_numbers || []).map(id => ({ id, blocked: true }))],
+  }));
+  if (rightFirst) { blocks.reverse(); blocks.forEach(b => b.items.reverse()); }
+  return blocks;
+}
+
+function blockWidth(b) { return b.items.length * S + (b.items.length - 1) * GAP; }
+
+// Space between two blocks: room for any seat numbers missing between them (e.g. Y 1-2 · Y 34-35
+// lines up under the ends of row X), otherwise an aisle.
+function between(a, b) {
+  const p = +a.items.at(-1).id, n = +b.items[0].id;
+  const missing = Number.isInteger(p) && Number.isInteger(n) ? Math.abs(n - p) - 1 : 0;
+  return missing > 0 ? GAP + missing * (S + GAP) : BLOCK_GAP;
+}
+
+function rowWidth(bl) { return bl.reduce((a, b, i) => a + blockWidth(b) + (i ? between(bl[i - 1], b) : 0), 0); }
+
+function draw() {
+  const rightFirst = (doc.layout?.seat_1_side || "right") === "right";
+  // width of the widest row (centred rows); side blocks push to the edges of this width
+  let maxW = 0;
+  for (const z of doc.zones) for (const r of z.rows) {
+    const bl = rowLayout(r, rightFirst);
+    if (!bl.some(b => b.side)) maxW = Math.max(maxW, rowWidth(bl));
+  }
+  const W = maxW + LABEL_W * 2 + 8;
+  const svg = el("svg", { role: "img", "aria-label": `Seat schematic for ${doc.venue.name_en}` });
+  let y = 4;
+  const stageW = Math.min(260, maxW * .45);
+  el("rect", { class: "stage", x: (W - stageW) / 2, y, width: stageW, height: 30, rx: 3 }, svg);
+  el("text", { class: "stagetext", x: W / 2, y: y + 15 }, svg).textContent = "STAGE 舞台";
+  y += 30 + 22;
+  const x0 = LABEL_W + 4;
+  const rowY = {};
+
+  for (const z of doc.zones) {
+    const zl = el("text", { class: "zonelabel", x: W / 2, y: y + 4 }, svg);
+    zl.textContent = `${z.name} ${z.name_zh || ""}`.trim();
+    zl.dataset.zone = z.name;
+    y += 16;
+    for (const row of z.rows) {
+      const bl = rowLayout(row, rightFirst);
+      let xs;
+      if (bl.some(b => b.side)) {
+        xs = bl.map(b => b.side === "left" ? x0 : b.side === "right" ? x0 + maxW - blockWidth(b) : x0 + (maxW - blockWidth(b)) / 2);
+      } else {
+        let x = x0 + (maxW - rowWidth(bl)) / 2;
+        xs = bl.map((b, i) => { if (i) x += between(bl[i - 1], b); const at = x; x += blockWidth(b); return at; });
+      }
+      const minX = Math.min(...xs), maxX = Math.max(...bl.map((b, i) => xs[i] + blockWidth(b)));
+      el("text", { class: "rowlabel", x: minX - 6, y: y + S / 2, "text-anchor": "end" }, svg).textContent = row.row;
+      el("text", { class: "rowlabel", x: maxX + 6, y: y + S / 2, "text-anchor": "start" }, svg).textContent = row.row;
+      const inPits = pitsFor(doc, row.row).map(p => p.name).join(", ");
+      bl.forEach((b, i) => b.items.forEach(({ id: s, blocked }, j) => {
+        if (blocked) {
+          if (j && b.items[j - 1].blocked) return;          // one filled area per run of blocked slots
+          let k = j; while (b.items[k + 1]?.blocked) k++;
+          const r = el("rect", { class: "blockedarea", x: xs[i] + j * (S + GAP), y, width: (k - j + 1) * (S + GAP) - GAP, height: S, rx: 1 }, svg);
+          el("title", {}, r).textContent = `${row.row}: solid area where ${b.items.slice(j, k + 1).map(t => t.id).join(", ")} would be (not seats)`;
+          return;
+        }
+        const mark = markOf(row, s);
+        const g = el("g", { class: `seat ${letters(mark).join(" ")}`, tabindex: 0 }, svg);
+        Object.assign(g.dataset, { mark, row: row.row, seat: s, zone: z.name });
+        if (row.inferred_numbers?.[s]) g.dataset.inferred = row.inferred_numbers[s];
+        if (row.note) g.dataset.note = row.note;
+        if (b.area) g.dataset.area = b.area;
+        if (inPits) g.dataset.pits = inPits;
+        seatGlyph(g, xs[i] + j * (S + GAP), y, mark, s);
+      }));
+      rowY[row.row] = y;
+      y += S + ROW_GAP;
+    }
+    y += ZONE_GAP;
+  }
+  (doc.orchestra_pits || []).forEach((pit, i) => {
+    const ys = pit.rows_removed.map(r => rowY[r]);
+    const top = Math.min(...ys), bottom = Math.max(...ys) + S;
+    const band = el("g", { class: "pitband" }, svg);
+    band.dataset.pit = i;
+    el("rect", { x: 2, y: top - 3, width: W - 4, height: bottom - top + 6, rx: 4 }, band);
+    el("text", { x: 10, y: (top + bottom) / 2 }, band).textContent = pit.name;
+  });
+  if (doc.standing?.places?.length) {
+    const places = doc.standing.places, n = places.length;
+    y -= ZONE_GAP - 10;
+    const w = n * S + (n - 1) * GAP;
+    let x = x0 + (maxW - w) / 2;
+    const g = el("g", { class: "standing" }, svg);
+    (rightFirst ? [...places].reverse() : places).forEach(pl => {
+      el("rect", { x, y, width: S, height: S, rx: 7 }, g);
+      el("text", { x: x + S / 2, y: y + S / 2 + .5 }, g).textContent = pl;
+      x += S + GAP;
+    });
+    el("text", { class: "rowlabel", x: W / 2, y: y + S + 10, "text-anchor": "middle" }, svg).textContent = "Standing";
+    y += S + 24 + ZONE_GAP;
+  }
+  const H = y - ZONE_GAP + 8;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("width", W); svg.setAttribute("height", H);
+  $("map").replaceChildren(svg);
+}
+
+// ---------------------------------------------------------------- facts
+
+// "W1, W2, 3–44, W3, W4": consecutive numbers collapse to a range, other labels stay as they are
+function runs(seats) {
+  const out = [];
+  for (const s of seats) {
+    const n = /^\d+$/.test(s) ? +s : NaN, last = out[out.length - 1];
+    if (!isNaN(n) && last && last.to === n - 1) last.to = n;
+    else out.push(isNaN(n) ? { label: s } : { from: n, to: n });
+  }
+  return out.map(r => r.label ?? (r.from === r.to ? r.from : `${r.from}–${r.to}`)).join(", ");
+}
+
+function rowSpan(rows) { return rows.length > 1 ? `${rows[0].row}–${rows.at(-1).row}` : rows[0]?.row || ""; }
+
+function facts() {
+  const printed = doc.printed_totals, cc = doc.count_check || {};
+  const zoneBoxes = z => z.rows.reduce((a, r) => a + seatsOf(r).length, 0);
+  const boxes = doc.zones.reduce((a, z) => a + zoneBoxes(z), 0);
+  const perZone = f => doc.zones.length > 1 ? doc.zones.map(z => `${esc(z.name)} ${f(z)}`).join(" · ") : "";
+  const F = [];
+  const ok = `<span class="tag ok">checked ✓</span>`;
+  const loc = doc.location;
+  if (loc) {
+    const lat = loc.latitude, lon = loc.longitude;
+    const osm = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}`;
+    const cs = loc.coordinates_source, as = loc.address_source;
+    F.push(["Location", "", `<span style="font-size:15px;font-weight:600">${esc(loc.address_en)}</span>` +
+      `${loc.address_zh ? `<br>${esc(loc.address_zh)}` : ""}${loc.district ? `<br>District: ${esc(loc.district)}` : ""}` +
+      `<br>${lat}, ${lon} · <a href="${esc(osm)}" rel="noopener">Open in OpenStreetMap</a>`,
+      `Coordinates: ${esc(cs.title)}, ${link(cs.dataset || cs.url)} (venue id ${esc(cs.venue_id)}, “${esc(cs.name_in_source)}”). ` +
+      `Address: ${esc(as.title || as.publisher)}${as.name_in_source ? ` (“${esc(as.name_in_source)}”)` : ""}. ${esc(loc.note || "")}`, "wide"]);
+  }
+
+  F.push(["Printed total", fmt(printed.Total), perZone(z => fmt(printed[z.name])), "Printed on the seating plan"]);
+  const allOk = doc.zones.every(z => cc[z.name]?.boxes_minus_X === cc[z.name]?.printed);
+  F.push(["Seat boxes drawn", fmt(boxes), perZone(z => fmt(zoneBoxes(z))),
+    `Counted from the plan. Boxes minus management seats = printed total ${allOk ? ok : `<span class="tag">mismatch</span>`}`]);
+  F.push(["Rows", fmt(doc.zones.reduce((a, z) => a + z.rows.length, 0)),
+    doc.zones.map(z => `${esc(z.name)} ${esc(rowSpan(z.rows))} (${z.rows.length})` +
+      (z.sections ? ` — ${z.sections.map(sc => `${esc(sc.name)} ${esc(sc.name_zh || "")} ${esc(sc.rows.join("–"))}`).join(", ")}` : "")).join(" · "), esc(doc.layout?.note?.match(/No row[^.]*\./)?.[0] || "")]);
+  F.push(["Seat 1", `${esc(doc.layout?.seat_1_side || "right")} end`, "of each row, looking at the stage from the hall", "Read from the plan's numbering"]);
+
+  for (const m of Object.keys(doc.marks || {})) {
+    const where = [];
+    let n = 0;
+    for (const z of doc.zones) for (const r of z.rows) {
+      const ids = seatsOf(r).filter(s => markOf(r, s).includes(m));
+      if (!ids.length) continue;
+      n += ids.length;
+      where.push(`${r.row} ${runs(ids.map(s => r.inferred_numbers?.[s] ? `${s} (=${r.inferred_numbers[s]})` : s))}`);
+    }
+    F.push([MARK_NAMES[m] || m, fmt(n), esc(where.join(" · ")),
+      esc(doc.marks[m]) + (m === "X" ? ". Not in the printed total." : m in DEFAULT_MARKS ? ". Included in the printed total." : "")]);
+  }
+
+  for (const p of doc.orchestra_pits || []) {
+    F.push([p.name, fmt(p.total_with_pit), `Rows ${esc(p.rows_removed.join(", "))} removed, −${p.seats_removed} seats`,
+      `“${esc(p.source.quote)}” <span class="tag">rows ${esc(p.rows_basis)}</span>`]);
+  }
+  if (doc.standing?.places?.length)
+    F.push(["Standing places", fmt(doc.standing.places.length), esc(`Numbered ${runs(doc.standing.places)}`), esc(doc.standing.note)]);
+  for (const r of doc.references || [])
+    F.push([r.what, "", (r.quotes || []).map(q => `“${esc(q)}”`).join("<br>"), esc(`${r.title || r.publisher}, ${r.document_version || ""}`.replace(/, $/, ""))]);
+
+  $("facts").innerHTML = F.map(([dt, v, d, s, cls]) =>
+    `<div class="fact ${cls || ""}"><dt>${esc(dt)}</dt><dd>${v ? `<div class="v">${v}</div>` : ""}${d ? `<div class="d">${d}</div>` : ""}${s ? `<div class="s">${s}</div>` : ""}</dd></div>`).join("");
+  $("rule").textContent = cc.rule ? `How the count is checked: ${cc.rule}` : "";
+}
+
+function table() {
+  const rows = [`<tr><th>Zone</th><th>Row</th><th class="num">Seats</th><th>Blocks (from seat 1)</th><th>Marks</th><th>Note</th></tr>`];
+  for (const z of doc.zones) for (const r of z.rows) {
+    const blocks = r.blocks.map(b => (b.area || b.side ? `${b.area || b.side}: ` : "") + runs(b.seats) +
+      (b.blocked ? `, ■ ${runs(b.blocked.skipped_numbers)} (blocked)` : "")).join(" · ");
+    const byMark = {};
+    for (const [s, m] of Object.entries(r.marks || {})) for (const l of letters(m)) (byMark[l] ||= []).push(s + (r.inferred_numbers?.[s] ? ` (=${r.inferred_numbers[s]})` : ""));
+    const marks = Object.entries(byMark).map(([m, ss]) => `${esc(m)}: ${esc(ss.join(", "))}`).join("<br>");
+    rows.push(`<tr><td>${esc(z.name)}</td><td><b>${esc(r.row)}</b></td><td class="num">${seatsOf(r).length}</td><td>${esc(blocks)}</td><td>${marks}</td>` +
+      `<td class="note">${pitsFor(doc, r.row).map(p => `<span class="tag">${esc(p.name)} (${esc(p.rows_basis)})</span> `).join("")}${esc(r.note || "")}</td></tr>`);
+  }
+  $("rows").innerHTML = rows.join("");
+}
+
+function sources() {
+  const src = doc.source, items = [];
+  items.push(`<b>Seating plan</b> (rows, seat numbers, marks, printed totals): ${esc(src.publisher)}, ${link(src.url)}` +
+    `${src.page ? `, shown on ${link(src.page)}${src.page_revised ? ` (page revised ${esc(src.page_revised)})` : ""}` : ""}` +
+    `${src.plan_code ? `, plan ${esc(src.plan_code)}` : ""}${src.printed_date ? `, dated ${esc(src.printed_date)}` : ", no printed date"}` +
+    `; sha256 <code>${esc(src.sha256.slice(0, 12))}…</code>`);
+  // one entry per source document, quoting every figure taken from it
+  const pits = doc.orchestra_pits || [], byUrl = new Map();
+  for (const p of pits) {
+    if (!byUrl.has(p.source.url)) byUrl.set(p.source.url, { src: p.source, quotes: [] });
+    byUrl.get(p.source.url).quotes.push(p.source.quote);
+  }
+  for (const { src: ps, quotes } of byUrl.values())
+    items.push(`<b>Orchestra pit</b>: ${esc(ps.title || ps.publisher)}, ${link(ps.url)} — ${quotes.map(q => `“${esc(q)}”`).join("; ")}.` +
+      `${ps.document_version ? ` Version ${esc(ps.document_version)}.` : ""}${ps.page_revised ? ` Page revised ${esc(ps.page_revised)}.` : ""}` +
+      ` Retrieved ${esc(ps.retrieved)}.`);
+  if (doc.location) {
+    const cs = doc.location.coordinates_source, as = doc.location.address_source;
+    items.push(`<b>Coordinates</b>: ${esc(cs.title)}, ${link(cs.dataset)}; file ${link(cs.url)}, venue id ${esc(cs.venue_id)}. Retrieved ${esc(cs.retrieved)}.`);
+    items.push(`<b>Address</b>: ${esc(as.title || as.publisher)}, ${link(as.url)}${as.document_version ? `, version ${esc(as.document_version)}` : ""}. Retrieved ${esc(as.retrieved)}.`);
+  }
+  for (const r of doc.references || [])
+    items.push(`<b>${esc(r.what)}</b>: ${esc(r.title || r.publisher)}, ${link(r.url)} — ${(r.quotes || []).map(q => `“${esc(q)}”`).join("; ")}.` +
+      `${r.document_version ? ` Version ${esc(r.document_version)}.` : ""} Retrieved ${esc(r.retrieved)}.${r.note ? ` ${esc(r.note)}` : ""}`);
+  for (const p of pits)
+    items.push(`<b>${esc(p.name)}</b>: rows ${esc(p.rows_removed.join(", "))} <span class="tag">${esc(p.rows_basis)}</span> ${esc(p.rows_reasoning)}`);
+  $("sources").innerHTML = items.map(i => `<li>${i}</li>`).join("");
+}
+
+// ---------------------------------------------------------------- downloads
+
+function saveJSON(obj, name) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 1) + "\n"], { type: "application/json" }));
+  const a = Object.assign(document.createElement("a"), { href: url, download: name });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+const gitURL = file => CONFIG.repo ? `${CONFIG.repo}/blob/${CONFIG.branch || "main"}/data/${file}` : "";
+
+function layoutSummary(t) {
+  const pit = doc.orchestra_pits?.[state.pit];
+  const offMarks = Object.keys(doc.marks || {}).filter(m => !state.marks[m]).map(m => MARK_NAMES[m].toLowerCase());
+  const closed = doc.zones.filter(z => !state.zones[z.name]).map(z => z.name);
+  return [`${fmt(t.total)} seats`, pit ? pit.name : "no orchestra pit",
+    offMarks.length ? `${offMarks.join(", ")} not counted` : "all seat types counted",
+    ...closed.length ? [`${closed.join(", ")} closed`] : [], ...t.standing ? [`+ ${t.standing} standing`] : []].join(" · ");
+}
+
+function layoutJSON() {
+  const t = tally(), pit = doc.orchestra_pits?.[state.pit];
+  const rows = [];
+  for (const z of doc.zones) for (const r of z.rows) {
+    const counted = [], not_counted = [];
+    for (const s of seatsOf(r)) {
+      const why = excluded(z.name, r.row, markOf(r, s));
+      why ? not_counted.push({ seat: s, reason: why }) : counted.push(s);
+    }
+    rows.push({ zone: z.name, row: r.row, counted, ...not_counted.length ? { not_counted } : {} });
+  }
+  return {
+    schema: "hkperf-venue-seats/layout@0.1",
+    generated: new Date().toISOString(),
+    venue: doc.venue,
+    seat_list: { file: `data/${venueFile}`, url: gitURL(venueFile) || null, schema: doc.schema, plan_sha256: doc.source.sha256 },
+    layout: {
+      orchestra_pit: pit ? { name: pit.name, rows_removed: pit.rows_removed, rows_basis: pit.rows_basis } : null,
+      count_marks: Object.fromEntries(Object.keys(doc.marks || {}).map(m => [m, { counted: state.marks[m], meaning: doc.marks[m] }])),
+      areas_open: state.zones,
+      standing: state.standing,
+    },
+    totals: {
+      seats: t.total,
+      by_zone: Object.fromEntries(doc.zones.filter(z => state.zones[z.name]).map(z => [z.name, t.zones[z.name]])),
+      by_mark: Object.fromEntries(Object.entries(t.marks).filter(([m]) => m in (doc.marks || {}))),
+      standing: t.standing,
+      not_counted: t.off,
+      lcsd_figure: pit ? { value: pit.total_with_pit, what: `with ${pit.name}` } : { value: doc.printed_totals.Total, what: "printed total" },
+    },
+    rows,
+  };
+}
+
+function downloads() {
+  const git = gitURL(venueFile);
+  $("dl-src-git").hidden = !git;
+  if (git) $("dl-src-git").href = git;
+  $("dl-src").onclick = () => saveJSON(doc, venueFile);
+  $("dl-layout").onclick = () => saveJSON(layoutJSON(), `${doc.venue.id}-layout.json`);
+}
+
+// ---------------------------------------------------------------- tooltip
+
+const tip = $("tip");
+function showTip(g, x, y) {
+  const d = g.dataset, m = d.mark;
+  let h = `<b>${esc(d.row)} ${esc(d.seat)}</b> · ${esc(d.zone)}${d.area ? ` · ${esc(d.area)}` : ""}`;
+  if (m) h += `<br>${letters(m).map(l => esc(MARK_ONE[l] || l)).join(" · ")}`;
+  if (!/^\d+$/.test(d.seat)) h += d.inferred ? `<br>No printed number; fits seat ${esc(d.inferred)}` : `<br>No printed number`;
+  if (d.off) h += `<br><span class="off">Not counted: ${esc(d.off)}</span>`;
+  else if (d.pits) h += `<br>Removed with: ${esc(d.pits)} (rows inferred)`;
+  if (d.note) h += `<br><span style="opacity:.75">${esc(d.note)}</span>`;
+  tip.innerHTML = h; tip.style.display = "block";
+  const r = tip.getBoundingClientRect();
+  tip.style.left = Math.min(x + 12, innerWidth - r.width - 8) + "px";
+  tip.style.top = (y + 14 + r.height > innerHeight ? y - r.height - 10 : y + 14) + "px";
+}
+$("map").addEventListener("pointermove", e => {
+  const g = e.target.closest(".seat");
+  g ? showTip(g, e.clientX, e.clientY) : (tip.style.display = "none");
+});
+$("map").addEventListener("pointerleave", () => tip.style.display = "none");
+$("map").addEventListener("focusin", e => {
+  const g = e.target.closest(".seat"); if (!g) return;
+  const r = g.getBoundingClientRect(); showTip(g, r.right, r.bottom);
+});
+$("map").addEventListener("focusout", () => tip.style.display = "none");
+$("zoom").onclick = () => {
+  const z = $("map").classList.toggle("zoomed");
+  $("zoom").textContent = z ? "Fit to width" : "Actual size";
+};
+
+init();
+</script>
+</body>
+</html>

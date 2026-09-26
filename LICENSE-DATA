@@ -1,0 +1,16 @@
+Seat lists (data/*.json)
+
+Copyright (c) 2026 Dennis Wu
+
+This project's contribution to the seat lists in data/ (their selection, structure, checks and
+notes) is licensed under the Creative Commons Attribution 4.0 International licence (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/
+Full legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+Attribution: "HK Venue Seats (hkperf-venue-seats), by Dennis Wu, CC BY 4.0", and keep the credit
+line and sources recorded in each file.
+
+The seat facts are compiled from seating plans and technical information published by the Leisure
+and Cultural Services Department (LCSD), HKSAR Government, and addresses and coordinates from LCSD's
+open data on DATA.GOV.HK. This licence covers only this project's own contribution. It does not grant
+any rights LCSD or others hold in their material; see "Copyright" in README.md.
