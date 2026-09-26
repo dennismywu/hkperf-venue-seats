@@ -29,6 +29,9 @@ body:
         - swcc-lh · Sheung Wan Civic Centre Lecture Hall
         - swhcc-ca-end · Sai Wan Ho Civic Centre Cultural Activities Hall (end stage)
         - swhcc-ca-thrust · Sai Wan Ho Civic Centre Cultural Activities Hall (thrust stage)
+        - tmth-aud · Tuen Mun Town Hall Auditorium
+        - tmth-ca · Tuen Mun Town Hall Cultural Activities Hall
+        - twth-ca · Tsuen Wan Town Hall Cultural Activities Hall
     validations:
       required: true
   - type: dropdown

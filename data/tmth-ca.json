@@ -1,0 +1,619 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.3",
+ "venue": {
+  "id": "tmth-ca",
+  "name_en": "Tuen Mun Town Hall Cultural Activities Hall",
+  "name_zh": "屯門大會堂 文娛廳"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.lcsd.gov.hk/en/tmth/common/attachments/tc/cah/seatingplan2.jpg",
+  "file": "seatingplan2.jpg",
+  "sha256": "23e06286a613db49dea33a4de08d5384d7238f6dffb9d74549e3be850424b931",
+  "plan_code": "revised Sept 2012",
+  "printed_date": "2012-09",
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [],
+ "location": {
+  "address_en": "3 Tuen Hi Road, Tuen Mun, New Territories, Hong Kong",
+  "address_zh": "香港新界屯門屯喜路3號",
+  "district": "Tuen Mun",
+  "latitude": 22.39181,
+  "longitude": 113.976771,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "76810049",
+   "name_in_source": "Tuen Mun Town Hall (Cultural Activities Hall)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Tuen Mun Town Hall"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and numbering runs on through three blocks. The plan prints that rows A-C are on floor level and rows D-N on the platform. No row I. The plan names no seating areas with totals, only the space (文娛廳 CULTURAL ACTIVITIES HALL), so there is one zone."
+ },
+ "marks": {
+  "W": "Seat suitable for audience on wheelchairs (grey box, W, no number)",
+  "X": "Management seat (crossed box, no number)"
+ },
+ "printed_totals": {
+  "Cultural Activities Hall": 290,
+  "Total": 290
+ },
+ "zones": [
+  {
+   "name": "Cultural Activities Hall",
+   "name_zh": "文娛廳",
+   "rows": [
+    {
+     "row": "A",
+     "blocks": [
+      {
+       "seats": [
+        "X1",
+        "W1",
+        "W2"
+       ]
+      },
+      {
+       "seats": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+       ]
+      },
+      {
+       "seats": [
+        "W3",
+        "W4",
+        "X2"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W",
+      "X2": "X"
+     },
+     "inferred_numbers": {
+      "X1": "1",
+      "W1": "2",
+      "W2": "3"
+     },
+     "note": "The left block is a crossed management box and two wheelchair boxes (grey, W), under seats 1-3 of row B and before 4, so they are 1-3. The right block is two wheelchair boxes and a management box after 16 (17-19 likely, not printed)."
+    },
+    {
+     "row": "B",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18"
+       ]
+      },
+      {
+       "seats": [
+        "19",
+        "20",
+        "21",
+        "22"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "C",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "D",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "E",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "F",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "G",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "H",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "J",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "K",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "L",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "M",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "N",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      }
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "name": "Floor level",
+     "name_zh": "地面",
+     "rows": [
+      "A",
+      "C"
+     ]
+    },
+    {
+     "name": "Platform",
+     "name_zh": "級台",
+     "rows": [
+      "D",
+      "N"
+     ]
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Cultural Activities Hall": {
+   "boxes": 292,
+   "management_X": 2,
+   "wheelchair_W": 4,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 290,
+   "printed": 290
+  }
+ }
+}

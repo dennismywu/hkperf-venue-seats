@@ -14,6 +14,9 @@
   {"id": "swhcc-ca-end", "name_en": "Sai Wan Ho Civic Centre Cultural Activities Hall (end stage)", "name_zh": "西灣河文娛中心 文娛廳（單向舞台）", "region": "Hong Kong Island", "added": "2026-09-26", "file": "swhcc-ca-end.json"},
   {"id": "swhcc-ca-thrust", "name_en": "Sai Wan Ho Civic Centre Cultural Activities Hall (thrust stage)", "name_zh": "西灣河文娛中心 文娛廳（三向舞台）", "region": "Hong Kong Island", "added": "2026-09-26", "file": "swhcc-ca-thrust.json"},
   {"id": "ekcc-lab-end", "name_en": "East Kowloon Cultural Centre, The Lab (end stage)", "name_zh": "東九文化中心 創館（單向舞台）", "region": "Kowloon", "added": "2026-09-26", "file": "ekcc-lab-end.json"},
-  {"id": "ekcc-lab-thrust", "name_en": "East Kowloon Cultural Centre, The Lab (long thrust stage)", "name_zh": "東九文化中心 創館（三向舞台（直向））", "region": "Kowloon", "added": "2026-09-26", "file": "ekcc-lab-thrust.json"}
+  {"id": "ekcc-lab-thrust", "name_en": "East Kowloon Cultural Centre, The Lab (long thrust stage)", "name_zh": "東九文化中心 創館（三向舞台（直向））", "region": "Kowloon", "added": "2026-09-26", "file": "ekcc-lab-thrust.json"},
+  {"id": "tmth-aud", "name_en": "Tuen Mun Town Hall Auditorium", "name_zh": "屯門大會堂 演奏廳", "region": "New Territories", "added": "2026-09-26", "file": "tmth-aud.json"},
+  {"id": "tmth-ca", "name_en": "Tuen Mun Town Hall Cultural Activities Hall", "name_zh": "屯門大會堂 文娛廳", "region": "New Territories", "added": "2026-09-26", "file": "tmth-ca.json"},
+  {"id": "twth-ca", "name_en": "Tsuen Wan Town Hall Cultural Activities Hall", "name_zh": "荃灣大會堂 文娛廳", "region": "New Territories", "added": "2026-09-26", "file": "twth-ca.json"}
  ]
 }

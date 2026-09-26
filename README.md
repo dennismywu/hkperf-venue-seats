@@ -26,6 +26,9 @@ and front-of-house teams.
 | Sheung Wan Civic Centre Lecture Hall (`swcc-lh`) | 150 | single | no pit |
 | Sai Wan Ho Civic Centre Cultural Activities Hall: end stage (`swhcc-ca-end`) | 110 | single | no pit |
 | Sai Wan Ho Civic Centre Cultural Activities Hall: thrust stage (`swhcc-ca-thrust`) | 100 | single | no pit |
+| Tuen Mun Town Hall Auditorium (`tmth-aud`) | 1,368 | Stalls 589 · Upper Stalls 439 · Balcony 340 | not yet recorded |
+| Tuen Mun Town Hall Cultural Activities Hall (`tmth-ca`) | 290 | single (floor A–C, platform D–N) | not yet recorded |
+| Tsuen Wan Town Hall Cultural Activities Hall (`twth-ca`) | 260 | single | not yet recorded |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
 Civic Centre Theatre). Each file says which, and gives the arithmetic.
