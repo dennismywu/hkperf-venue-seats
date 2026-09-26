@@ -71,6 +71,13 @@ finish({
     "layout": {
         "seat_1_side": "left",
         "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. The side blocks are angled towards the stage; rows Q-S have no right block, where the wall steps in. No row I. The plan names no seating areas, only the space (劇院 THEATRE), so there is one zone.",
+        "banks": [
+            {"id": "centre", "side": "front", "rows": [{"row": r["row"], "block": 2} for r in rows], "seat_1": "left"},
+            {"id": "left", "side": "left", "rows": [{"row": r["row"], "block": 1} for r in rows], "rows_run": "across",
+             "seat_1": "left", "beside": "centre"},
+            {"id": "right", "side": "right", "rows": [{"row": r["row"], "block": 3} for r in rows if len(r["blocks"]) == 3],
+             "rows_run": "across", "seat_1": "left", "beside": "centre"},
+        ],
     },
     "marks": {
         "W": "Seat suitable for audience on wheelchairs (box prints W, no number)",

@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data format · HK Venue Seats</title>
+<meta name="description" content="How the HK Venue Seats seat lists are structured: venues, parts of house, rows, blocks and seats; marks, pits, sources, banks around the stage, and the checks every file passes.">
+<meta name="author" content="Dennis Wu">
+<style>
+:root { --bg: #f7f6f3; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a65; --line: #d9d7d0; --acc: #16796f; --code: #efede8; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936; --acc: #5fc4b8; --code: #262624; }
+}
+:root[data-theme="dark"] { --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936; --acc: #5fc4b8; --code: #262624; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, -apple-system, "PingFang HK", "Noto Sans HK", sans-serif; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 36px 16px 48px; }
+a { color: var(--acc); }
+h1 { font-size: 28px; margin: 0 0 6px; line-height: 1.2; }
+h2 { font-size: 19px; margin: 36px 0 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+h3 { font-size: 15px; margin: 22px 0 6px; }
+.sub { color: var(--muted); margin: 0 0 20px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; }
+ul, ol { padding-left: 20px; } li { margin-bottom: 5px; }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code); padding: 1px 4px; border-radius: 4px; }
+pre { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto; margin: 10px 0 14px; }
+pre code { background: none; padding: 0; font-size: 12.5px; }
+.tablewrap { overflow-x: auto; margin: 10px 0 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 7px 11px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { color: var(--muted); font-size: 12px; font-weight: 600; }
+td:first-child { white-space: nowrap; }
+.toc { columns: 2; column-gap: 28px; margin: 0; }
+@media (max-width: 560px) { .toc { columns: 1; } }
+.note { color: var(--muted); font-size: 13px; }
+.copy { font: inherit; font-size: 13px; font-weight: 600; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 8px; padding: 5px 12px; cursor: pointer; }
+#prompt-text { white-space: pre-wrap; }
+footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p><a href="./">← Hong Kong Performing Arts Venues Seat Configuration</a></p>
+  <h1>Data format</h1>
+  <p class="sub">How the seat lists are structured, and the rules behind them. Schema
+    <code>hkperf-venue-seats/seatlist@0.3</code>. Last updated 26 September 2026.</p>
+
+  <div class="card">
+    <p style="margin-top:0"><b>In short:</b> one JSON file per seating layout, with a CSV beside it. Each file lists
+      the parts of house, their rows, the blocks within each row and the seats in each block, in number order, with
+      the marks the plan prints. Everything is a fact read from the operator's published plan, with its source.
+      There are no seat coordinates: where rows sit around the stage is recorded as an arrangement, not a
+      measurement.</p>
+    <p style="margin-bottom:0">Every file is checked when it is built: the seats counted must equal the totals
+      printed on the plan.</p>
+  </div>
+
+  <h2 id="contents">Contents</h2>
+  <ol class="toc">
+    <li><a href="#files">Files</a></li>
+    <li><a href="#index">The venue index</a></li>
+    <li><a href="#venue">A seat list, top to bottom</a></li>
+    <li><a href="#seats">Parts of house, rows, blocks, seats</a></li>
+    <li><a href="#marks">Marks</a></li>
+    <li><a href="#unnumbered">Seats with no printed number</a></li>
+    <li><a href="#counts">Totals and the count check</a></li>
+    <li><a href="#pits">Orchestra pits</a></li>
+    <li><a href="#sources">Sources and references</a></li>
+    <li><a href="#location">Location</a></li>
+    <li><a href="#banks">Banks: arrangement around the stage</a></li>
+    <li><a href="#layouts">Rooms with more than one layout</a></li>
+    <li><a href="#csv">The CSV</a></li>
+    <li><a href="#checks">What the build checks</a></li>
+    <li><a href="#versions">Versions</a></li>
+    <li><a href="#prompt">Drawing a map with an AI model</a></li>
+  </ol>
+
+  <h2 id="files">1. Files</h2>
+  <div class="tablewrap"><table>
+    <tr><th>File</th><th>Holds</th></tr>
+    <tr><td><code>data/index.json</code></td><td>the list of seat lists, with names, region and date added</td></tr>
+    <tr><td><code>data/&lt;id&gt;.json</code></td><td>one seating layout of one hall: the full record</td></tr>
+    <tr><td><code>data/&lt;id&gt;.csv</code></td><td>the same seats, one line per seat box, for spreadsheets</td></tr>
+  </table></div>
+  <p>An <code>id</code> is the venue's short code and the hall, e.g. <code>ktt-aud</code> (Kwai Tsing Theatre
+    Auditorium) or <code>swcc-th</code> (Sheung Wan Civic Centre Theatre). A room with several seating layouts has
+    one file per layout, e.g. <code>ekcc-lab-end</code> and <code>ekcc-lab-thrust</code>. Text is UTF-8; the CSV
+    starts with a byte-order mark so spreadsheet apps read the Chinese names correctly.</p>
+
+  <h2 id="index">2. The venue index</h2>
+  <pre><code>{"venues": [
+  {"id": "swcc-th", "name_en": "Sheung Wan Civic Centre Theatre", "name_zh": "上環文娛中心 劇院",
+   "region": "Hong Kong Island", "added": "2026-09-26", "file": "swcc-th.json"},
+  ...
+]}</code></pre>
+  <p><code>region</code> is Hong Kong Island, Kowloon or New Territories, and must agree with the venue's
+    district. <code>added</code> is the date the seat list was added to this project.</p>
+
+  <h2 id="venue">3. A seat list, top to bottom</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Key</th><th>Holds</th></tr>
+    <tr><td><code>schema</code></td><td>the format and version, <code>hkperf-venue-seats/seatlist@0.3</code></td></tr>
+    <tr><td><code>venue</code></td><td><code>id</code>, <code>name_en</code>, <code>name_zh</code></td></tr>
+    <tr><td><code>source</code></td><td>the seating plan the file was read from (see <a href="#sources">sources</a>)</td></tr>
+    <tr><td><code>references</code></td><td>other operator documents that confirm or contradict a figure, with quotes</td></tr>
+    <tr><td><code>location</code></td><td>address and coordinates, each with its source</td></tr>
+    <tr><td><code>layout</code></td><td><code>seat_1_side</code>, a note on how the plan is numbered, and optionally <code>banks</code></td></tr>
+    <tr><td><code>marks</code></td><td>what each mark letter means on this plan</td></tr>
+    <tr><td><code>printed_totals</code></td><td>the totals printed on the plan, per part of house and <code>Total</code></td></tr>
+    <tr><td><code>orchestra_pits</code></td><td>each pit option and the rows it removes (optional)</td></tr>
+    <tr><td><code>standing</code></td><td>numbered standing places, where the plan prints them (optional)</td></tr>
+    <tr><td><code>zones</code></td><td>the seats: parts of house → rows → blocks → seats</td></tr>
+    <tr><td><code>count_check</code></td><td>the counts behind the build check, per part of house</td></tr>
+  </table></div>
+
+  <h2 id="seats">4. Parts of house, rows, blocks, seats</h2>
+  <pre><code>zones[]          a part of house: name, name_zh, optional sections
+  rows[]         a row: its label, optional marks, inferred_numbers and note
+    blocks[]     a run of seats between aisles
+      seats[]    seat ids, in number order from seat 1's end</code></pre>
+  <ul>
+    <li><b>Parts of house</b> (<code>zones</code>) are the areas the plan names and totals, e.g. Stalls 堂座,
+      Balcony 樓座, Gallery. Where a plan names only the room, there is one zone with the room's name.
+      <code>sections</code> record sub-areas the plan prints without separate totals (e.g. Front and Rear Stalls).</li>
+    <li><b>Rows</b> keep the label printed on the plan: <code>A</code>, <code>AA</code>, <code>BD</code>. Rows
+      are listed front to back, as the plan orders them.</li>
+    <li><b>Blocks</b> split a row where an aisle or a gap interrupts it, listed from seat 1's side. A block may
+      name its <code>side</code> or <code>area</code>, and may record a <code>blocked</code> area the plan fills
+      in solid, with the numbers it covers.</li>
+    <li><b>Seats</b> are ids as printed: <code>"12"</code>. Boxes printed without a number get a label in their
+      row, <code>W1</code>, <code>W2</code>… or <code>X1</code>… (see <a href="#unnumbered">below</a>).</li>
+  </ul>
+  <p>A real row, from the Sheung Wan Civic Centre Theatre:</p>
+  <pre><code>{"row": "W",
+ "blocks": [{"seats": ["1", "2", "3", "4", "X1", "X2"], "side": "left"},
+            {"seats": ["W1", "W2", "9", "10", "11", "12"], "side": "right"}],
+ "marks": {"X1": "X", "X2": "X", "W1": "W", "W2": "W"},
+ "inferred_numbers": {"X1": "5", "X2": "6", "W1": "7", "W2": "8"},
+ "note": "The left block ends with two solid black management boxes after 4; the right block opens with two
+          wheelchair boxes before 9. The four boxes between 4 and 9 fill 5-8 exactly. No centre block."}</code></pre>
+  <p><code>layout.seat_1_side</code> says which end of each row seat 1 is at, as drawn with the stage at the top
+    (<code>left</code> or <code>right</code>), and <code>layout.note</code> explains anything unusual: skipped
+    numbers, missing row letters, rows that restart their numbering.</p>
+
+  <h2 id="marks">5. Marks</h2>
+  <p>A row's <code>marks</code> map a seat id to one or more letters. Each file's top-level <code>marks</code>
+    gives the plan's own wording for each letter it uses.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Letter</th><th>Meaning</th><th>In the printed total?</th></tr>
+    <tr><td><code>W</code></td><td>wheelchair space</td><td>yes</td></tr>
+    <tr><td><code>X</code></td><td>management seat, kept by the venue</td><td>no</td></tr>
+    <tr><td><code>R</code></td><td>restricted sightline</td><td>yes</td></tr>
+    <tr><td><code>L</code></td><td>limited legroom</td><td>yes</td></tr>
+  </table></div>
+  <p>Letters combine: <code>"RL"</code> is a seat with both a restricted sightline and limited legroom.</p>
+
+  <h2 id="unnumbered">6. Seats with no printed number</h2>
+  <p>Plans often print wheelchair spaces and management seats as boxes with only <code>W</code>, a cross or a
+    solid fill. Such a box keeps a label (<code>W1</code>, <code>X1</code>…) and gets a number in
+    <code>inferred_numbers</code> only when that number is certain:</p>
+  <ul>
+    <li>the gap between its printed neighbours fits it exactly, e.g. <code>20 · X X · 23</code> → 21 and 22; or</li>
+    <li>the operator's technical sheet names it, e.g. “Row S: S8, S9, S16 &amp; S17”.</li>
+  </ul>
+  <p>Otherwise it stays unnumbered, and the row's <code>note</code> says what is likely and that it is not
+    printed. The CSV gives each seat's <code>number_basis</code>: <code>printed</code>, <code>inferred</code>
+    or <code>none</code>.</p>
+
+  <h2 id="counts">7. Totals and the count check</h2>
+  <p><code>printed_totals</code> copies the plan's figures: <code>{"Stalls": 172, "Gallery": 71, "Total": 243}</code>.
+    The rule that ties the seats to them:</p>
+  <div class="card"><b>Printed total = boxes on the plan − management seats (X).</b> Wheelchair, restricted and
+    limited-legroom seats are counted. This rule is our reading, not printed on the plans; it has matched every
+    part of house of every plan so far.</div>
+  <p><code>count_check</code> records the arithmetic for each part of house: boxes, each mark's count, boxes
+    minus X, and the printed figure.</p>
+
+  <h2 id="pits">8. Orchestra pits</h2>
+  <pre><code>{"name": "Orchestra pit (10 × 2 m)",
+ "rows_removed": ["AA", "BB"],
+ "rows_basis": "stated",
+ "rows_reasoning": "The technical sheet names the rows. AA + BB = 17 + 18 = 35 boxes ...",
+ "seats_removed": 35, "total_with_pit": 447,
+ "stated": ["seats_removed"],
+ "source": {"url": "...swcc-th-lfe.pdf", "document_version": "V. 2026.03.09", "quote": "35 seats will be lost ..."}}</code></pre>
+  <ul>
+    <li>A pit option exists only where the operator states the seats it removes, or the capacity with it.</li>
+    <li><code>rows_basis</code> is <code>stated</code> when the operator names the rows, and
+      <code>inferred</code> when it gives only the number: the rows are then the run of front rows that gives
+      exactly that number, and <code>rows_reasoning</code> shows the arithmetic and why no other run fits.</li>
+    <li><code>stated</code> lists which figures the operator printed; the others are calculated.</li>
+    <li>A pit the operator describes without a seat figure is recorded in <code>references</code>, not as an option.</li>
+  </ul>
+
+  <h2 id="sources">9. Sources and references</h2>
+  <p><code>source</code> identifies the plan exactly: publisher, <code>url</code>, <code>file</code> name,
+    <code>sha256</code> of the file read, the plan's printed version if any, and the credit line. If the operator
+    replaces the file, the hash shows the data was read from an earlier version.</p>
+  <p><code>references</code> are other documents from the operator, each with URL, title, printed version,
+    hash, date retrieved, exact <code>quotes</code> and a <code>note</code>. They confirm totals, wheelchair
+    numbers and pit figures, and record conflicts openly, e.g. a booking form that gives 592 where the plan and
+    technical sheets give 596.</p>
+  <p>The data comes only from the operator's own published material. Ticketing and box-office data, and seat
+    maps drawn by others, are never used.</p>
+
+  <h2 id="location">10. Location</h2>
+  <p><code>location</code> holds <code>address_en</code>, <code>address_zh</code>, <code>district</code>,
+    <code>latitude</code> and <code>longitude</code>, reproduced from LCSD's open data on DATA.GOV.HK. Each part
+    names its source record (<code>coordinates_source</code>, <code>address_source</code>), and a script
+    re-reads the open data to confirm them. Coordinates are LCSD's point for the building, not for the hall.</p>
+
+  <h2 id="banks">11. Banks: arrangement around the stage</h2>
+  <p>In most halls every row faces the stage, and the map draws them one under another. Some rooms seat the
+    audience on more than one side: a thrust stage, rows along the side walls, boxes. For these,
+    <code>layout.banks</code> records the arrangement, still without coordinates. A bank is a group of rows, or
+    single blocks of rows, on one side of the stage.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Key</th><th>Holds</th></tr>
+    <tr><td><code>id</code></td><td>a name for the bank, e.g. <code>stalls-left</code></td></tr>
+    <tr><td><code>side</code></td><td><code>front</code>, <code>left</code> or <code>right</code> of the stage</td></tr>
+    <tr><td><code>rows</code></td><td>its rows, nearest the stage first: a label for a whole row, or <code>{"row": "A", "block": 1}</code> for one block</td></tr>
+    <tr><td><code>seat_1</code></td><td>which end seat 1 is at: <code>left</code>/<code>right</code> for rows drawn level; <code>downstage</code>/<code>upstage</code> for upright rows</td></tr>
+    <tr><td><code>rows_run</code></td><td>side banks: <code>along</code> the side (upright; default) or <code>across</code> (level, facing the stage)</td></tr>
+    <tr><td><code>in_line</code></td><td>upright side rows that follow one another down a wall, rather than sit side by side</td></tr>
+    <tr><td><code>after</code></td><td>side banks against the walls after a front bank, e.g. boxes between stalls and balcony</td></tr>
+    <tr><td><code>beside</code></td><td>side banks whose rows sit level with the same rows of a front bank, across the aisle</td></tr>
+    <tr><td><code>align</code></td><td>other side banks: level with the stage's front (<code>downstage</code>) or back (<code>upstage</code>), beside the front banks (<code>house</code>), or along the room (<code>room</code>)</td></tr>
+  </table></div>
+  <p>The long-thrust layout of EKCC's The Lab, for example:</p>
+  <pre><code>"banks": [
+  {"id": "stalls-left",  "side": "left",  "rows": ["BA", "BB", "BC", "BD"], "seat_1": "downstage", "align": "upstage"},
+  {"id": "stalls-right", "side": "right", "rows": ["DA", "DB", "DC", "DD"], "seat_1": "downstage", "align": "upstage"},
+  {"id": "stalls-end",   "side": "front", "rows": ["AA", "AB", "AC", "AD", "AE", "AF"], "seat_1": "left"},
+  {"id": "gallery-left", "side": "left",  "rows": ["BN"], "seat_1": "downstage", "align": "room"},
+  ...
+]</code></pre>
+  <p>The viewer draws the stage in the middle, front banks below it and side banks beside it. Order and
+    neighbours follow the plan; distances do not. Every block of every row must be in exactly one bank. Files
+    without banks are drawn with every row facing the stage.</p>
+
+  <h2 id="layouts">12. Rooms with more than one layout</h2>
+  <p>Flexible rooms publish one plan per seating layout, e.g. an end stage and a thrust stage. Each layout is its
+    own seat list with its own totals; a layout's name is in its <code>venue</code> names, and its
+    <code>layout.note</code> says which other layouts exist.</p>
+
+  <h2 id="csv">13. The CSV</h2>
+  <p>One line per seat box, in the order of the JSON:</p>
+  <div class="tablewrap"><table>
+    <tr><th>Column</th><th>Holds</th></tr>
+    <tr><td><code>venue_id</code></td><td>the seat list's id</td></tr>
+    <tr><td><code>part_of_house</code>, <code>part_of_house_zh</code></td><td>the zone's names</td></tr>
+    <tr><td><code>row</code>, <code>block</code></td><td>the row label, and the block's position in the row (1 = seat 1's side)</td></tr>
+    <tr><td><code>block_area</code></td><td>the block's side or area, where recorded</td></tr>
+    <tr><td><code>bank</code></td><td>the bank the block is in, where the layout has banks</td></tr>
+    <tr><td><code>seat</code></td><td>the seat id (<code>12</code>, <code>W1</code>, <code>X2</code>)</td></tr>
+    <tr><td><code>seat_number</code>, <code>number_basis</code></td><td>its number, and whether that is <code>printed</code>, <code>inferred</code> or <code>none</code></td></tr>
+    <tr><td><code>marks</code></td><td>the mark letters, then one 0/1 column each: <code>wheelchair</code>, <code>management</code>, <code>restricted_sightline</code>, <code>limited_legroom</code></td></tr>
+    <tr><td><code>orchestra_pits</code></td><td>the pit options that remove this seat</td></tr>
+  </table></div>
+  <p>The viewer's download adds <code>counted</code> and <code>not_counted_reason</code> for the configuration
+    chosen on screen.</p>
+
+  <h2 id="checks">14. What the build checks</h2>
+  <p>A seat list is written only if all of these hold; otherwise the build stops with the reason.</p>
+  <ul>
+    <li>Each part of house: boxes − management seats = the printed total, and the parts add up to the printed overall total.</li>
+    <li>Each pit: the seats in its rows equal the stated loss, or give the stated capacity.</li>
+    <li>Banks, where given: every block of every row is in exactly one bank; sides, ends and references to other banks are valid.</li>
+    <li>Separately, a script confirms each address, coordinate and region against LCSD's open data.</li>
+  </ul>
+  <p>Where a plan's PDF carries text, every seat number in the file was also matched one for one against it;
+    scanned plans were read by eye from zoomed crops. Each script's header says which.</p>
+
+  <h2 id="versions">15. Versions</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Version</th><th>Changes</th></tr>
+    <tr><td><code>seatlist@0.3</code></td><td>adds optional <code>layout.banks</code> and the CSV's <code>bank</code> column; nothing else changed</td></tr>
+    <tr><td><code>seatlist@0.2</code></td><td>the first published format</td></tr>
+  </table></div>
+  <p class="note">Planner files have their own formats (<code>plan@0.2</code>, <code>plan-protected@0.1</code>),
+    described in the repository's README.</p>
+
+  <h2 id="prompt">16. Drawing a map with an AI model</h2>
+  <p>The viewer is one way to draw the data. If you would rather have a language model draw a seat map for your
+    own use, here is an example prompt. Attach or paste one seat-list JSON file after it. It asks for a
+    self-contained SVG and for the model to count its own output, which you should still check against the
+    file's <code>printed_totals</code>.</p>
+  <p><button class="copy" type="button" id="copy-prompt">Copy the prompt</button> <span class="note" id="copied" aria-live="polite"></span></p>
+  <pre><code id="prompt-text">You are drawing a schematic seat map from a structured seat list. The seat list follows the
+schema hkperf-venue-seats/seatlist@0.3 (https://code.denniswu.org/hkperf-venue-seats/schema.html).
+It is attached below. Produce one self-contained SVG, then a short check report.
+
+WHAT THE DATA IS
+- zones = parts of house (e.g. Stalls, Balcony). Each zone has rows; each row has blocks (runs of seats
+  between aisles), listed from seat 1's end; each block lists seat ids in number order.
+- Seat ids are printed numbers ("12") or labels for boxes printed without a number ("W1", "X1").
+  If a row's inferred_numbers gives a number for such a box, you may show it in a tooltip, not on the seat.
+- A row's marks map seat ids to letters: W wheelchair space, X management seat, R restricted sightline,
+  L limited legroom. Letters can combine ("RL").
+- There are NO coordinates. Do not invent positions, curves, rakes or distances. Draw a schematic.
+
+LAYOUT RULES
+1. If layout.banks is absent: put a stage box at the top. Draw each zone in order, with its name
+   (name and name_zh) as a heading, and each row as one horizontal line under the previous one, centred.
+   Within a row, draw blocks left to right in drawing order: if layout.seat_1_side is "right", reverse
+   the block order and the seat order in each block, so seat 1 ends up on the right. Leave an aisle gap
+   between blocks. If two neighbouring blocks skip numbers (e.g. 11 then 32), leave room for the missing
+   seats instead of an aisle. A block with "side": "left" or "right" goes to that edge of the widest row.
+2. If layout.banks is present, follow it instead. Each bank is a group of rows (or single blocks,
+   {"row": "A", "block": 1}) on one side of the stage, listed nearest the stage first.
+   - Put the stage in the middle. Front banks go below it, one after another, rows level and centred.
+   - Side banks (left/right) go beside it. With rows_run "along" (default) each row is an upright column
+     and the bank's rows sit side by side, nearest the stage innermost; with in_line true they follow
+     one another down the wall instead. With rows_run "across" each row is level, one behind another.
+   - seat_1 says which end seat 1 is at: left/right for level rows, downstage/upstage for upright rows
+     (downstage = the end nearer the front audience).
+   - after: the bank sits against the side walls after the named front bank. beside: each row sits
+     level with the same row of the named front bank, across the aisle; rows it lacks continue below.
+   - align (other side banks): downstage = level with the stage's front, upstage = with its back,
+     house = beside the front banks from their first row, room = centred along the whole room.
+   Keep the order and neighbours exactly; distances are free.
+3. Label every row at both ends (or at both ends of each column) with its row label.
+4. Draw every seat as an equal square with its seat id inside; wheelchair seats show "W". Style marks:
+   W filled blue, X crossed out and greyed (not counted by default), R with an inner outline,
+   L with a light fill. Add a legend for the marks this file uses (file's top-level marks has the wording).
+5. For each orchestra_pits entry, add a dashed outline around its rows_removed, labelled with its name and
+   "rows stated" or "rows inferred" from rows_basis. If standing.places exists, draw them as round places.
+6. Under the map, add this text, unchanged: "Not the venue's seat plan. This map is drawn from the seat
+   data: a machine-assisted reading of the rows and seats of the venue. It is not the actual seat plan.
+   For the actual seat plan, refer to the version published by the operator:" followed by source.url.
+7. Title the map with venue.name_en and venue.name_zh. Credit: source.credit. Data: CC BY 4.0.
+
+SVG REQUIREMENTS
+- One &lt;svg&gt; with a viewBox; no external files or scripts; readable text (seat numbers at least 7px).
+- Give each seat a &lt;title&gt; tooltip: row, seat, part of house, mark meanings, and any row note.
+- Use data attributes on each seat: data-zone, data-row, data-seat, data-mark.
+
+CHECK REPORT (after the SVG)
+- Count the seat boxes you drew per zone, and how many carry X. Show: boxes - X = count, and compare it
+  with printed_totals for each zone and for Total. They must match; if not, say which rows differ.
+- List anything in the data you could not place, rather than guessing.
+
+SEAT LIST:
+[paste or attach one data/&lt;id&gt;.json here]</code></pre>
+  <p class="note">The drawing is yours to use under the data's licence (CC BY 4.0, with the credit line). It is a
+    schematic, like the viewer's map, not the venue's seat plan.</p>
+
+  <footer>
+    Seat lists: this project's contribution under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.
+    Seat facts compiled from seating plans and technical information published by the Leisure and Cultural
+    Services Department, HKSAR Government. <a id="repo" href="https://github.com/dennismywu/hkperf-venue-seats" rel="noopener">Source and data on GitHub</a>.
+    <br>© 2026 <a href="./" rel="author">Dennis Wu</a>. An independent project, not affiliated with or endorsed by LCSD.
+  </footer>
+</div>
+<script src="viewer/config.js"></script>
+<script src="viewer/analytics.js"></script>
+<script>
+if (typeof startStats === "function") startStats();
+document.getElementById("copy-prompt").onclick = async () => {
+  const text = document.getElementById("prompt-text").textContent;
+  try { await navigator.clipboard.writeText(text); document.getElementById("copied").textContent = "Copied."; }
+  catch (e) { document.getElementById("copied").textContent = "Select the text below and copy it."; }
+  if (typeof track === "function") track("schema-prompt-copied");
+};
+</script>
+</body>
+</html>

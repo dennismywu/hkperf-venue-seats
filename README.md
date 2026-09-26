@@ -121,6 +121,9 @@ Then visit http://localhost:8770/app/.
 
 ## Data format
 
+The full description, with examples and an example prompt for drawing a map with an AI model, is published
+as [Data format](https://code.denniswu.org/hkperf-venue-seats/schema.html) (`site/schema.html`). In brief:
+
 One JSON file per venue in `data/`, listed in `data/index.json`, with a CSV beside it (one line per seat
 box: part of house, row, block, bank, seat, number and its basis, marks, pit rows). Schema
 `hkperf-venue-seats/seatlist@0.3`:
