@@ -4,6 +4,10 @@
   {"id": "ylt-aud", "name_en": "Yuen Long Theatre Auditorium", "name_zh": "元朗劇院 演藝廳", "file": "ylt-aud.json"},
   {"id": "hkch-th", "name_en": "Hong Kong City Hall Theatre", "name_zh": "香港大會堂 劇院", "file": "hkch-th.json"},
   {"id": "stth-aud", "name_en": "Sha Tin Town Hall Auditorium", "name_zh": "沙田大會堂 演奏廳", "file": "stth-aud.json"},
-  {"id": "ekcc-hall", "name_en": "East Kowloon Cultural Centre, The Hall", "name_zh": "東九文化中心 劇院", "file": "ekcc-hall.json"}
+  {"id": "ekcc-hall", "name_en": "East Kowloon Cultural Centre, The Hall", "name_zh": "東九文化中心 劇院", "file": "ekcc-hall.json"},
+  {"id": "kst-nw", "name_en": "Ko Shan Theatre New Wing Auditorium", "name_zh": "高山劇場新翼 演藝廳", "file": "kst-nw.json"},
+  {"id": "swhcc-th", "name_en": "Sai Wan Ho Civic Centre Theatre", "name_zh": "西灣河文娛中心 劇院", "file": "swhcc-th.json"},
+  {"id": "ekcc-turns-horizontal", "name_en": "East Kowloon Cultural Centre, The Turns (horizontal stage)", "name_zh": "東九文化中心 形館（橫向舞台）", "file": "ekcc-turns-horizontal.json"},
+  {"id": "ekcc-turns-end", "name_en": "East Kowloon Cultural Centre, The Turns (end stage)", "name_zh": "東九文化中心 形館（單向舞台）", "file": "ekcc-turns-end.json"}
  ]
 }

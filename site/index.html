@@ -210,7 +210,7 @@ async function venues() {
     tbody.innerHTML = docs.map(([v, d]) => {
       const t = d.printed_totals;
       const areas = d.zones.length > 1 ? d.zones.map(z => `${esc(z.name)} ${fmt(t[z.name])}`).join(" · ") : "single";
-      const pits = (d.orchestra_pits || []).map(p => `${esc(p.name)}: ${fmt(p.total_with_pit)} <small>rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))} <span class="tag">inferred</span></small>`).join("") || `<small>no seats lost</small>`;
+      const pits = (d.orchestra_pits || []).map(p => `${esc(p.name)}: ${fmt(p.total_with_pit)} <small>rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))} <span class="tag">inferred</span></small>`).join("") || `<small>none in the data</small>`;
       const standing = d.standing?.places?.length ? `<small>+ ${d.standing.places.length} standing</small>` : "";
       const csv = v.file.replace(/\.json$/, ".csv");
       const git = repo ? `<a href="${esc(`${repo}/blob/${branch}/data/${v.file}`)}" rel="noopener">JSON</a><a href="${esc(`${repo}/blob/${branch}/data/${csv}`)}" rel="noopener">CSV</a>` : "";

@@ -1,0 +1,882 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.2",
+ "venue": {
+  "id": "swhcc-th",
+  "name_en": "Sai Wan Ho Civic Centre Theatre",
+  "name_zh": "西灣河文娛中心 劇院"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.lcsd.gov.hk/en/swhcc/common/doc/seating-plan.pdf",
+  "file": "seating-plan.pdf",
+  "sha256": "d949e65c0fdb7cda2d1ee34276fc7bb25083460f31701c40803d2e1b1f6f1222",
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [
+  {
+   "what": "Seat total, wheelchair seats and orchestra pit",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/swhcc-th-lfe.pdf",
+   "title": "Sai Wan Ho Civic Centre – Theatre, FULL Technical Information",
+   "document_version": "V. 2026.07.09",
+   "sha256": "e0bfc213bd00ef93770adc7ba39943b169632e2c073f90e5c1c017981a493a0b",
+   "retrieved": "2026-09-26",
+   "quotes": [
+    "Total Seating: 453",
+    "Wheelchair Seat Row A: A3, A4, A11 & A12 Row S: S8, S9, S16 & S17",
+    "FORESTAGE / ORCHESTRA PIT Not available"
+   ],
+   "note": "Confirms the plan's total and the numbers of the eight wheelchair boxes. There is no orchestra pit."
+  }
+ ],
+ "location": {
+  "address_en": "111 Shau Kei Wan Road, Hong Kong",
+  "address_zh": "香港筲箕灣道111號",
+  "district": "Eastern",
+  "latitude": 22.2818,
+  "longitude": 114.222501,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "87710034",
+   "name_in_source": "Sai Wan Ho Civic Centre (Theatre)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Sai Wan Ho Civic Centre"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. The side blocks are angled towards the stage; rows Q-S have no right block, where the wall steps in. No row I. The plan names no seating areas, only the space (劇院 THEATRE), so there is one zone."
+ },
+ "marks": {
+  "W": "Seat suitable for audience on wheelchairs (box prints W, no number)",
+  "X": "Management seat (crossed box, no number)"
+ },
+ "printed_totals": {
+  "Theatre": 453,
+  "Total": 453
+ },
+ "zones": [
+  {
+   "name": "Theatre",
+   "name_zh": "劇院",
+   "rows": [
+    {
+     "row": "A",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2"
+       ]
+      },
+      {
+       "seats": [
+        "W1",
+        "W2",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "W3",
+        "W4"
+       ]
+      },
+      {
+       "seats": [
+        "13",
+        "14"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W"
+     },
+     "inferred_numbers": {
+      "W1": "3",
+      "W2": "4",
+      "W3": "11",
+      "W4": "12"
+     },
+     "note": "Four wheelchair boxes print W, no number: two between 2 and 5, two between 10 and 13, so they fill 3-4 and 11-12 exactly, as the technical sheet lists them."
+    },
+    {
+     "row": "B",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18"
+       ]
+      },
+      {
+       "seats": [
+        "19",
+        "20",
+        "21",
+        "22"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "C",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ]
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23",
+        "24"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "D",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ]
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23",
+        "24"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "E",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      },
+      {
+       "seats": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+       ]
+      },
+      {
+       "seats": [
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "F",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      },
+      {
+       "seats": [
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "G",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      },
+      {
+       "seats": [
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "H",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      },
+      {
+       "seats": [
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "J",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      },
+      {
+       "seats": [
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22"
+       ]
+      },
+      {
+       "seats": [
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "K",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      },
+      {
+       "seats": [
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22"
+       ]
+      },
+      {
+       "seats": [
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "L",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      },
+      {
+       "seats": [
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22"
+       ]
+      },
+      {
+       "seats": [
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "M",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      },
+      {
+       "seats": [
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22"
+       ]
+      },
+      {
+       "seats": [
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "N",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      },
+      {
+       "seats": [
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "X1",
+        "X2"
+       ]
+      },
+      {
+       "seats": [
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "inferred_numbers": {
+      "X1": "21",
+      "X2": "22"
+     },
+     "note": "Two crossed management boxes, no number, end the centre block after 20; the right block starts at 23, so they fill 21-22 exactly."
+    },
+    {
+     "row": "O",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      },
+      {
+       "seats": [
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "P",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      },
+      {
+       "seats": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+       ]
+      },
+      {
+       "seats": [
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "Q",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ],
+     "note": "No right block: the wall comes in behind row P."
+    },
+    {
+     "row": "R",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ],
+     "note": "No right block."
+    },
+    {
+     "row": "S",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "X1",
+        "X2"
+       ]
+      },
+      {
+       "seats": [
+        "W1",
+        "W2",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "W3",
+        "W4"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X",
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W"
+     },
+     "inferred_numbers": {
+      "X1": "6",
+      "X2": "7",
+      "W1": "8",
+      "W2": "9",
+      "W3": "16",
+      "W4": "17"
+     },
+     "note": "The left block ends with two crossed management boxes after 5, and the centre block has two wheelchair boxes each side of 10-15, all without numbers. 6-9 fall exactly to the four boxes between 5 and 10; the technical sheet names the wheelchair seats S8, S9, S16 and S17. No right block."
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Theatre": {
+   "boxes": 457,
+   "management_X": 4,
+   "wheelchair_W": 8,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 453,
+   "printed": 453
+  }
+ }
+}

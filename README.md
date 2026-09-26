@@ -16,8 +16,13 @@ and front-of-house teams.
 | Hong Kong City Hall Theatre (`hkch-th`) | 463 + 10 standing | single | pit formed from forestage traps; no seats lost |
 | Sha Tin Town Hall Auditorium (`stth-aud`) | 1,372 | Stalls 589 · Upper Stalls 443 · Balcony 340 | 1,299 (A–B) |
 | East Kowloon Cultural Centre, The Hall (`ekcc-hall`) | 1,200 | Stalls 716 · Balcony 484 | small pit 1,126 (A–C) · large pit 1,063 (A–E) |
+| Ko Shan Theatre New Wing Auditorium (`kst-nw`) | 596 | Stalls 495 · Balcony 101 | pit lift (30 m²); LCSD publishes no seats lost |
+| Sai Wan Ho Civic Centre Theatre (`swhcc-th`) | 453 | single | no pit |
+| East Kowloon Cultural Centre, The Turns: horizontal stage (`ekcc-turns-horizontal`) | 160 | single | no pit |
+| East Kowloon Cultural Centre, The Turns: end stage (`ekcc-turns-end`) | 176 | single | no pit |
 
 Pit rows are inferred: LCSD states the seats lost, not the rows. Each file says so and gives the arithmetic.
+The Turns is one flexible room with two seated layouts, so each layout is its own seat list.
 
 ## What the data is, and what it is not
 

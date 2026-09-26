@@ -19,6 +19,10 @@ body:
         - hkch-th · Hong Kong City Hall Theatre
         - stth-aud · Sha Tin Town Hall Auditorium
         - ekcc-hall · East Kowloon Cultural Centre, The Hall
+        - kst-nw · Ko Shan Theatre New Wing Auditorium
+        - swhcc-th · Sai Wan Ho Civic Centre Theatre
+        - ekcc-turns-horizontal · East Kowloon Cultural Centre, The Turns (horizontal stage)
+        - ekcc-turns-end · East Kowloon Cultural Centre, The Turns (end stage)
     validations:
       required: true
   - type: dropdown
