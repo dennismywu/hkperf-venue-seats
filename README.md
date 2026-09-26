@@ -29,6 +29,7 @@ and front-of-house teams.
 | Tuen Mun Town Hall Auditorium (`tmth-aud`) | 1,368 | Stalls 589 · Upper Stalls 439 · Balcony 340 | 1,295 (rows A–B, stated) |
 | Tuen Mun Town Hall Cultural Activities Hall (`tmth-ca`) | 290 | single (floor A–C, platform D–N) | no pit |
 | Tsuen Wan Town Hall Cultural Activities Hall (`twth-ca`) | 260 | single (floor A–C, platform D–N) | no pit |
+| Hong Kong Cultural Centre Grand Theatre (`hkcc-gt`) | 1,734 | Stalls 1 788 · Stalls 2 425 · Circle and Upper Circle 495 · V.I.P. Boxes 26 | two pit lifts (53 and 102 seats); LCSD publishes no rows |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
 Civic Centre Theatre, Tuen Mun Town Hall Auditorium). Each file says which, and gives the arithmetic.
@@ -154,7 +155,7 @@ of the stage (a thrust stage, or rows along the side walls). The files still hol
 |---|---|
 | `id` | a name for the bank, e.g. `stalls-left` |
 | `side` | which side of the stage it is on: `front`, `left` or `right` |
-| `rows` | its rows, nearest the stage first: a row label for a whole row, or `{"row": "A", "block": 1}` for one block of it |
+| `rows` | its rows, nearest the stage first: a row label for a whole row, or `{"row": "A", "block": 1}` for one block of it; add `"zone"` where row letters repeat across parts of house, e.g. `{"zone": "Stalls 2", "row": "A", "block": 1}` |
 | `rows_run` | side banks: `along` (each row upright, running along the side; the default) or `across` (each row level, facing the stage, one behind another, e.g. boxes on a side wall) |
 | `in_line` | side banks whose rows run along: `true` when the rows follow one another down the wall rather than sit side by side |
 | `seat_1` | which end seat 1 is at: `left`/`right` for rows drawn level (front banks, `across`); `downstage`/`upstage` for upright rows |
@@ -171,6 +172,11 @@ Version 0.3 adds `banks` and the CSV's `bank` column; nothing else changed from 
 **Seats with no printed number.** Wheelchair and management boxes often print only `W` or `X`. Such a box
 is labelled `W1`, `W2`… (or `X1`…) in its row. It gets an inferred number only when the gap between its
 printed neighbours fits exactly (e.g. `6 · X X · 9` → 7, 8); otherwise it stays unnumbered and the note says so.
+
+**Totals from elsewhere, and exceptions.** Where a plan prints no totals, `totals_source` says where the
+checked figures come from (for the Grand Theatre, LCSD's technical sheet). Where LCSD's figure for a part of
+house also counts its management seats, the zone says so with `count_includes` and a `count_note`; the build
+and the viewer both show it.
 
 **How counts are checked.** On every plan so far, the printed total equals the boxes drawn minus the
 management seats. Wheelchair, restricted and limited-legroom seats are counted. This rule is our reading;

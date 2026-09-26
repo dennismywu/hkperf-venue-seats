@@ -67,34 +67,48 @@ BANK_SIDES = {"front", "left", "right"}
 BANK_ALIGN = {"downstage", "upstage", "house", "room"}
 
 
+def find_row(doc, ref):
+    """A bank's row reference -> (zone name, row). ref: "AA", or {row, zone?, block?}; zone is needed when the
+    letter repeats across parts of house."""
+    label = ref if isinstance(ref, str) else ref["row"]
+    zone = None if isinstance(ref, str) else ref.get("zone")
+    hits = [(z["name"], r) for z in doc["zones"] if zone in (None, z["name"]) for r in z["rows"] if r["row"] == label]
+    assert hits, f"no row {zone + ' ' if zone else ''}{label}"
+    assert len(hits) == 1, f"row {label} is in {', '.join(h[0] for h in hits)}: name its zone"
+    return hits[0]
+
+
+def ref_blocks(ref, row):
+    """Block indexes a reference covers: all of them, or the one it names."""
+    return range(len(row["blocks"])) if isinstance(ref, str) or "block" not in ref else [ref["block"] - 1]
+
+
 def bank_of(doc):
-    """(row, block index) -> the id of the bank it is in; empty when the layout has no banks."""
+    """(zone, row, block index) -> the id of the bank it is in; empty when the layout has no banks."""
     out = {}
     for b in doc.get("layout", {}).get("banks") or []:
         for ref in b["rows"]:
-            if isinstance(ref, str):
-                for z in doc["zones"]:
-                    for r in z["rows"]:
-                        if r["row"] == ref:
-                            out.update({(ref, i): b["id"] for i in range(len(r["blocks"]))})
-            else:
-                out[(ref["row"], ref["block"] - 1)] = b["id"]
+            zone, r = find_row(doc, ref)
+            out.update({(zone, r["row"], i): b["id"] for i in ref_blocks(ref, r)})
     return out
 
 
 def aisle_banks(*parts):
-    """Banks for halls whose rows run left block · centre block · right block (seat 1 at the left),
-    with the row labels in the aisles. parts: (id prefix, rows) per part of house. Rows without a
-    centre block keep their end blocks level with the rows before them."""
+    """Banks for halls whose rows run left block · centre block · right block (seat 1 at the left), with
+    the row labels in the aisles. parts: (id prefix, rows) or (id prefix, rows, zone name) per part of
+    house; give the zone when row letters repeat across parts. A row with one block is centre only; a
+    row with two blocks has side blocks only, level with the rows either side of it."""
     banks = []
-    for prefix, rows in parts:
+    for prefix, rows, *zone in parts:
+        ref = (lambda r, blk: {"zone": zone[0], "row": r["row"], "block": blk}) if zone else (lambda r, blk: {"row": r["row"], "block": blk})
         centre = f"{prefix}-centre"
+        mid = {3: 2, 1: 1}
         banks += [
-            {"id": centre, "side": "front", "rows": [{"row": r["row"], "block": 2} for r in rows if len(r["blocks"]) == 3],
+            {"id": centre, "side": "front", "rows": [ref(r, mid[len(r["blocks"])]) for r in rows if len(r["blocks"]) in mid],
              "seat_1": "left"},
-            {"id": f"{prefix}-left", "side": "left", "rows": [{"row": r["row"], "block": 1} for r in rows],
+            {"id": f"{prefix}-left", "side": "left", "rows": [ref(r, 1) for r in rows if len(r["blocks"]) > 1],
              "rows_run": "across", "seat_1": "left", "beside": centre},
-            {"id": f"{prefix}-right", "side": "right", "rows": [{"row": r["row"], "block": len(r["blocks"])} for r in rows if len(r["blocks"]) > 1],
+            {"id": f"{prefix}-right", "side": "right", "rows": [ref(r, len(r["blocks"])) for r in rows if len(r["blocks"]) > 1],
              "rows_run": "across", "seat_1": "left", "beside": centre},
         ]
     return banks
@@ -105,8 +119,8 @@ def check_banks(doc):
     banks = doc.get("layout", {}).get("banks")
     if not banks:
         return
-    rows = {r["row"]: r for z in doc["zones"] for r in z["rows"]}
     fronts = {b["id"] for b in banks if b["side"] == "front"}
+    front_rows = {(find_row(doc, r)[0], find_row(doc, r)[1]["row"]) for f in banks if f["side"] == "front" for r in f["rows"]}
     placed = {}
     for b in banks:
         assert b["side"] in BANK_SIDES, f"bank {b['id']}: side {b['side']!r}"
@@ -119,19 +133,20 @@ def check_banks(doc):
         assert "after" not in b or (b["side"] != "front" and b["after"] in fronts), f"bank {b['id']}: after {b.get('after')!r}"
         assert "beside" not in b or (b["side"] != "front" and run == "across" and b["beside"] in fronts and "after" not in b), \
             f"bank {b['id']}: beside {b.get('beside')!r} needs a front bank and rows running across"
-        front_rows = {(r if isinstance(r, str) else r["row"]) for f in banks if f["side"] == "front" for r in f["rows"]}
-        assert "level_with" not in b or (b["side"] != "front" and b["level_with"] in front_rows
-                                         and not {"after", "beside"} & set(b)), f"bank {b['id']}: level_with {b.get('level_with')!r}"
+        if "level_with" in b:
+            zone, r = find_row(doc, b["level_with"])
+            assert b["side"] != "front" and (zone, r["row"]) in front_rows and not {"after", "beside"} & set(b), \
+                f"bank {b['id']}: level_with {b['level_with']!r} must be a row of a front bank"
         assert b["side"] == "front" or {"after", "beside", "level_with"} & set(b) or b.get("align", "downstage") in BANK_ALIGN, f"bank {b['id']}: align"
         for ref in b["rows"]:
-            name = ref if isinstance(ref, str) else ref["row"]
-            assert name in rows, f"bank {b['id']}: no row {name}"
-            idx = range(len(rows[name]["blocks"])) if isinstance(ref, str) else [ref["block"] - 1]
-            for i in idx:
-                assert 0 <= i < len(rows[name]["blocks"]), f"bank {b['id']}: row {name} has no block {i + 1}"
-                assert (name, i) not in placed, f"row {name} block {i + 1} is in banks {placed[(name, i)]} and {b['id']}"
-                placed[(name, i)] = b["id"]
-    missing = [f"{n} block {i + 1}" for n, r in rows.items() for i in range(len(r["blocks"])) if (n, i) not in placed]
+            zone, r = find_row(doc, ref)
+            for i in ref_blocks(ref, r):
+                key = (zone, r["row"], i)
+                assert 0 <= i < len(r["blocks"]), f"bank {b['id']}: {zone} row {r['row']} has no block {i + 1}"
+                assert key not in placed, f"{zone} row {r['row']} block {i + 1} is in banks {placed[key]} and {b['id']}"
+                placed[key] = b["id"]
+    missing = [f"{z['name']} {r['row']} block {i + 1}" for z in doc["zones"] for r in z["rows"]
+               for i in range(len(r["blocks"])) if (z["name"], r["row"], i) not in placed]
     assert not missing, f"not in any bank: {', '.join(missing)}"
 
 
@@ -153,11 +168,16 @@ def finish(doc):
     check = {}
     for z in doc["zones"]:
         boxes, x = _seats(z["rows"]), _marked(z["rows"], "X")
+        # A part of house whose official figure also counts its management seats says so, and why.
+        with_x = "X" in z.get("count_includes", [])
+        assert not with_x or z.get("count_note"), f"{z['name']}: count_includes needs a count_note"
+        counted = boxes if with_x else boxes - x
         check[z["name"]] = {"boxes": boxes, "management_X": x, "wheelchair_W": _marked(z["rows"], "W"),
                             "restricted_R": _marked(z["rows"], "R"), "limited_legroom_L": _marked(z["rows"], "L"),
                             "boxes_minus_X": boxes - x,
+                            **({"counted_with_X": boxes, "exception": z["count_note"]} if with_x else {}),
                             "printed": printed[z["name"]]}
-        assert boxes - x == printed[z["name"]], f"{z['name']}: {boxes} boxes - {x} X != {printed[z['name']]}"
+        assert counted == printed[z["name"]], f"{z['name']}: {boxes} boxes - {x} X != {printed[z['name']]}"
     assert sum(printed[z["name"]] for z in doc["zones"]) == printed["Total"], "zone totals do not add up"
 
     for pit in doc.get("orchestra_pits", []):
@@ -206,7 +226,7 @@ def csv_rows(doc):
                     number, basis = (s, "printed") if s.isdigit() else (inferred, "inferred") if inferred else ("", "none")
                     yield {
                         "venue_id": doc["venue"]["id"], "part_of_house": z["name"], "part_of_house_zh": z.get("name_zh", ""),
-                        "row": r["row"], "block": bi, "block_area": b.get("area") or b.get("side") or "", "bank": bank.get((r["row"], bi - 1), ""), "seat": s,
+                        "row": r["row"], "block": bi, "block_area": b.get("area") or b.get("side") or "", "bank": bank.get((z["name"], r["row"], bi - 1), ""), "seat": s,
                         "seat_number": number, "number_basis": basis, "marks": m,
                         "wheelchair": int("W" in m), "management": int("X" in m),
                         "restricted_sightline": int("R" in m), "limited_legroom": int("L" in m),

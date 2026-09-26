@@ -370,18 +370,32 @@ $("reset").onclick = () => { state = defaults(doc); controls(); update(); previe
 
 // ---------------------------------------------------------------- key figures
 
+// Management seats that LCSD's figures count (zones with count_includes X) but this configuration leaves out.
+function lcsdCountsX(st = state) {
+  const out = { n: 0, zones: [] };
+  if (st.marks.X !== false || doc.orchestra_pits?.[st.pit]) return out;
+  for (const z of doc.zones) {
+    if (!z.count_includes?.includes("X") || !st.zones[z.name]) continue;
+    const n = z.rows.reduce((a, r) => a + seatsOf(r).filter(s => letters(markOf(r, s)).includes("X")).length, 0);
+    if (n) { out.n += n; out.zones.push(z.name); }
+  }
+  return out;
+}
+
 function keys(t, flash) {
   // compare with LCSD's own figure for this configuration: the printed total, or the pit total
   const pit = doc.orchestra_pits?.[state.pit];
   const printed = pit ? pit.total_with_pit : doc.printed_totals?.Total;
   const what = pit ? `LCSD figure with ${pit.name}` : "printed total";
-  const diff = t.total - printed;
+  // a part of house whose LCSD figure also counts its management seats (count_includes): compare like with like
+  const extra = lcsdCountsX();
+  const diff = t.total + extra.n - printed;
   const items = [
     ["main", fmt(t.total) + (t.standing ? ` <small style="font-size:14px">+ ${t.standing} standing</small>` : ""), "Seats in this configuration"],
     ...doc.zones.length > 1 ? doc.zones.map(z => ["", state.zones[z.name] ? fmt(t.zones[z.name]) : "closed", z.name]) : [],
     ...Object.keys(doc.marks || {}).filter(m => m === "W").map(m => ["", state.marks[m] ? fmt(t.marks[m]) : "0", MARK_NAMES[m]]),
     ["", diff === 0 ? `<span class="ok">= ${fmt(printed)}</span>` : `<span class="${diff < 0 ? "neg" : ""}">${diff > 0 ? "+" : "−"}${fmt(Math.abs(diff))}</span>`,
-      diff === 0 ? `Matches ${what}` : `vs ${what} ${fmt(printed)}`],
+      (diff === 0 ? `Matches ${what}` : `vs ${what} ${fmt(printed)}`) + (extra.n ? ` (LCSD also counts ${extra.n} management seat${extra.n > 1 ? "s" : ""} in ${extra.zones.join(", ")})` : "")],
     ["", fmt(t.off), "Seat boxes not counted"],
   ];
   $("keys").innerHTML = items.map(([c, v, l]) => `<div class="key ${c}${flash ? " flash" : ""}"><b>${v}</b><span>${esc(l)}</span></div>`).join("");
@@ -409,7 +423,8 @@ function update(flash = true) {
   $("reset").disabled = def;
   $("hint").className = "hint" + (def ? " ok" : "");
   $("hint").textContent = def
-    ? `Printed configuration: ${fmt(doc.printed_totals.Total)} seats, management seats not counted.`
+    ? `Printed configuration: ${fmt(t.total)} seats, management seats not counted.` +
+      (lcsdCountsX().n ? ` LCSD's figure (${fmt(doc.printed_totals.Total)}) also counts ${lcsdCountsX().n} management seats in ${lcsdCountsX().zones.join(", ")}.` : "")
     : "Faded seats on the map are not counted.";
 }
 
@@ -441,10 +456,13 @@ function facts() {
       `Address: ${esc(as.title || as.publisher)}${as.name_in_source ? ` (“${esc(as.name_in_source)}”)` : ""}. ${esc(loc.note || "")}`, "wide"]);
   }
 
-  F.push(["Printed total", fmt(printed.Total), perZone(z => fmt(printed[z.name])), "Printed on the seating plan"]);
-  const allOk = doc.zones.every(z => cc[z.name]?.boxes_minus_X === cc[z.name]?.printed);
+  F.push([doc.totals_source ? "LCSD total" : "Printed total", fmt(printed.Total), perZone(z => fmt(printed[z.name])),
+    esc(doc.totals_source || "Printed on the seating plan")]);
+  const allOk = doc.zones.every(z => (cc[z.name]?.counted_with_X ?? cc[z.name]?.boxes_minus_X) === cc[z.name]?.printed);
+  const exceptions = doc.zones.filter(z => cc[z.name]?.exception).map(z => `${esc(z.name)}: ${esc(cc[z.name].exception)}`);
   F.push(["Seat boxes drawn", fmt(boxes), perZone(z => fmt(zoneBoxes(z))),
-    `Counted from the plan. Boxes minus management seats = printed total ${allOk ? ok : `<span class="tag">mismatch</span>`}`]);
+    `Counted from the plan. Boxes minus management seats = ${doc.totals_source ? "LCSD's" : "printed"} total ${allOk ? ok : `<span class="tag">mismatch</span>`}` +
+    (exceptions.length ? `<br>Exception: ${exceptions.join("<br>")}` : "")]);
   F.push(["Rows", fmt(doc.zones.reduce((a, z) => a + z.rows.length, 0)),
     doc.zones.map(z => `${esc(z.name)} ${esc(rowSpan(z.rows))} (${z.rows.length})` +
       (z.sections ? ` — ${z.sections.map(sc => `${esc(sc.name)} ${esc(sc.name_zh || "")} ${esc(sc.rows.join("–"))}`).join(", ")}` : "")).join(" · "), esc(doc.layout?.note?.match(/No row[^.]*\./)?.[0] || "")]);
@@ -541,17 +559,18 @@ const csvCell = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""'
 
 function configCSV() {
   const lines = [CSV_COLUMNS.join(",")];
-  const bank = new Map();                          // "row/block index" -> bank id
+  const bank = new Map();                          // "zone/row/block index" -> bank id
   for (const b of doc.layout?.banks || []) for (const ref of b.rows) {
-    if (typeof ref === "string") { const r = doc.zones.flatMap(z => z.rows).find(x => x.row === ref); r?.blocks.forEach((_, i) => bank.set(`${ref}/${i}`, b.id)); }
-    else bank.set(`${ref.row}/${ref.block - 1}`, b.id);
+    const { z, row } = findRow(doc, ref);
+    const all = typeof ref === "string" || !ref.block;
+    row.blocks.forEach((_, i) => { if (all || i === ref.block - 1) bank.set(`${z.name}/${row.row}/${i}`, b.id); });
   }
   for (const z of doc.zones) for (const r of z.rows) {
     const pits = pitsFor(doc, r.row).map(p => p.name).join("; ");
     r.blocks.forEach((b, bi) => b.seats.forEach(s => {
       const m = markOf(r, s), inf = r.inferred_numbers?.[s], why = excluded(z.name, r.row, m);
       const [number, basis] = /^\d+$/.test(s) ? [s, "printed"] : inf ? [inf, "inferred"] : ["", "none"];
-      lines.push([doc.venue.id, z.name, z.name_zh || "", r.row, bi + 1, b.area || b.side || "", bank.get(`${r.row}/${bi}`) || "", s, number, basis, m,
+      lines.push([doc.venue.id, z.name, z.name_zh || "", r.row, bi + 1, b.area || b.side || "", bank.get(`${z.name}/${r.row}/${bi}`) || "", s, number, basis, m,
         +m.includes("W"), +m.includes("X"), +m.includes("R"), +m.includes("L"), pits, why ? 0 : 1, why].map(csvCell).join(","));
     }));
   }

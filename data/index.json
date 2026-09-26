@@ -17,6 +17,7 @@
   {"id": "ekcc-lab-thrust", "name_en": "East Kowloon Cultural Centre, The Lab (long thrust stage)", "name_zh": "東九文化中心 創館（三向舞台（直向））", "region": "Kowloon", "added": "2026-09-26", "file": "ekcc-lab-thrust.json"},
   {"id": "tmth-aud", "name_en": "Tuen Mun Town Hall Auditorium", "name_zh": "屯門大會堂 演奏廳", "region": "New Territories", "added": "2026-09-26", "file": "tmth-aud.json"},
   {"id": "tmth-ca", "name_en": "Tuen Mun Town Hall Cultural Activities Hall", "name_zh": "屯門大會堂 文娛廳", "region": "New Territories", "added": "2026-09-26", "file": "tmth-ca.json"},
-  {"id": "twth-ca", "name_en": "Tsuen Wan Town Hall Cultural Activities Hall", "name_zh": "荃灣大會堂 文娛廳", "region": "New Territories", "added": "2026-09-26", "file": "twth-ca.json"}
+  {"id": "twth-ca", "name_en": "Tsuen Wan Town Hall Cultural Activities Hall", "name_zh": "荃灣大會堂 文娛廳", "region": "New Territories", "added": "2026-09-26", "file": "twth-ca.json"},
+  {"id": "hkcc-gt", "name_en": "Hong Kong Cultural Centre Grand Theatre", "name_zh": "香港文化中心 大劇院", "region": "Kowloon", "added": "2026-09-26", "file": "hkcc-gt.json"}
  ]
 }

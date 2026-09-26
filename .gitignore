@@ -3,9 +3,7 @@ __pycache__/
 .venv/
 .DS_Store
 # LCSD drawings and anything with positions stay local
-sources/*.pdf
-sources/*.jpg
-sources/*.png
+sources/
 work/
 # built project page
 dist/

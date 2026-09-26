@@ -247,29 +247,38 @@ function finishMap(svg, doc, W, y) {
 //     (each row level, facing the stage; rows one behind another, e.g. boxes on a side wall)
 //   in_line (side banks, rows along): rows one after another down the wall, not side by side
 //   after (side banks): the id of a front bank; the bank sits against the side wall after it
-//   level_with (side banks): a row of a front bank; the bank starts level with that row, outside the
+//   rows may name their part of house, {"zone": "Stalls 2", "row": "A"}, where row letters repeat
+//   level_with (side banks): a row of a front bank ("R", or {zone, row}); the bank starts level with that row, outside the
 //     front rows (e.g. boxes on the side walls beside the stalls)
 //   beside (side banks, rows across): the id of a front bank; each row sits level with the same row of
 //     that bank, across the aisle from it (rows the front bank lacks continue below it)
 //   label: optional heading drawn with the bank
 const BANK_GAP = 18, COL_GAP = 8;
 
+// A bank's rows: "AA" (a whole row), or {row, zone?, block?} where zone names the part of house when row
+// letters repeat across levels, and block picks one block of the row (1 = seat 1's side).
+function findRow(doc, ref) {
+  const label = typeof ref === "string" ? ref : ref.row, zone = typeof ref === "string" ? null : ref.zone;
+  for (const z of doc.zones) if (!zone || z.name === zone) for (const r of z.rows) if (r.row === label) return { z, row: r };
+  throw new Error(`no row ${zone ? zone + " " : ""}${label}`);
+}
+const rowKey = (z, row) => `${z.name}/${row.row}`;
+
 function bankPieces(doc, bank) {
-  const byName = new Map();
-  for (const z of doc.zones) for (const r of z.rows) byName.set(r.row, { z, row: r });
   return bank.rows.map(ref => {
-    const { z, row } = byName.get(typeof ref === "string" ? ref : ref.row);
-    const blocks = typeof ref === "string" ? row.blocks : [row.blocks[ref.block - 1]];
+    const { z, row } = findRow(doc, ref);
+    const blocks = typeof ref === "string" || !ref.block ? row.blocks : [row.blocks[ref.block - 1]];
     return { z, row, blocks };
   });
 }
 
 // A piece's seats (and blocked slots) in order from seat 1's end, with the space before each.
-function pieceItems(piece, reversed) {
+function pieceItems(piece, reversed, aisle) {
   const bl = rowLayout({ blocks: piece.blocks }, reversed);          // reversed: seat 1 at the right
   const src = reversed ? [...piece.blocks].reverse() : piece.blocks;
   const out = [];
-  bl.forEach((b, i) => b.items.forEach((it, j) => out.push({ ...it, b: src[i], before: j ? GAP : i ? between(bl[i - 1], b) : 0 })));
+  // aisle: blocks of a row within a side bank sit an aisle apart, not spaced for the numbers between them
+  bl.forEach((b, i) => b.items.forEach((it, j) => out.push({ ...it, b: src[i], before: j ? GAP : i ? (aisle ? BLOCK_GAP : between(bl[i - 1], b)) : 0 })));
   return out;
 }
 const pieceLength = items => items.reduce((a, it) => a + it.before + S, 0);
@@ -277,7 +286,7 @@ const pieceLength = items => items.reduce((a, it) => a + it.before + S, 0);
 function drawBankedMap(doc) {
   const banks = doc.layout.banks.map(bk => {
     const level = bk.side === "front" || bk.rows_run === "across";      // rows drawn level, facing the stage
-    const pieces = bankPieces(doc, bk).map(p => ({ ...p, items: pieceItems(p, level && bk.seat_1 === "right") }));
+    const pieces = bankPieces(doc, bk).map(p => ({ ...p, items: pieceItems(p, level && bk.seat_1 === "right", bk.side !== "front") }));
     const lens = pieces.map(p => pieceLength(p.items)), n = pieces.length, longest = Math.max(...lens);
     // w, h: the bank's extent on the map
     const [w, h] = level ? [longest, n * (S + ROW_GAP) - ROW_GAP]
@@ -299,35 +308,51 @@ function drawBankedMap(doc) {
   const houseTop = stageH + BANK_GAP + LBL;
   let y = houseTop;
   const zonesSeen = new Set();
-  const frontRowY = new Map();                      // row label -> its y in a front bank
+  let outerHalf = frontW / 2;                       // half-width of the rows so far, side blocks included
+  const frontRowY = new Map();                      // "zone/row" -> its y in a front bank
   for (const b of front) {
     // a heading for the bank's own label, or for the first front bank of each part of house
     b.heading = b.label || (!zonesSeen.has(b.pieces[0].z.name) ? `${b.pieces[0].z.name} ${b.pieces[0].z.name_zh || ""}`.trim() : "");
     b.pieces.forEach(p => zonesSeen.add(p.z.name));
     if (b.heading && b !== front[0]) y += 14;
-    place.push({ b, x: -b.w / 2, y });
-    b.pieces.forEach((p, i) => frontRowY.set(p.row.row, y + i * (S + ROW_GAP)));
-    // side banks level with this bank's rows, across the aisle (where the row labels are)
-    let extra = 0;
-    const idx = new Map(b.pieces.map((p, i) => [p.row.row, i]));
-    for (const s of sides.filter(s => s.beside === b.id)) {
-      let k = 0;
-      s.pos = s.pieces.map((p, i) => {
-        const r = idx.has(p.row.row) ? idx.get(p.row.row) : b.pieces.length - 1 + ++k;
-        const edge = r < b.pieces.length ? b.lens[r] / 2 : b.w / 2;
-        return { x: s.side === "left" ? -edge - LABEL_W - s.lens[i] : edge + LABEL_W, y: y + r * (S + ROW_GAP), matched: r < b.pieces.length };
+    // side banks level with this bank's rows, across the aisle (where the row labels are). Side rows the
+    // front bank lacks keep their order: those before its first row go above it, those after it below.
+    const alongside = sides.filter(s => s.beside === b.id);
+    const idx = new Map(b.pieces.map((p, i) => [rowKey(p.z, p.row), i]));
+    let lead = 0, extra = 0;
+    for (const s of alongside) {
+      const first = s.pieces.findIndex(p => idx.has(rowKey(p.z, p.row)));
+      const before = first < 0 ? 0 : first;
+      let last = b.pieces.length - 1;
+      s.rix = s.pieces.map((p, i) => {
+        const k = rowKey(p.z, p.row);
+        if (idx.has(k)) return (last = idx.get(k));
+        return i < before ? i - before : ++last;
       });
-      extra = Math.max(extra, k);
+      lead = Math.max(lead, before);
+      extra = Math.max(extra, Math.max(...s.rix) - (b.pieces.length - 1));
+    }
+    b.lead = lead;
+    y += lead * (S + ROW_GAP);
+    place.push({ b, x: -b.w / 2, y });
+    b.pieces.forEach((p, i) => frontRowY.set(rowKey(p.z, p.row), y + i * (S + ROW_GAP)));
+    for (const s of alongside) {
+      s.pos = s.pieces.map((p, i) => {
+        const r = s.rix[i], matched = r >= 0 && r < b.pieces.length;
+        const edge = matched ? b.lens[r] / 2 : b.w / 2;
+        return { x: s.side === "left" ? -edge - LABEL_W - s.lens[i] : edge + LABEL_W, y: y + r * (S + ROW_GAP), matched };
+      });
+      s.pos.forEach((q, i) => { outerHalf = Math.max(outerHalf, s.side === "left" ? -q.x : q.x + s.lens[i]); });
       place.push({ b: s, x: 0, y });
     }
-    y += b.h + extra * (S + ROW_GAP) + BANK_GAP;
+    y += b.h + Math.max(0, extra) * (S + ROW_GAP) + BANK_GAP;
     // side banks that follow this front bank: against the side walls, before the next front bank
     const band = sides.filter(s => s.after === b.id);
     if (band.length) {
       let inL = 0, inR = 0;
       for (const s of band) {
-        if (s.side === "left") { place.push({ b: s, x: -frontW / 2 + inL, y: y + LBL }); inL += s.w + BANK_GAP; }
-        else { place.push({ b: s, x: frontW / 2 - s.w - inR, y: y + LBL }); inR += s.w + BANK_GAP; }
+        if (s.side === "left") { place.push({ b: s, x: -outerHalf + inL, y: y + LBL }); inL += s.w + BANK_GAP; }
+        else { place.push({ b: s, x: outerHalf - s.w - inR, y: y + LBL }); inR += s.w + BANK_GAP; }
       }
       y += Math.max(...band.map(s => s.h)) + 2 * LBL + BANK_GAP;
     }
@@ -338,8 +363,9 @@ function drawBankedMap(doc) {
     let edge = stageW / 2 + BANK_GAP;               // distance from the centre line to the bank's inner edge
     for (const b of sides.filter(s => s.level_with && s.side === (dir < 0 ? "left" : "right"))) {
       // against the side wall, level with a row of the front banks
-      const x = dir < 0 ? -(frontHalf + BANK_GAP) - b.w : frontHalf + BANK_GAP;
-      place.push({ b, x, y: frontRowY.get(b.level_with) ?? houseTop });
+      const x = dir < 0 ? -(outerHalf + LABEL_W + BANK_GAP) - b.w : outerHalf + LABEL_W + BANK_GAP;
+      const lw = b.level_with, at = typeof lw === "string" ? [...frontRowY].find(([k]) => k.endsWith("/" + lw))?.[1] : frontRowY.get(`${lw.zone}/${lw.row}`);
+      place.push({ b, x, y: at ?? houseTop });
     }
     for (const b of sides.filter(s => !s.after && !s.beside && !s.level_with && s.side === (dir < 0 ? "left" : "right"))) {
       if (outer(b)) edge = Math.max(edge, frontHalf + BANK_GAP);
@@ -379,7 +405,7 @@ function drawBankedMap(doc) {
     const X = ox + x, Y = oy + top;
     const heading = b.side === "front" ? b.heading : b.label || "";
     if (heading) {
-      const hx = b.side === "front" ? ox : X + b.w / 2, hy = b.side === "front" ? Y - 8 : Y - LBL - 6;
+      const hx = b.side === "front" ? ox : X + b.w / 2, hy = b.side === "front" ? Y - 8 - (b.lead || 0) * (S + ROW_GAP) : Y - LBL - 6;
       const zl = el("text", { class: "zonelabel", x: hx, y: hy }, svg);
       zl.textContent = heading;
       zl.dataset.zone = b.pieces[0].z.name;

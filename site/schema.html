@@ -108,6 +108,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     <tr><td><code>layout</code></td><td><code>seat_1_side</code>, a note on how the plan is numbered, and optionally <code>banks</code></td></tr>
     <tr><td><code>marks</code></td><td>what each mark letter means on this plan</td></tr>
     <tr><td><code>printed_totals</code></td><td>the totals printed on the plan, per part of house and <code>Total</code></td></tr>
+    <tr><td><code>totals_source</code></td><td>where the totals come from, when the plan prints none (optional)</td></tr>
     <tr><td><code>orchestra_pits</code></td><td>each pit option and the rows it removes (optional)</td></tr>
     <tr><td><code>standing</code></td><td>numbered standing places, where the plan prints them (optional)</td></tr>
     <tr><td><code>zones</code></td><td>the seats: parts of house → rows → blocks → seats</td></tr>
@@ -175,6 +176,11 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     part of house of every plan so far.</div>
   <p><code>count_check</code> records the arithmetic for each part of house: boxes, each mark's count, boxes
     minus X, and the printed figure.</p>
+  <p><b>Totals from elsewhere.</b> Where a plan prints no totals, <code>totals_source</code> says where the checked
+    figures come from, e.g. the operator's technical sheet (Hong Kong Cultural Centre Grand Theatre).</p>
+  <p><b>Exceptions.</b> Where the operator's figure for a part of house also counts its management seats, that zone
+    carries <code>"count_includes": ["X"]</code> and a <code>count_note</code> explaining it; the check then counts
+    every box there, and <code>count_check</code> records the exception. Nothing is adjusted to make a figure fit.</p>
 
   <h2 id="pits">8. Orchestra pits</h2>
   <pre><code>{"name": "Orchestra pit (10 × 2 m)",
@@ -219,7 +225,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     <tr><th>Key</th><th>Holds</th></tr>
     <tr><td><code>id</code></td><td>a name for the bank, e.g. <code>stalls-left</code></td></tr>
     <tr><td><code>side</code></td><td><code>front</code>, <code>left</code> or <code>right</code> of the stage</td></tr>
-    <tr><td><code>rows</code></td><td>its rows, nearest the stage first: a label for a whole row, or <code>{"row": "A", "block": 1}</code> for one block</td></tr>
+    <tr><td><code>rows</code></td><td>its rows, nearest the stage first: a label for a whole row, or <code>{"row": "A", "block": 1}</code> for one block; add <code>"zone"</code> where row letters repeat across parts of house</td></tr>
     <tr><td><code>seat_1</code></td><td>which end seat 1 is at: <code>left</code>/<code>right</code> for rows drawn level; <code>downstage</code>/<code>upstage</code> for upright rows</td></tr>
     <tr><td><code>rows_run</code></td><td>side banks: <code>along</code> the side (upright; default) or <code>across</code> (level, facing the stage)</td></tr>
     <tr><td><code>in_line</code></td><td>upright side rows that follow one another down a wall, rather than sit side by side</td></tr>
@@ -311,6 +317,7 @@ LAYOUT RULES
 2. If layout.banks is present, follow it instead. Each bank is a group of rows (or single blocks,
    {"row": "A", "block": 1}) on one side of the stage, listed nearest the stage first.
    - Put the stage in the middle. Front banks go below it, one after another, rows level and centred.
+   - A row reference may name its part of house ("zone") where row letters repeat across levels.
    - Side banks (left/right) go beside it. With rows_run "along" (default) each row is an upright column
      and the bank's rows sit side by side, nearest the stage innermost; with in_line true they follow
      one another down the wall instead. With rows_run "across" each row is level, one behind another.
