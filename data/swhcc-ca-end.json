@@ -1,0 +1,330 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.2",
+ "venue": {
+  "id": "swhcc-ca-end",
+  "name_en": "Sai Wan Ho Civic Centre Cultural Activities Hall (end stage)",
+  "name_zh": "西灣河文娛中心 文娛廳（單向舞台）"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.lcsd.gov.hk/en/swhcc/common/forms/plan_end.pdf",
+  "file": "plan_end.pdf",
+  "sha256": "37a36f43b1c60cea0997607f72526fa962f22d19e9a55520441707ff7577ee11",
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [
+  {
+   "what": "Seat totals for each layout",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/swhcc-ca-lfe.pdf",
+   "title": "Sai Wan Ho Civic Centre – Cultural Activities Hall, FULL Technical Information",
+   "document_version": "V. 2026.05.28",
+   "sha256": "c76908b02ac915f40685196714a77743f0adf1f0b0041bec73b8fcfb03f6ba7f",
+   "retrieved": "2026-09-26",
+   "quotes": [
+    "Total Seating: End Stage: 110 seats Thrust Stage: 100 seats normally set-up within the booking period"
+   ],
+   "note": "Confirms both plans' totals. Neither plan marks wheelchair seats, and no orchestra pit is described."
+  }
+ ],
+ "location": {
+  "address_en": "111 Shau Kei Wan Road, Hong Kong",
+  "address_zh": "香港筲箕灣道111號",
+  "district": "Eastern",
+  "latitude": 22.2818,
+  "longitude": 114.222501,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "87710033",
+   "name_in_source": "Sai Wan Ho Civic Centre (Cultural Activities Hall)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Sai Wan Ho Civic Centre"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "marks": {
+  "X": "Management seat (crossed box, no number)"
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "note": "Drawn with the stage at the top. One straight block per row, rows A-O (no row I), seat 1 at the left; the rows are staggered by half a seat. This is one of the hall's seating layouts; the thrust-stage layout is a separate seat list."
+ },
+ "printed_totals": {
+  "Cultural Activities Hall": 110,
+  "Total": 110
+ },
+ "zones": [
+  {
+   "name": "Cultural Activities Hall",
+   "name_zh": "文娛廳",
+   "rows": [
+    {
+     "row": "A",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "B",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "C",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "D",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "E",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "F",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "G",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "H",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "J",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "K",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "L",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "M",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "N",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "O",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "X1",
+        "X2"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "note": "Two crossed management boxes, no number, after 6 (7-8 likely, not printed)."
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Cultural Activities Hall": {
+   "boxes": 112,
+   "management_X": 2,
+   "wheelchair_W": 0,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 110,
+   "printed": 110
+  }
+ }
+}

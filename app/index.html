@@ -192,7 +192,8 @@ async function init() {
   try { venues = (await getJSON(DATA + "index.json")).venues; }
   catch (e) { $("subtitle").innerHTML = `<span class="err">Could not load data/index.json. Serve the repo root over HTTP (e.g. <code>python -m http.server</code>) and open /app/.</span>`; return; }
   const sel = $("venue");
-  for (const v of venues) sel.add(new Option(`${v.name_en} · ${v.name_zh}`, v.id));
+  const sorted = [...venues].sort((a, b) => a.name_en.localeCompare(b.name_en, "en"));
+  for (const v of sorted) sel.add(new Option(`${v.name_en} · ${v.name_zh}`, v.id));
   const want = new URLSearchParams(location.search).get("venue");
   if (want && venues.some(v => v.id === want)) sel.value = want;
   sel.hidden = venues.length < 2;
@@ -613,7 +614,7 @@ function showTip(g, x, y) {
   if (m) h += `<br>${letters(m).map(l => esc(MARK_ONE[l] || l)).join(" · ")}`;
   if (!/^\d+$/.test(d.seat)) h += d.inferred ? `<br>No printed number; fits seat ${esc(d.inferred)}` : `<br>No printed number`;
   if (d.off) h += `<br><span class="off">Not counted: ${esc(d.off)}</span>`;
-  else if (d.pits) h += `<br>Removed with: ${esc(d.pits)} (rows inferred)`;
+  else if (d.pits) h += `<br>Removed with: ${esc(d.pits)}`;
   if (d.note) h += `<br><span style="opacity:.75">${esc(d.note)}</span>`;
   tip.innerHTML = h; tip.style.display = "block";
   const r = tip.getBoundingClientRect();

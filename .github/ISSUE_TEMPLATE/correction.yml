@@ -23,6 +23,10 @@ body:
         - swhcc-th · Sai Wan Ho Civic Centre Theatre
         - ekcc-turns-horizontal · East Kowloon Cultural Centre, The Turns (horizontal stage)
         - ekcc-turns-end · East Kowloon Cultural Centre, The Turns (end stage)
+        - swcc-th · Sheung Wan Civic Centre Theatre
+        - swcc-lh · Sheung Wan Civic Centre Lecture Hall
+        - swhcc-ca-end · Sai Wan Ho Civic Centre Cultural Activities Hall (end stage)
+        - swhcc-ca-thrust · Sai Wan Ho Civic Centre Cultural Activities Hall (thrust stage)
     validations:
       required: true
   - type: dropdown

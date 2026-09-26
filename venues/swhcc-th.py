@@ -32,9 +32,9 @@ for lab in "OP":
     a, b, c = ends[lab]
     rows.append(row(lab, rng(1, a), rng(a + 1, b), rng(b + 1, c)))
 rows += [
-    row("Q", rng(1, 7), rng(8, 21), note="No right block: the wall comes in behind row P."),
-    row("R", rng(1, 7), rng(8, 21), note="No right block."),
-    row("S", rng(1, 5) + ["X1", "X2"], ["W1", "W2"] + rng(10, 15) + ["W3", "W4"],
+    row("Q", {"seats": rng(1, 7), "side": "left"}, rng(8, 21), note="No right block: the wall comes in behind row P."),
+    row("R", {"seats": rng(1, 7), "side": "left"}, rng(8, 21), note="No right block."),
+    row("S", {"seats": rng(1, 5) + ["X1", "X2"], "side": "left"}, ["W1", "W2"] + rng(10, 15) + ["W3", "W4"],
         marks={"X1": "X", "X2": "X", "W1": "W", "W2": "W", "W3": "W", "W4": "W"},
         inferred={"X1": "6", "X2": "7", "W1": "8", "W2": "9", "W3": "16", "W4": "17"},
         note="The left block ends with two crossed management boxes after 5, and the centre block has two wheelchair boxes "

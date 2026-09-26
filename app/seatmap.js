@@ -155,7 +155,7 @@ function drawSeatMap(doc) {
         t.textContent = row.row;
         Object.assign(t.dataset, { row: row.row, zone: z.name });
       }
-      const inPits = pitsFor(doc, row.row).map(p => p.name).join(", ");
+      const inPits = pitsFor(doc, row.row).map(p => `${p.name} (rows ${p.rows_basis})`).join(", ");
       bl.forEach((b, i) => b.items.forEach(({ id: s, blocked }, j) => {
         if (blocked) {
           if (j && b.items[j - 1].blocked) return;          // one filled area per run of blocked slots

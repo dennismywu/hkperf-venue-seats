@@ -115,8 +115,8 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
         <tbody id="venues"><tr><td colspan="6" class="note">Loading…</td></tr></tbody>
       </table>
     </div>
-    <p class="note">Seat totals are those printed on each plan. Pit rows are inferred: LCSD states the seats
-      lost, not the rows, and each file shows the arithmetic.</p>
+    <p class="note">Seat totals are those printed on each plan. Pit rows are marked <i>stated</i> where LCSD
+      names them, and <i>inferred</i> where it gives only the seats lost; each file shows the arithmetic.</p>
   </section>
 
   <section aria-labelledby="what-h">
@@ -190,9 +190,10 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
     </details>
     <details>
       <summary>Why does a venue with an orchestra pit have no pit option?</summary>
-      <div class="a"><p>A pit option is added only when the operator states how many seats the pit removes. The rows
-        are then inferred as the front rows that give exactly that number, and marked as inferred. Where no figure
-        is published, the pit is described in the sources but no seats are removed.</p></div>
+      <div class="a"><p>A pit option is added only when the operator states how many seats the pit removes. Where
+        the operator also names the rows, those are used; otherwise the rows are inferred as the front rows that
+        give exactly that number, and marked as inferred. Where no figure is published, the pit is described in the
+        sources but no seats are removed.</p></div>
     </details>
     <details>
       <summary>Does the planner keep what I enter?</summary>
@@ -302,7 +303,7 @@ async function venues() {
     tbody.innerHTML = docs.map(([v, d]) => {
       const t = d.printed_totals;
       const areas = d.zones.length > 1 ? d.zones.map(z => `${esc(z.name)} ${fmt(t[z.name])}`).join(" · ") : "single";
-      const pits = (d.orchestra_pits || []).map(p => `${esc(p.name)}: ${fmt(p.total_with_pit)} <small>rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))} <span class="tag">inferred</span></small>`).join("") || `<small>none in the data</small>`;
+      const pits = (d.orchestra_pits || []).map(p => `${esc(p.name)}: ${fmt(p.total_with_pit)} <small>rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))} <span class="tag">${esc(p.rows_basis)}</span></small>`).join("") || `<small>none in the data</small>`;
       const standing = d.standing?.places?.length ? `<small>+ ${d.standing.places.length} standing</small>` : "";
       const csv = v.file.replace(/\.json$/, ".csv");
       const git = repo ? `<a href="${esc(`${repo}/blob/${branch}/data/${v.file}`)}" rel="noopener">JSON</a><a href="${esc(`${repo}/blob/${branch}/data/${csv}`)}" rel="noopener">CSV</a>` : "";

@@ -1,0 +1,289 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.2",
+ "venue": {
+  "id": "swhcc-ca-thrust",
+  "name_en": "Sai Wan Ho Civic Centre Cultural Activities Hall (thrust stage)",
+  "name_zh": "西灣河文娛中心 文娛廳（三向舞台）"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.lcsd.gov.hk/en/swhcc/common/forms/plan_thrust.pdf",
+  "file": "plan_thrust.pdf",
+  "sha256": "18aad6614983e3fdf781c1e86037c524bb31ec46ebf4c2379c9b34455d8773a1",
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [
+  {
+   "what": "Seat totals for each layout",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/swhcc-ca-lfe.pdf",
+   "title": "Sai Wan Ho Civic Centre – Cultural Activities Hall, FULL Technical Information",
+   "document_version": "V. 2026.05.28",
+   "sha256": "c76908b02ac915f40685196714a77743f0adf1f0b0041bec73b8fcfb03f6ba7f",
+   "retrieved": "2026-09-26",
+   "quotes": [
+    "Total Seating: End Stage: 110 seats Thrust Stage: 100 seats normally set-up within the booking period"
+   ],
+   "note": "Confirms both plans' totals. Neither plan marks wheelchair seats, and no orchestra pit is described."
+  }
+ ],
+ "location": {
+  "address_en": "111 Shau Kei Wan Road, Hong Kong",
+  "address_zh": "香港筲箕灣道111號",
+  "district": "Eastern",
+  "latitude": 22.2818,
+  "longitude": 114.222501,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "87710033",
+   "name_in_source": "Sai Wan Ho Civic Centre (Cultural Activities Hall)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Sai Wan Ho Civic Centre"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "marks": {
+  "X": "Management seat (crossed box, no number)"
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "note": "The audience sits on three sides of the stage: a block to the left, angled towards it, a block facing it, and a block to the right, angled towards it. The map draws each row as one line with the stage at the top. Seat 1 is at the stage end of the left block; numbering runs on through the centre block and out along the right block. Row F is on the left side only. This is one of the hall's seating layouts; the end-stage layout is a separate seat list."
+ },
+ "printed_totals": {
+  "Cultural Activities Hall": 100,
+  "Total": 100
+ },
+ "zones": [
+  {
+   "name": "Cultural Activities Hall",
+   "name_zh": "文娛廳",
+   "rows": [
+    {
+     "row": "A",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+       ]
+      },
+      {
+       "seats": [
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "B",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      },
+      {
+       "seats": [
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "C",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13"
+       ]
+      },
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "D",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      },
+      {
+       "seats": [
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      },
+      {
+       "seats": [
+        "15",
+        "16",
+        "17",
+        "18"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "E",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      },
+      {
+       "seats": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13"
+       ]
+      },
+      {
+       "seats": [
+        "14",
+        "15",
+        "16"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "F",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "X1",
+        "X2"
+       ],
+       "side": "left"
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "note": "Left side only: 1-2, then two crossed management boxes, no number (3-4 likely, not printed)."
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Cultural Activities Hall": {
+   "boxes": 102,
+   "management_X": 2,
+   "wheelchair_W": 0,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 100,
+   "printed": 100
+  }
+ }
+}

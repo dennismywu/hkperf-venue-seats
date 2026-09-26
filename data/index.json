@@ -8,6 +8,10 @@
   {"id": "kst-nw", "name_en": "Ko Shan Theatre New Wing Auditorium", "name_zh": "高山劇場新翼 演藝廳", "region": "Kowloon", "added": "2026-09-26", "file": "kst-nw.json"},
   {"id": "swhcc-th", "name_en": "Sai Wan Ho Civic Centre Theatre", "name_zh": "西灣河文娛中心 劇院", "region": "Hong Kong Island", "added": "2026-09-26", "file": "swhcc-th.json"},
   {"id": "ekcc-turns-horizontal", "name_en": "East Kowloon Cultural Centre, The Turns (horizontal stage)", "name_zh": "東九文化中心 形館（橫向舞台）", "region": "Kowloon", "added": "2026-09-26", "file": "ekcc-turns-horizontal.json"},
-  {"id": "ekcc-turns-end", "name_en": "East Kowloon Cultural Centre, The Turns (end stage)", "name_zh": "東九文化中心 形館（單向舞台）", "region": "Kowloon", "added": "2026-09-26", "file": "ekcc-turns-end.json"}
+  {"id": "ekcc-turns-end", "name_en": "East Kowloon Cultural Centre, The Turns (end stage)", "name_zh": "東九文化中心 形館（單向舞台）", "region": "Kowloon", "added": "2026-09-26", "file": "ekcc-turns-end.json"},
+  {"id": "swcc-th", "name_en": "Sheung Wan Civic Centre Theatre", "name_zh": "上環文娛中心 劇院", "region": "Hong Kong Island", "added": "2026-09-26", "file": "swcc-th.json"},
+  {"id": "swcc-lh", "name_en": "Sheung Wan Civic Centre Lecture Hall", "name_zh": "上環文娛中心 演講廳", "region": "Hong Kong Island", "added": "2026-09-26", "file": "swcc-lh.json"},
+  {"id": "swhcc-ca-end", "name_en": "Sai Wan Ho Civic Centre Cultural Activities Hall (end stage)", "name_zh": "西灣河文娛中心 文娛廳（單向舞台）", "region": "Hong Kong Island", "added": "2026-09-26", "file": "swhcc-ca-end.json"},
+  {"id": "swhcc-ca-thrust", "name_en": "Sai Wan Ho Civic Centre Cultural Activities Hall (thrust stage)", "name_zh": "西灣河文娛中心 文娛廳（三向舞台）", "region": "Hong Kong Island", "added": "2026-09-26", "file": "swhcc-ca-thrust.json"}
  ]
 }
