@@ -40,6 +40,9 @@
 .reset { margin-top: 10px; width: 100%; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); cursor: pointer; font-size: 13px; }
 .reset:disabled { opacity: .5; cursor: default; }
 .to-planner { margin-top: 12px; width: 100%; justify-content: center; }
+.share { margin-top: 8px; width: 100%; justify-content: center; }
+.sharebox { margin-top: 6px; font-size: 12px; color: var(--muted); }
+.sharebox input { width: 100%; margin-top: 4px; font: inherit; font-size: 12px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
 
 /* facts */
 .below { display: grid; gap: 16px; padding-top: 16px; padding-bottom: 32px; }
@@ -101,6 +104,8 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
     </div>
     <p class="hint" id="hint"></p>
     <button class="reset" id="reset" type="button">Reset to the printed configuration</button>
+    <button class="btn share" id="share" type="button">Share this configuration</button>
+    <div class="sharebox" id="sharebox" aria-live="polite" hidden></div>
     <a class="btn primary to-planner" id="to-planner" href="planner.html">Plan with this configuration →</a>
     <p class="hint">Opens the planner: price categories, ballpark totals and names on seats, all kept in your
       browser.</p>
@@ -397,6 +402,8 @@ function update(flash = true) {
   document.querySelector("#map .standing")?.classList.toggle("on", state.standing);
   $("dl-config-note").textContent = configSummary(t);
   $("to-planner").href = `planner.html?venue=${encodeURIComponent(doc.venue.id)}#c=${encodeConfig({ venue: doc.venue.id, ...state })}`;
+  history.replaceState(null, "", viewerLink().replace(location.origin + location.pathname, ""));
+  $("sharebox").hidden = true;
   refreshEffects(t);
   const def = isDefault();
   $("reset").disabled = def;
@@ -552,6 +559,34 @@ function configCSV() {
 }
 
 const gitURL = file => CONFIG.repo ? `${CONFIG.repo}/blob/${CONFIG.branch || "main"}/data/${file}` : "";
+
+// This view's link: the venue, and the configuration when it differs from the printed one. The
+// configuration rides in the fragment (#c=...), which browsers do not send to the server.
+function viewerLink() {
+  const base = `${location.origin}${location.pathname}?venue=${encodeURIComponent(doc.venue.id)}`;
+  return isDefault() ? base : `${base}#c=${encodeConfig({ venue: doc.venue.id, ...state })}`;
+}
+
+$("share").onclick = async () => {
+  const url = viewerLink(), box = $("sharebox");
+  const text = `${doc.venue.name_en} · ${configSummary(tally())}`;
+  track("viewer-shared");
+  // phones and tablets: the system share sheet; elsewhere: copy the link
+  if (navigator.share && matchMedia("(pointer: coarse)").matches) {
+    try { await navigator.share({ title: doc.venue.name_en, text, url }); return; }
+    catch (e) { if (e.name === "AbortError") return; }
+  }
+  box.hidden = false;
+  try {
+    await navigator.clipboard.writeText(url);
+    box.textContent = "Link copied. It opens this venue with this configuration.";
+  } catch (e) {
+    box.innerHTML = `Copy this link:<input readonly aria-label="Link to this configuration">`;
+    const input = box.querySelector("input");
+    input.value = url;
+    input.focus(); input.select();
+  }
+};
 
 function configSummary(t) {
   const pit = doc.orchestra_pits?.[state.pit];
