@@ -1,0 +1,541 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.2",
+ "venue": {
+  "id": "ekcc-lab-end",
+  "name_en": "East Kowloon Cultural Centre, The Lab (end stage)",
+  "name_zh": "東九文化中心 創館（單向舞台）"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD), East Kowloon Cultural Centre",
+  "url": "https://www.ekcc.hk/documents/venue_detail/hiring/the-lab/index/SeatsPlan-T3_End.pdf",
+  "page": "https://www.ekcc.hk/en/hiring/the-lab/",
+  "file": "SeatsPlan-T3_End.pdf",
+  "sha256": "5effaee6ff82d39069b6c7c98ac2d18d6018e9370a2503629255b1128048cac9",
+  "plan_code": "ver. 2025.08",
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [
+  {
+   "what": "Seat totals for each layout and wheelchair spaces",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.ekcc.hk/documents/venue_detail/hiring/the-lab/index/TechInfo/ekcc-la-lfe.pdf",
+   "title": "East Kowloon Cultural Centre – The Lab, FULL Technical Information",
+   "document_version": "V. 2026.07.20",
+   "sha256": "aa4301585ecb15dac45093769282fd8f4a35d10ab2768f69238e45a4fc728835",
+   "retrieved": "2026-09-26",
+   "quotes": [
+    "Total Seating Long Thrust Stage 258 End Stage 243 Wheelchair Space 4"
+   ],
+   "note": "Confirms both plans' totals and the four W boxes in each. No orchestra pit is described."
+  }
+ ],
+ "location": {
+  "address_en": "60 Ngau Tau Kok Road, Kowloon, Hong Kong",
+  "address_zh": null,
+  "district": null,
+  "latitude": 22.32427,
+  "longitude": 114.21494,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "826817417",
+   "name_in_source": "East Kowloon Cultural Centre (The Hall)",
+   "note": "The Lab is not listed in venues.xml. This is the entry for The Hall; LCSD gives every East Kowloon Cultural Centre venue the same point for the building."
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.ekcc.hk/documents/venue_detail/hiring/the-lab/index/TechInfo/ekcc-la-lfe.pdf",
+   "title": "East Kowloon Cultural Centre – The Lab, FULL Technical Information",
+   "document_version": "V. 2026.07.20",
+   "sha256": "aa4301585ecb15dac45093769282fd8f4a35d10ab2768f69238e45a4fc728835",
+   "retrieved": "2026-09-26",
+   "quote": "East Kowloon Cultural Centre 60 Ngau Tau Kok Road, Kowloon, HK",
+   "note": "Not in LCSD's venue.json; address as printed on the technical sheet."
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "marks": {
+  "W": "Seat suitable for audience on wheel chairs (box prints W, no number)",
+  "X": "Management seat (crossed box, no number)"
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "note": "Drawn with the stage at the top. Stalls rows AA-AM (no row AI) face the stage, seat 1 at the left; BA and DA are short rows beside the stage, drawn upright on the plan. The gallery is rows AN-AO at the back and rows BN and DN along the side walls, drawn upright. The map draws every row as one line. This is one of The Lab's seating layouts; the long-thrust layout is a separate seat list."
+ },
+ "printed_totals": {
+  "Stalls": 172,
+  "Gallery": 71,
+  "Total": 243
+ },
+ "zones": [
+  {
+   "name": "Stalls",
+   "name_zh": "堂座",
+   "rows": [
+    {
+     "row": "BA",
+     "blocks": [
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      }
+     ],
+     "note": "Beside the stage on the left, upright on the plan; seats 5-8 only."
+    },
+    {
+     "row": "DA",
+     "blocks": [
+      {
+       "seats": [
+        "W1",
+        "W2"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W"
+     },
+     "note": "Beside the stage on the right: two wheelchair boxes, W with no number, upright on the plan."
+    },
+    {
+     "row": "AA",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AB",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AC",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AD",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AE",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AF",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AG",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "X1",
+        "X2"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "note": "Two crossed management boxes, no number, after 12 (13-14 likely, not printed)."
+    },
+    {
+     "row": "AH",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AJ",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AK",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AL",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AM",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Gallery",
+   "name_zh": "樓座",
+   "rows": [
+    {
+     "row": "AN",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "X1",
+        "X2"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "note": "Two crossed management boxes, no number, after 17 (18-19 likely, not printed)."
+    },
+    {
+     "row": "AO",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "W1",
+        "W2"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W"
+     },
+     "note": "Two wheelchair boxes, W with no number, after 16, set apart from it and from each other; their numbers are not printed."
+    },
+    {
+     "row": "BN",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18"
+       ]
+      }
+     ],
+     "note": "Along the left wall, above the stalls. Drawn upright on the plan, numbered from the audience end (1) towards the stage."
+    },
+    {
+     "row": "DN",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18"
+       ]
+      }
+     ],
+     "note": "Along the right wall, above the stalls. Drawn upright on the plan, numbered from the audience end (1) towards the stage."
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Stalls": {
+   "boxes": 174,
+   "management_X": 2,
+   "wheelchair_W": 2,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 172,
+   "printed": 172
+  },
+  "Gallery": {
+   "boxes": 73,
+   "management_X": 2,
+   "wheelchair_W": 2,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 71,
+   "printed": 71
+  }
+ }
+}

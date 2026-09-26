@@ -20,6 +20,8 @@ and front-of-house teams.
 | Sai Wan Ho Civic Centre Theatre (`swhcc-th`) | 453 | single | no pit |
 | East Kowloon Cultural Centre, The Turns: horizontal stage (`ekcc-turns-horizontal`) | 160 | single | no pit |
 | East Kowloon Cultural Centre, The Turns: end stage (`ekcc-turns-end`) | 176 | single | no pit |
+| East Kowloon Cultural Centre, The Lab: end stage (`ekcc-lab-end`) | 243 | Stalls 172 · Gallery 71 | no pit |
+| East Kowloon Cultural Centre, The Lab: long thrust stage (`ekcc-lab-thrust`) | 258 | Stalls 187 · Gallery 71 | no pit |
 | Sheung Wan Civic Centre Theatre (`swcc-th`) | 482 | single | 447 (rows AA–BB, stated) |
 | Sheung Wan Civic Centre Lecture Hall (`swcc-lh`) | 150 | single | no pit |
 | Sai Wan Ho Civic Centre Cultural Activities Hall: end stage (`swhcc-ca-end`) | 110 | single | no pit |
@@ -27,7 +29,7 @@ and front-of-house teams.
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
 Civic Centre Theatre). Each file says which, and gives the arithmetic.
-The Turns and the Cultural Activities Hall are flexible rooms with two seated layouts each, so each layout is its own seat list.
+The Turns, The Lab and the Cultural Activities Hall are flexible rooms with two seated layouts each, so each layout is its own seat list.
 
 ## What the data is, and what it is not
 
