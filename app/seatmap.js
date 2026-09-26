@@ -247,6 +247,8 @@ function finishMap(svg, doc, W, y) {
 //     (each row level, facing the stage; rows one behind another, e.g. boxes on a side wall)
 //   in_line (side banks, rows along): rows one after another down the wall, not side by side
 //   after (side banks): the id of a front bank; the bank sits against the side wall after it
+//   beside (side banks, rows across): the id of a front bank; each row sits level with the same row of
+//     that bank, across the aisle from it (rows the front bank lacks continue below it)
 //   label: optional heading drawn with the bank
 const BANK_GAP = 18, COL_GAP = 8;
 
@@ -284,10 +286,10 @@ function drawBankedMap(doc) {
   const front = banks.filter(b => b.side === "front");
   const sides = banks.filter(b => b.side !== "front");
   const outer = b => b.align === "room" || b.align === "house";   // beside the front banks, not the stage
-  const beside = sides.filter(b => !b.after && !outer(b));
+  const byStage = sides.filter(b => !b.after && !b.beside && !outer(b));
   const frontW = Math.max(0, ...front.map(b => b.w));
   const stageW = Math.min(300, Math.max(120, frontW * .7));
-  const stageH = Math.max(36, ...beside.map(b => b.h));
+  const stageH = Math.max(36, ...byStage.map(b => b.h));
   const LBL = 14;                                   // room for labels above and below side columns
 
   // positions around a stage centred on x = 0, top at y = 0 (shifted into view at the end)
@@ -301,7 +303,20 @@ function drawBankedMap(doc) {
     b.pieces.forEach(p => zonesSeen.add(p.z.name));
     if (b.heading && b !== front[0]) y += 14;
     place.push({ b, x: -b.w / 2, y });
-    y += b.h + BANK_GAP;
+    // side banks level with this bank's rows, across the aisle (where the row labels are)
+    let extra = 0;
+    const idx = new Map(b.pieces.map((p, i) => [p.row.row, i]));
+    for (const s of sides.filter(s => s.beside === b.id)) {
+      let k = 0;
+      s.pos = s.pieces.map((p, i) => {
+        const r = idx.has(p.row.row) ? idx.get(p.row.row) : b.pieces.length - 1 + ++k;
+        const edge = r < b.pieces.length ? b.lens[r] / 2 : b.w / 2;
+        return { x: s.side === "left" ? -edge - LABEL_W - s.lens[i] : edge + LABEL_W, y: y + r * (S + ROW_GAP), matched: r < b.pieces.length };
+      });
+      extra = Math.max(extra, k);
+      place.push({ b: s, x: 0, y });
+    }
+    y += b.h + extra * (S + ROW_GAP) + BANK_GAP;
     // side banks that follow this front bank: against the side walls, before the next front bank
     const band = sides.filter(s => s.after === b.id);
     if (band.length) {
@@ -317,7 +332,7 @@ function drawBankedMap(doc) {
   const frontHalf = frontW / 2 + LABEL_W;
   for (const dir of [-1, 1]) {
     let edge = stageW / 2 + BANK_GAP;               // distance from the centre line to the bank's inner edge
-    for (const b of sides.filter(s => !s.after && s.side === (dir < 0 ? "left" : "right"))) {
+    for (const b of sides.filter(s => !s.after && !s.beside && s.side === (dir < 0 ? "left" : "right"))) {
       if (outer(b)) edge = Math.max(edge, frontHalf + BANK_GAP);
       const x = dir < 0 ? -edge - b.w : edge;
       const top = b.align === "upstage" ? 0 : b.align === "house" ? houseTop : b.align === "room" ? (houseBottom - b.h) / 2 : stageH - b.h;
@@ -325,9 +340,12 @@ function drawBankedMap(doc) {
       edge += b.w + BANK_GAP;
     }
   }
-  const minX = Math.min(-stageW / 2, ...place.map(p => p.x)) - LABEL_W;
-  const maxX = Math.max(stageW / 2, ...place.map(p => p.x + p.b.w)) + LABEL_W;
-  const minY = Math.min(0, ...place.map(p => p.y)) - LBL - 18;
+  // extents: whole banks, or each row of a bank placed row by row
+  const ext = place.flatMap(p => p.b.pos ? p.b.pos.map((q, i) => ({ x0: q.x, x1: q.x + p.b.lens[i], y0: q.y, y1: q.y + S }))
+    : [{ x0: p.x, x1: p.x + p.b.w, y0: p.y, y1: p.y + p.b.h }]);
+  const minX = Math.min(-stageW / 2, ...ext.map(e => e.x0)) - LABEL_W;
+  const maxX = Math.max(stageW / 2, ...ext.map(e => e.x1)) + LABEL_W;
+  const minY = Math.min(0, ...ext.map(e => e.y0)) - LBL - 18;
   const W = maxX - minX, ox = -minX, oy = -minY + 4;
 
   const svg = el("svg", { role: "img", "aria-label": `Seat schematic for ${doc.venue.name_en}` });
@@ -360,7 +378,18 @@ function drawBankedMap(doc) {
     let run = Y;                                    // in-line columns: where the next row starts
     b.pieces.forEach((p, i) => {
       const inPits = pitNote(doc, p.row), len = b.lens[i];
-      if (b.level && b.side !== "front") {
+      if (b.pos) {
+        // level with the front bank's row; its label is already in the aisle, unless the front bank lacks the row
+        const q = b.pos[i], x0 = ox + q.x, ry = oy + q.y;
+        let cx = x0;
+        p.items.forEach(it => {
+          cx += it.before;
+          if (it.blocked) blockedAt(p.row, it.id, cx, ry); else seatAt(svg, p.z, p.row, it.id, it.b, inPits, cx, ry);
+          cx += S;
+        });
+        if (!q.matched) b.side === "left" ? rowLabel(p, x0 + len + 6, ry + S / 2, "start") : rowLabel(p, x0 - 6, ry + S / 2, "end");
+        grow(p.row.row, x0, ry, x0 + len, ry + S);
+      } else if (b.level && b.side !== "front") {
         // a short row facing the stage, against its side wall; rows one behind another
         const ry = Y + i * (S + ROW_GAP), x0 = b.side === "left" ? X : X + b.w - len;
         let cx = x0;
@@ -420,7 +449,7 @@ function drawBankedMap(doc) {
     const x1 = Math.max(...bx.map(r => r.x1)), y1 = Math.max(...bx.map(r => r.y1));
     pitBand(svg, i, pit, x0 - LABEL_W, y0 - 3, x1 - x0 + 2 * LABEL_W, y1 - y0 + 6);
   });
-  const bottom = oy + Math.max(houseBottom, ...place.map(p => p.y + p.b.h)) + LBL + 10;
+  const bottom = oy + Math.max(houseBottom, ...ext.map(e => e.y1)) + LBL + 10;
   return finishMap(svg, doc, W, bottom);
 }
 

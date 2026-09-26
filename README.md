@@ -153,10 +153,11 @@ of the stage (a thrust stage, or rows along the side walls). The files still hol
 | `in_line` | side banks whose rows run along: `true` when the rows follow one another down the wall rather than sit side by side |
 | `seat_1` | which end seat 1 is at: `left`/`right` for rows drawn level (front banks, `across`); `downstage`/`upstage` for upright rows |
 | `after` | side banks: the `id` of a front bank; the bank sits against the side wall after it (e.g. boxes between the stalls and the balcony) |
+| `beside` | side banks whose rows run across: the `id` of a front bank; each row sits level with the same row of that bank, across the aisle (e.g. side blocks of the same rows) |
 | `align` | other side banks: beside the stage, level with its front (`downstage`) or back (`upstage`); beside the front banks (`house`); or along the room (`room`) |
 
 The viewer draws the stage in the middle, front banks below it and side banks beside it, or against
-the side walls after a front bank. Order and neighbours follow the plan; distances do not. Every block of every row must be in
+the side walls after a front bank, or level with a front bank's rows across the aisle. Order and neighbours follow the plan; distances do not. Every block of every row must be in
 exactly one bank, or the build fails. Files without `banks` are drawn as before, every row facing the stage.
 Version 0.3 adds `banks` and the CSV's `bank` column; nothing else changed from 0.2.
 
