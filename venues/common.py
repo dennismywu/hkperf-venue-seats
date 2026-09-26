@@ -8,7 +8,7 @@ import csv
 import json
 from pathlib import Path
 
-SCHEMA = "hkperf-venue-seats/seatlist@0.2"
+SCHEMA = "hkperf-venue-seats/seatlist@0.3"
 DATA = Path(__file__).resolve().parent.parent / "data"
 
 LCSD = "Leisure and Cultural Services Department (LCSD)"
@@ -63,6 +63,48 @@ def row(label, *blocks, marks=None, inferred=None, note=None):
     return r
 
 
+BANK_SIDES = {"front": {"left", "right"}, "left": {"downstage", "upstage"}, "right": {"downstage", "upstage"}}
+BANK_ALIGN = {"downstage", "upstage", "house", "room"}
+
+
+def bank_of(doc):
+    """(row, block index) -> the id of the bank it is in; empty when the layout has no banks."""
+    out = {}
+    for b in doc.get("layout", {}).get("banks") or []:
+        for ref in b["rows"]:
+            if isinstance(ref, str):
+                for z in doc["zones"]:
+                    for r in z["rows"]:
+                        if r["row"] == ref:
+                            out.update({(ref, i): b["id"] for i in range(len(r["blocks"]))})
+            else:
+                out[(ref["row"], ref["block"] - 1)] = b["id"]
+    return out
+
+
+def check_banks(doc):
+    """layout.banks, when given, must place every block of every row exactly once."""
+    banks = doc.get("layout", {}).get("banks")
+    if not banks:
+        return
+    rows = {r["row"]: r for z in doc["zones"] for r in z["rows"]}
+    placed = {}
+    for b in banks:
+        assert b["side"] in BANK_SIDES, f"bank {b['id']}: side {b['side']!r}"
+        assert b.get("seat_1", "left" if b["side"] == "front" else "downstage") in BANK_SIDES[b["side"]], f"bank {b['id']}: seat_1"
+        assert b["side"] == "front" or b.get("align", "downstage") in BANK_ALIGN, f"bank {b['id']}: align"
+        for ref in b["rows"]:
+            name = ref if isinstance(ref, str) else ref["row"]
+            assert name in rows, f"bank {b['id']}: no row {name}"
+            idx = range(len(rows[name]["blocks"])) if isinstance(ref, str) else [ref["block"] - 1]
+            for i in idx:
+                assert 0 <= i < len(rows[name]["blocks"]), f"bank {b['id']}: row {name} has no block {i + 1}"
+                assert (name, i) not in placed, f"row {name} block {i + 1} is in banks {placed[(name, i)]} and {b['id']}"
+                placed[(name, i)] = b["id"]
+    missing = [f"{n} block {i + 1}" for n, r in rows.items() for i in range(len(r["blocks"])) if (n, i) not in placed]
+    assert not missing, f"not in any bank: {', '.join(missing)}"
+
+
 def _seats(rows):
     return sum(len(b["seats"]) for r in rows for b in r["blocks"])
 
@@ -101,6 +143,7 @@ def finish(doc):
         pit["total_with_pit"] = printed["Total"] - removed
         pit["stated"] = list(stated)
 
+    check_banks(doc)
     doc["count_check"] = {"rule": COUNT_RULE, **check}
     out = DATA / f"{doc['venue']['id']}.json"
     with open(out, "w") as f:
@@ -114,7 +157,7 @@ def finish(doc):
     return doc
 
 
-CSV_COLUMNS = ["venue_id", "part_of_house", "part_of_house_zh", "row", "block", "block_area", "seat",
+CSV_COLUMNS = ["venue_id", "part_of_house", "part_of_house_zh", "row", "block", "block_area", "bank", "seat",
                "seat_number", "number_basis", "marks", "wheelchair", "management", "restricted_sightline",
                "limited_legroom", "orchestra_pits"]
 
@@ -122,6 +165,7 @@ CSV_COLUMNS = ["venue_id", "part_of_house", "part_of_house_zh", "row", "block", 
 def csv_rows(doc):
     """One record per seat box, in the order of the JSON (the viewer builds its CSV the same way)."""
     pits = doc.get("orchestra_pits", [])
+    bank = bank_of(doc)
     for z in doc["zones"]:
         for r in z["rows"]:
             marks = r.get("marks", {})
@@ -132,7 +176,7 @@ def csv_rows(doc):
                     number, basis = (s, "printed") if s.isdigit() else (inferred, "inferred") if inferred else ("", "none")
                     yield {
                         "venue_id": doc["venue"]["id"], "part_of_house": z["name"], "part_of_house_zh": z.get("name_zh", ""),
-                        "row": r["row"], "block": bi, "block_area": b.get("area") or b.get("side") or "", "seat": s,
+                        "row": r["row"], "block": bi, "block_area": b.get("area") or b.get("side") or "", "bank": bank.get((r["row"], bi - 1), ""), "seat": s,
                         "seat_number": number, "number_basis": basis, "marks": m,
                         "wheelchair": int("W" in m), "management": int("X" in m),
                         "restricted_sightline": int("R" in m), "limited_legroom": int("L" in m),

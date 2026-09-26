@@ -122,15 +122,15 @@ Then visit http://localhost:8770/app/.
 ## Data format
 
 One JSON file per venue in `data/`, listed in `data/index.json`, with a CSV beside it (one line per seat
-box: part of house, row, block, seat, number and its basis, marks, pit rows). Schema
-`hkperf-venue-seats/seatlist@0.2`:
+box: part of house, row, block, bank, seat, number and its basis, marks, pit rows). Schema
+`hkperf-venue-seats/seatlist@0.3`:
 
 | Key | Holds |
 |---|---|
 | `venue` | `id`, English and Chinese names |
 | `source` | the seating plan: publisher, URL, file name, SHA-256, plan code or version, credit |
 | `location` | address, district, latitude and longitude, each with its source |
-| `layout` | which end seat 1 is at (`seat_1_side`) and notes on the numbering |
+| `layout` | which end seat 1 is at (`seat_1_side`), notes on the numbering, and optionally `banks` (below) |
 | `marks` | the meaning of each mark letter: `W` wheelchair, `X` management, `R` restricted sightline, `L` limited legroom |
 | `printed_totals` | the totals printed on the plan, per part of house and overall |
 | `orchestra_pits` | each pit option: rows removed (with basis and reasoning), seats removed, total, quoted source |
@@ -139,6 +139,23 @@ box: part of house, row, block, seat, number and its basis, marks, pit rows). Sc
 | `count_check` | the counts behind the check, per part of house |
 
 A row may also carry `marks` (seat id → one or more mark letters), `inferred_numbers` and a `note`.
+
+**Banks: where the audience sits around the stage.** Some rooms seat the audience on more than one side
+of the stage (a thrust stage, or rows along the side walls). The files still hold no coordinates; instead
+`layout.banks` records the arrangement, as read from the plan:
+
+| Key | Holds |
+|---|---|
+| `id` | a name for the bank, e.g. `stalls-left` |
+| `side` | which side of the stage it is on: `front`, `left` or `right` |
+| `rows` | its rows, nearest the stage first: a row label for a whole row, or `{"row": "A", "block": 1}` for one block of it |
+| `seat_1` | which end seat 1 is at: `left`/`right` for a front bank; `downstage`/`upstage` for a side bank |
+| `align` | side banks: beside the stage, level with its front (`downstage`) or back (`upstage`); beside the front banks (`house`); or along the room (`room`) |
+
+The viewer draws the stage in the middle, front banks below it and side banks beside it as upright
+columns. Order and neighbours follow the plan; distances do not. Every block of every row must be in
+exactly one bank, or the build fails. Files without `banks` are drawn as before, every row facing the stage.
+Version 0.3 adds `banks` and the CSV's `bank` column; nothing else changed from 0.2.
 
 **Seats with no printed number.** Wheelchair and management boxes often print only `W` or `X`. Such a box
 is labelled `W1`, `W2`… (or `X1`…) in its row. It gets an inferred number only when the gap between its

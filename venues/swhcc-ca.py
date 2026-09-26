@@ -80,7 +80,12 @@ def build():
         **common,
         "layout": {
             "seat_1_side": "left",
-            "note": "The audience sits on three sides of the stage: a block to the left, angled towards it, a block facing it, and a block to the right, angled towards it. The map draws each row as one line with the stage at the top. Seat 1 is at the stage end of the left block; numbering runs on through the centre block and out along the right block. Row F is on the left side only. This is one of the hall's seating layouts; the end-stage layout is a separate seat list.",
+            "note": "The audience sits on three sides of the stage: a block to the left, angled towards it, a block facing it, and a block to the right, angled towards it. Each row runs through all three: seat 1 is at the upstage end of the left block, numbering runs on through the centre block and back up the right block. Row F is on the left side only. This is one of the hall's seating layouts; the end-stage layout is a separate seat list.",
+            "banks": [
+                {"id": "left", "side": "left", "rows": [{"row": r, "block": 1} for r in "ABCDEF"], "seat_1": "upstage", "align": "downstage"},
+                {"id": "centre", "side": "front", "rows": [{"row": r, "block": 2} for r in "ABCDE"], "seat_1": "left"},
+                {"id": "right", "side": "right", "rows": [{"row": r, "block": 3} for r in "ABCDE"], "seat_1": "downstage", "align": "downstage"},
+            ],
         },
         "printed_totals": {"Cultural Activities Hall": 100, "Total": 100},
         "zones": [{"name": "Cultural Activities Hall", "name_zh": "文娛廳", "rows": thrust}],

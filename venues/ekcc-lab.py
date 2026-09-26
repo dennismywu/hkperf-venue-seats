@@ -59,6 +59,13 @@ def source(file, sha):
             "plan_code": "ver. 2025.08", "printed_date": None, "credit": CREDIT}
 
 
+GALLERY_BANKS = [
+    {"id": "gallery-left", "side": "left", "rows": ["BN"], "seat_1": "downstage", "align": "room"},
+    {"id": "gallery-right", "side": "right", "rows": ["DN"], "seat_1": "downstage", "align": "room"},
+    {"id": "gallery-back", "side": "front", "rows": ["AN", "AO"], "seat_1": "left"},
+]
+
+
 def gallery():
     return [
         row("AN", rng(1, 17) + XS, marks={x: "X" for x in XS},
@@ -110,7 +117,13 @@ def build():
         **common,
         "layout": {
             "seat_1_side": "left",
-            "note": "Drawn with the stage at the top. Stalls rows AA-AM (no row AI) face the stage, seat 1 at the left; BA and DA are short rows beside the stage, drawn upright on the plan. The gallery is rows AN-AO at the back and rows BN and DN along the side walls, drawn upright. The map draws every row as one line. This is one of The Lab's seating layouts; the long-thrust layout is a separate seat list.",
+            "note": "Drawn with the stage at the top. Stalls rows AA-AM (no row AI) face the stage, seat 1 at the left; BA and DA are short upright rows at the sides of the front stalls. The gallery is rows AN-AO at the back and rows BN and DN along the side walls, drawn upright and numbered from the back. This is one of The Lab's seating layouts; the long-thrust layout is a separate seat list.",
+            "banks": [
+                {"id": "stalls", "side": "front", "rows": ["AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AJ", "AK", "AL", "AM"], "seat_1": "left"},
+                {"id": "stalls-left", "side": "left", "rows": ["BA"], "seat_1": "downstage", "align": "house"},
+                {"id": "stalls-right", "side": "right", "rows": ["DA"], "seat_1": "downstage", "align": "house"},
+                *GALLERY_BANKS,
+            ],
         },
         "printed_totals": {"Stalls": 172, "Gallery": 71, "Total": 243},
         "zones": [
@@ -124,7 +137,13 @@ def build():
         **common,
         "layout": {
             "seat_1_side": "left",
-            "note": "The stage runs down the middle of the room with the audience on three sides: rows BA-BD to its left and DA-DD to its right, drawn upright on the plan and numbered from the audience end, and rows AA-AF facing its end, seat 1 at the left. The gallery is rows AN-AO at the back and rows BN and DN along the side walls. The map draws every row as one line. This is one of The Lab's seating layouts; the end-stage layout is a separate seat list.",
+            "note": "The stage runs down the middle of the room with the audience on three sides: rows BA-BD to its left and DA-DD to its right, drawn upright on the plan and numbered from the audience end, and rows AA-AF facing its end, seat 1 at the left. The gallery is rows AN-AO at the back and rows BN and DN along the side walls. This is one of The Lab's seating layouts; the end-stage layout is a separate seat list.",
+            "banks": [
+                {"id": "stalls-left", "side": "left", "rows": ["BA", "BB", "BC", "BD"], "seat_1": "downstage", "align": "upstage"},
+                {"id": "stalls-right", "side": "right", "rows": ["DA", "DB", "DC", "DD"], "seat_1": "downstage", "align": "upstage"},
+                {"id": "stalls-end", "side": "front", "rows": ["AA", "AB", "AC", "AD", "AE", "AF"], "seat_1": "left"},
+                *GALLERY_BANKS,
+            ],
         },
         "printed_totals": {"Stalls": 187, "Gallery": 71, "Total": 258},
         "zones": [

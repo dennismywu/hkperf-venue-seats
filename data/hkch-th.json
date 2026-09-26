@@ -1,5 +1,5 @@
 {
- "schema": "hkperf-venue-seats/seatlist@0.2",
+ "schema": "hkperf-venue-seats/seatlist@0.3",
  "venue": {
   "id": "hkch-th",
   "name_en": "Hong Kong City Hall Theatre",

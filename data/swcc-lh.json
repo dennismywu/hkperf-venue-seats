@@ -1,5 +1,5 @@
 {
- "schema": "hkperf-venue-seats/seatlist@0.2",
+ "schema": "hkperf-venue-seats/seatlist@0.3",
  "venue": {
   "id": "swcc-lh",
   "name_en": "Sheung Wan Civic Centre Lecture Hall",

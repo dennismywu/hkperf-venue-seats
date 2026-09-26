@@ -527,19 +527,24 @@ function save(blob, name) {
 }
 
 // Same columns as data/<venue>.csv (venues/common.py), plus whether each seat counts here.
-const CSV_COLUMNS = ["venue_id", "part_of_house", "part_of_house_zh", "row", "block", "block_area", "seat",
+const CSV_COLUMNS = ["venue_id", "part_of_house", "part_of_house_zh", "row", "block", "block_area", "bank", "seat",
   "seat_number", "number_basis", "marks", "wheelchair", "management", "restricted_sightline",
   "limited_legroom", "orchestra_pits", "counted", "not_counted_reason"];
 const csvCell = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
 
 function configCSV() {
   const lines = [CSV_COLUMNS.join(",")];
+  const bank = new Map();                          // "row/block index" -> bank id
+  for (const b of doc.layout?.banks || []) for (const ref of b.rows) {
+    if (typeof ref === "string") { const r = doc.zones.flatMap(z => z.rows).find(x => x.row === ref); r?.blocks.forEach((_, i) => bank.set(`${ref}/${i}`, b.id)); }
+    else bank.set(`${ref.row}/${ref.block - 1}`, b.id);
+  }
   for (const z of doc.zones) for (const r of z.rows) {
     const pits = pitsFor(doc, r.row).map(p => p.name).join("; ");
     r.blocks.forEach((b, bi) => b.seats.forEach(s => {
       const m = markOf(r, s), inf = r.inferred_numbers?.[s], why = excluded(z.name, r.row, m);
       const [number, basis] = /^\d+$/.test(s) ? [s, "printed"] : inf ? [inf, "inferred"] : ["", "none"];
-      lines.push([doc.venue.id, z.name, z.name_zh || "", r.row, bi + 1, b.area || b.side || "", s, number, basis, m,
+      lines.push([doc.venue.id, z.name, z.name_zh || "", r.row, bi + 1, b.area || b.side || "", bank.get(`${r.row}/${bi}`) || "", s, number, basis, m,
         +m.includes("W"), +m.includes("X"), +m.includes("R"), +m.includes("L"), pits, why ? 0 : 1, why].map(csvCell).join(","));
     }));
   }

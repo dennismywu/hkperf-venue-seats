@@ -1,5 +1,5 @@
 {
- "schema": "hkperf-venue-seats/seatlist@0.2",
+ "schema": "hkperf-venue-seats/seatlist@0.3",
  "venue": {
   "id": "stth-aud",
   "name_en": "Sha Tin Town Hall Auditorium",

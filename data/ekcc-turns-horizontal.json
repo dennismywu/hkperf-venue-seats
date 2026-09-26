@@ -1,5 +1,5 @@
 {
- "schema": "hkperf-venue-seats/seatlist@0.2",
+ "schema": "hkperf-venue-seats/seatlist@0.3",
  "venue": {
   "id": "ekcc-turns-horizontal",
   "name_en": "East Kowloon Cultural Centre, The Turns (horizontal stage)",

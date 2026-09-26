@@ -1,5 +1,5 @@
 {
- "schema": "hkperf-venue-seats/seatlist@0.2",
+ "schema": "hkperf-venue-seats/seatlist@0.3",
  "venue": {
   "id": "ekcc-lab-end",
   "name_en": "East Kowloon Cultural Centre, The Lab (end stage)",
@@ -64,7 +64,73 @@
  },
  "layout": {
   "seat_1_side": "left",
-  "note": "Drawn with the stage at the top. Stalls rows AA-AM (no row AI) face the stage, seat 1 at the left; BA and DA are short rows beside the stage, drawn upright on the plan. The gallery is rows AN-AO at the back and rows BN and DN along the side walls, drawn upright. The map draws every row as one line. This is one of The Lab's seating layouts; the long-thrust layout is a separate seat list."
+  "note": "Drawn with the stage at the top. Stalls rows AA-AM (no row AI) face the stage, seat 1 at the left; BA and DA are short upright rows at the sides of the front stalls. The gallery is rows AN-AO at the back and rows BN and DN along the side walls, drawn upright and numbered from the back. This is one of The Lab's seating layouts; the long-thrust layout is a separate seat list.",
+  "banks": [
+   {
+    "id": "stalls",
+    "side": "front",
+    "rows": [
+     "AA",
+     "AB",
+     "AC",
+     "AD",
+     "AE",
+     "AF",
+     "AG",
+     "AH",
+     "AJ",
+     "AK",
+     "AL",
+     "AM"
+    ],
+    "seat_1": "left"
+   },
+   {
+    "id": "stalls-left",
+    "side": "left",
+    "rows": [
+     "BA"
+    ],
+    "seat_1": "downstage",
+    "align": "house"
+   },
+   {
+    "id": "stalls-right",
+    "side": "right",
+    "rows": [
+     "DA"
+    ],
+    "seat_1": "downstage",
+    "align": "house"
+   },
+   {
+    "id": "gallery-left",
+    "side": "left",
+    "rows": [
+     "BN"
+    ],
+    "seat_1": "downstage",
+    "align": "room"
+   },
+   {
+    "id": "gallery-right",
+    "side": "right",
+    "rows": [
+     "DN"
+    ],
+    "seat_1": "downstage",
+    "align": "room"
+   },
+   {
+    "id": "gallery-back",
+    "side": "front",
+    "rows": [
+     "AN",
+     "AO"
+    ],
+    "seat_1": "left"
+   }
+  ]
  },
  "printed_totals": {
   "Stalls": 172,
