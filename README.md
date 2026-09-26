@@ -26,12 +26,12 @@ and front-of-house teams.
 | Sheung Wan Civic Centre Lecture Hall (`swcc-lh`) | 150 | single | no pit |
 | Sai Wan Ho Civic Centre Cultural Activities Hall: end stage (`swhcc-ca-end`) | 110 | single | no pit |
 | Sai Wan Ho Civic Centre Cultural Activities Hall: thrust stage (`swhcc-ca-thrust`) | 100 | single | no pit |
-| Tuen Mun Town Hall Auditorium (`tmth-aud`) | 1,368 | Stalls 589 · Upper Stalls 439 · Balcony 340 | not yet recorded |
-| Tuen Mun Town Hall Cultural Activities Hall (`tmth-ca`) | 290 | single (floor A–C, platform D–N) | not yet recorded |
-| Tsuen Wan Town Hall Cultural Activities Hall (`twth-ca`) | 260 | single | not yet recorded |
+| Tuen Mun Town Hall Auditorium (`tmth-aud`) | 1,368 | Stalls 589 · Upper Stalls 439 · Balcony 340 | 1,295 (rows A–B, stated) |
+| Tuen Mun Town Hall Cultural Activities Hall (`tmth-ca`) | 290 | single (floor A–C, platform D–N) | no pit |
+| Tsuen Wan Town Hall Cultural Activities Hall (`twth-ca`) | 260 | single (floor A–C, platform D–N) | no pit |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
-Civic Centre Theatre). Each file says which, and gives the arithmetic.
+Civic Centre Theatre, Tuen Mun Town Hall Auditorium). Each file says which, and gives the arithmetic.
 The Turns, The Lab and the Cultural Activities Hall are flexible rooms with two seated layouts each, so each layout is its own seat list.
 
 ## What the data is, and what it is not

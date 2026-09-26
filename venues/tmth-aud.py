@@ -10,7 +10,21 @@ Usage: python venues/tmth-aud.py
 """
 from common import CREDIT, LCSD, finish, location, rng, row
 
-REFERENCES = []
+TECH_SHEET = {
+    "publisher": LCSD,
+    "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/tmth-aud-lfe.pdf",
+    "title": "Tuen Mun Town Hall – Auditorium, FULL Technical Information",
+    "document_version": "V. 2026.08.07",
+    "sha256": "5263856e6fe678ad8e3bb5036c4edc3e4d20ce1b1b568e19a743adb960d6a53b",
+    "retrieved": "2026-09-26",
+}
+REFERENCES = [{
+    "what": "Seat totals and orchestra pit",
+    **TECH_SHEET,
+    "quotes": ["Total Seating: 1,368 Stalls: 1,028 Stall: 589 Upper Stall: 439 Balcony: 340",
+               "73 seats will be lost from Stall Level Row A & Row B for setting orchestra pit"],
+    "note": "Confirms the plan's totals (the sheet's 'Stalls: 1,028' is stall and upper stall together), and names the rows the pit removes. No wheelchair figure is given.",
+}]
 X = lambda *ids: {i: "X" for i in ids}
 W = lambda *ids: {i: "W" for i in ids}
 
@@ -75,6 +89,14 @@ finish({
         "X": "Management seat (crossed box, no number)",
     },
     "printed_totals": {"Stalls": 589, "Upper Stalls": 439, "Balcony": 340, "Total": 1368},
+    "orchestra_pits": [{
+        "name": "Orchestra pit (91.5 m²)",
+        "rows_removed": ["A", "B"],
+        "rows_basis": "stated",
+        "rows_reasoning": "The technical sheet names the rows. A + B = 36 + 37 = 73, matching the stated loss.",
+        "stated": {"seats_removed": 73},
+        "source": {**TECH_SHEET, "quote": "73 seats will be lost from Stall Level Row A & Row B for setting orchestra pit"},
+    }],
     "zones": [
         {"name": "Stalls", "name_zh": "大堂前座", "rows": stalls},
         {"name": "Upper Stalls", "name_zh": "大堂後座", "rows": upper},

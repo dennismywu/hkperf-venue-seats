@@ -9,7 +9,20 @@ Usage: python venues/twth-ca.py
 """
 from common import CREDIT, LCSD, finish, location, rng, row
 
-REFERENCES = []
+TECH_SHEET = {
+    "publisher": LCSD,
+    "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/twth-ca-lfe.pdf",
+    "title": "Tsuen Wan Town Hall – Cultural Activities Hall, FULL Technical Information",
+    "document_version": "V. 2026.07.20",
+    "sha256": "4bc97b373dba8905831aed3888f8f05fef93b5371166c2c5ad5edbdb1d3b6a43",
+    "retrieved": "2026-09-26",
+}
+REFERENCES = [{
+    "what": "Seat total, floor and platform, wheelchair seats",
+    **TECH_SHEET,
+    "quotes": ["Total Seating: 260 - 49 on flat floor (including 4 wheelchair seats) - 211 on retractable seating platform"],
+    "note": "Confirms the plan's total. Rows A-C hold 45 numbered seats and the 4 wheelchair boxes (49, the flat floor); rows D-N hold 211 (the platform). No orchestra pit is described.",
+}]
 
 rows = [row("A", rng(1, 16) + ["W1", "W2", "W3", "W4"], marks={f"W{i}": "W" for i in range(1, 5)},
             note="Four wheelchair boxes, W with no number, end the row after 16 (17-20 likely, not printed).")]
@@ -34,7 +47,7 @@ finish({
                          address_zh="香港新界荃灣大河道72號", district="Tsuen Wan", address_name="Tsuen Wan Town Hall"),
     "layout": {
         "seat_1_side": "left",
-        "note": "Drawn with the stage at the top. One straight block per row, seat 1 at the left; rows are centred, so their ends step in and out. No row I. The plan names no seating areas, only the space (文娛廳 CULTURAL ACTIVITIES HALL), so there is one zone.",
+        "note": "Drawn with the stage at the top. One straight block per row, seat 1 at the left; rows are centred, so their ends step in and out. Per the technical sheet, rows A-C are on the flat floor and rows D-N on a retractable seating platform. No row I. The plan names no seating areas, only the space (文娛廳 CULTURAL ACTIVITIES HALL), so there is one zone.",
     },
     "marks": {
         "W": "Seat suitable for audience on wheel chairs (box prints W, no number)",
@@ -42,6 +55,8 @@ finish({
     },
     "printed_totals": {"Cultural Activities Hall": 260, "Total": 260},
     "zones": [
-        {"name": "Cultural Activities Hall", "name_zh": "文娛廳", "rows": rows},
+        {"name": "Cultural Activities Hall", "name_zh": "文娛廳", "rows": rows,
+         "sections": [{"name": "Flat floor", "name_zh": "水平面", "rows": ["A", "C"]},
+                      {"name": "Retractable seating platform", "name_zh": "電動折合式單向觀眾席", "rows": ["D", "N"]}]},
     ],
 })

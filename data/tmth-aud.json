@@ -14,7 +14,22 @@
   "printed_date": "2012-09",
   "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
  },
- "references": [],
+ "references": [
+  {
+   "what": "Seat totals and orchestra pit",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/tmth-aud-lfe.pdf",
+   "title": "Tuen Mun Town Hall – Auditorium, FULL Technical Information",
+   "document_version": "V. 2026.08.07",
+   "sha256": "5263856e6fe678ad8e3bb5036c4edc3e4d20ce1b1b568e19a743adb960d6a53b",
+   "retrieved": "2026-09-26",
+   "quotes": [
+    "Total Seating: 1,368 Stalls: 1,028 Stall: 589 Upper Stall: 439 Balcony: 340",
+    "73 seats will be lost from Stall Level Row A & Row B for setting orchestra pit"
+   ],
+   "note": "Confirms the plan's totals (the sheet's 'Stalls: 1,028' is stall and upper stall together), and names the rows the pit removes. No wheelchair figure is given."
+  }
+ ],
  "location": {
   "address_en": "3 Tuen Hi Road, Tuen Mun, New Territories, Hong Kong",
   "address_zh": "香港新界屯門屯喜路3號",
@@ -53,6 +68,31 @@
   "Balcony": 340,
   "Total": 1368
  },
+ "orchestra_pits": [
+  {
+   "name": "Orchestra pit (91.5 m²)",
+   "rows_removed": [
+    "A",
+    "B"
+   ],
+   "rows_basis": "stated",
+   "rows_reasoning": "The technical sheet names the rows. A + B = 36 + 37 = 73, matching the stated loss.",
+   "source": {
+    "publisher": "Leisure and Cultural Services Department (LCSD)",
+    "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/tmth-aud-lfe.pdf",
+    "title": "Tuen Mun Town Hall – Auditorium, FULL Technical Information",
+    "document_version": "V. 2026.08.07",
+    "sha256": "5263856e6fe678ad8e3bb5036c4edc3e4d20ce1b1b568e19a743adb960d6a53b",
+    "retrieved": "2026-09-26",
+    "quote": "73 seats will be lost from Stall Level Row A & Row B for setting orchestra pit"
+   },
+   "seats_removed": 73,
+   "total_with_pit": 1295,
+   "stated": [
+    "seats_removed"
+   ]
+  }
+ ],
  "zones": [
   {
    "name": "Stalls",

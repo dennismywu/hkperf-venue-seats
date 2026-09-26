@@ -14,7 +14,21 @@
   "printed_date": "2011-11-10",
   "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
  },
- "references": [],
+ "references": [
+  {
+   "what": "Seat total, floor and platform, wheelchair seats",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/twth-ca-lfe.pdf",
+   "title": "Tsuen Wan Town Hall – Cultural Activities Hall, FULL Technical Information",
+   "document_version": "V. 2026.07.20",
+   "sha256": "4bc97b373dba8905831aed3888f8f05fef93b5371166c2c5ad5edbdb1d3b6a43",
+   "retrieved": "2026-09-26",
+   "quotes": [
+    "Total Seating: 260 - 49 on flat floor (including 4 wheelchair seats) - 211 on retractable seating platform"
+   ],
+   "note": "Confirms the plan's total. Rows A-C hold 45 numbered seats and the 4 wheelchair boxes (49, the flat floor); rows D-N hold 211 (the platform). No orchestra pit is described."
+  }
+ ],
  "location": {
   "address_en": "72 Tai Ho Road, Tsuen Wan, New Territories, Hong Kong",
   "address_zh": "香港新界荃灣大河道72號",
@@ -41,7 +55,7 @@
  },
  "layout": {
   "seat_1_side": "left",
-  "note": "Drawn with the stage at the top. One straight block per row, seat 1 at the left; rows are centred, so their ends step in and out. No row I. The plan names no seating areas, only the space (文娛廳 CULTURAL ACTIVITIES HALL), so there is one zone."
+  "note": "Drawn with the stage at the top. One straight block per row, seat 1 at the left; rows are centred, so their ends step in and out. Per the technical sheet, rows A-C are on the flat floor and rows D-N on a retractable seating platform. No row I. The plan names no seating areas, only the space (文娛廳 CULTURAL ACTIVITIES HALL), so there is one zone."
  },
  "marks": {
   "W": "Seat suitable for audience on wheel chairs (box prints W, no number)",
@@ -450,6 +464,24 @@
       "X2": "2"
      },
      "note": "Two management boxes, X with no number, open the row before 3, so they are 1-2."
+    }
+   ],
+   "sections": [
+    {
+     "name": "Flat floor",
+     "name_zh": "水平面",
+     "rows": [
+      "A",
+      "C"
+     ]
+    },
+    {
+     "name": "Retractable seating platform",
+     "name_zh": "電動折合式單向觀眾席",
+     "rows": [
+      "D",
+      "N"
+     ]
     }
    ]
   }

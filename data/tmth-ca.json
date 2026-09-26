@@ -14,7 +14,34 @@
   "printed_date": "2012-09",
   "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
  },
- "references": [],
+ "references": [
+  {
+   "what": "Seat total",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "retrieved": "2026-09-26",
+   "document_version": "V. 2026.08.07",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/tmth-ca-lfe.pdf",
+   "title": "Tuen Mun Town Hall – Cultural Activities Hall, FULL Technical Information",
+   "sha256": "eb99940d652c25d5f795d8bf943c176e675bdace91870a17e229b3993f3057c3",
+   "quotes": [
+    "Max. Total Seating: 290 The venue seats 290 on a fixed tier"
+   ],
+   "note": "Confirms the plan's total. No wheelchair figure is given."
+  },
+  {
+   "what": "Orchestra pit",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "retrieved": "2026-09-26",
+   "document_version": "V. 2026.08.07",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/tmth-ca-sfe.pdf",
+   "title": "Tuen Mun Town Hall – Cultural Activities Hall, Basic Technical Information",
+   "sha256": "b560acdf807067c4bcaa4d3868c9474e6cfb07caddbf174d777de5cca94bbcb8",
+   "quotes": [
+    "Orchestra pit None"
+   ],
+   "note": "There is no orchestra pit."
+  }
+ ],
  "location": {
   "address_en": "3 Tuen Hi Road, Tuen Mun, New Territories, Hong Kong",
   "address_zh": "香港新界屯門屯喜路3號",

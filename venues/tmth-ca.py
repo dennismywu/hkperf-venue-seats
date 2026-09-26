@@ -9,7 +9,27 @@ Usage: python venues/tmth-ca.py
 """
 from common import CREDIT, LCSD, finish, location, rng, row
 
-REFERENCES = []
+SHEET = {"publisher": LCSD, "retrieved": "2026-09-26", "document_version": "V. 2026.08.07"}
+REFERENCES = [
+    {
+        "what": "Seat total",
+        **SHEET,
+        "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/tmth-ca-lfe.pdf",
+        "title": "Tuen Mun Town Hall – Cultural Activities Hall, FULL Technical Information",
+        "sha256": "eb99940d652c25d5f795d8bf943c176e675bdace91870a17e229b3993f3057c3",
+        "quotes": ["Max. Total Seating: 290 The venue seats 290 on a fixed tier"],
+        "note": "Confirms the plan's total. No wheelchair figure is given.",
+    },
+    {
+        "what": "Orchestra pit",
+        **SHEET,
+        "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/tmth-ca-sfe.pdf",
+        "title": "Tuen Mun Town Hall – Cultural Activities Hall, Basic Technical Information",
+        "sha256": "b560acdf807067c4bcaa4d3868c9474e6cfb07caddbf174d777de5cca94bbcb8",
+        "quotes": ["Orchestra pit None"],
+        "note": "There is no orchestra pit.",
+    },
+]
 
 rows = [
     row("A", ["X1", "W1", "W2"], rng(4, 16), ["W3", "W4", "X2"],
