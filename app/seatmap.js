@@ -218,3 +218,66 @@ function drawSeatMap(doc) {
   svg.setAttribute("width", W); svg.setAttribute("height", H);
   return svg;
 }
+
+// ---------------------------------------------------------------- zoom
+// The map sits in a fixed frame (#map) that scrolls. It starts fitted to the frame; − / + / Fit / 100% and
+// Ctrl/⌘ + wheel (or a trackpad pinch) zoom it, keeping the point under the pointer in place.
+const zoom = { frame: null, svg: null, scale: 1, fit: true, label: null };
+const ZOOM_STEP = 1.25, ZOOM_MAX = 4;
+
+function zoomControls(box) {
+  box.classList.add("zoomctl");
+  box.innerHTML = `<button type="button" data-z="out" aria-label="Zoom out" title="Zoom out">−</button>
+    <span class="zlevel" aria-live="polite"></span>
+    <button type="button" data-z="in" aria-label="Zoom in" title="Zoom in">+</button>
+    <button type="button" data-z="fit" title="Fit the whole map in the frame">Fit</button>
+    <button type="button" data-z="one" title="Actual size">100%</button>`;
+  zoom.label = box.querySelector(".zlevel");
+  box.querySelector('[data-z="out"]').onclick = () => zoomTo(zoom.scale / ZOOM_STEP);
+  box.querySelector('[data-z="in"]').onclick = () => zoomTo(zoom.scale * ZOOM_STEP);
+  box.querySelector('[data-z="fit"]').onclick = () => { zoom.fit = true; applyZoom(fitScale()); };
+  box.querySelector('[data-z="one"]').onclick = () => zoomTo(1);
+}
+
+// Put a freshly drawn map in the frame, fitted.
+function showMap(frame, svg) {
+  const first = !zoom.frame;
+  zoom.frame = frame; zoom.svg = svg; zoom.fit = true;
+  frame.replaceChildren(svg);
+  applyZoom(fitScale());
+  if (first) {
+    new ResizeObserver(() => { if (zoom.fit && zoom.svg) applyZoom(fitScale()); }).observe(frame);
+    frame.addEventListener("wheel", e => {
+      if (!(e.ctrlKey || e.metaKey)) return;              // plain wheel scrolls the frame
+      e.preventDefault();
+      zoomTo(zoom.scale * Math.exp(-e.deltaY * 0.0022), e.clientX, e.clientY);
+    }, { passive: false });
+  }
+}
+
+function fitScale() {
+  const vb = zoom.svg.viewBox.baseVal, f = zoom.frame;
+  return Math.max(0.05, Math.min((f.clientWidth - 4) / vb.width, (f.clientHeight - 4) / vb.height));
+}
+
+function zoomTo(scale, cx, cy) {
+  zoom.fit = false;
+  const min = Math.min(fitScale(), 1) * 0.5;
+  applyZoom(Math.min(ZOOM_MAX, Math.max(min, scale)), cx, cy);
+}
+
+// Resize the drawing to scale; keep the map point under (cx, cy) - or the frame's centre - where it was.
+function applyZoom(scale, cx, cy) {
+  const { svg, frame } = zoom, vb = svg.viewBox.baseVal;
+  const fr = frame.getBoundingClientRect();
+  if (cx === undefined) { cx = fr.left + frame.clientWidth / 2; cy = fr.top + frame.clientHeight / 2; }
+  const before = svg.getBoundingClientRect(), old = before.width / vb.width || scale;
+  const u = (cx - before.left) / old, v = (cy - before.top) / old;
+  zoom.scale = scale;
+  svg.setAttribute("width", Math.round(vb.width * scale));
+  svg.setAttribute("height", Math.round(vb.height * scale));
+  const after = svg.getBoundingClientRect();
+  frame.scrollLeft += after.left + u * scale - cx;
+  frame.scrollTop += after.top + v * scale - cy;
+  if (zoom.label) zoom.label.textContent = `${Math.round(scale * 100)}%`;
+}

@@ -111,7 +111,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
         <span class="swatch"><svg width="17" height="17" viewBox="-1 -1 17 17"><g class="seat"><rect x="0" y="0" width="15" height="15" rx="2"/></g></svg>Counted</span>
         <span class="swatch"><svg width="17" height="17" viewBox="-1 -1 17 17"><g class="seat off"><rect x="0" y="0" width="15" height="15" rx="2"/></g></svg>Not counted in this configuration</span>
       </div>
-      <button id="zoom" type="button">Actual size</button>
+      <div id="zoomctl" role="group" aria-label="Zoom"></div>
     </div>
     <div id="map"></div>
     <p class="note" id="layoutnote"></p>
@@ -403,7 +403,7 @@ function update(flash = true) {
 
 // ---------------------------------------------------------------- map
 
-function draw() { $("map").replaceChildren(drawSeatMap(doc)); }
+function draw() { showMap($("map"), drawSeatMap(doc)); }
 
 
 // ---------------------------------------------------------------- facts
@@ -626,10 +626,7 @@ $("map").addEventListener("focusin", e => {
   const r = g.getBoundingClientRect(); showTip(g, r.right, r.bottom);
 });
 $("map").addEventListener("focusout", () => tip.style.display = "none");
-$("zoom").onclick = () => {
-  const z = $("map").classList.toggle("zoomed");
-  $("zoom").textContent = z ? "Fit to width" : "Actual size";
-};
+zoomControls($("zoomctl"));
 
 $("to-planner").addEventListener("click", () => track("viewer-to-planner"));
 startStats();

@@ -60,9 +60,13 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .tools { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
 .tools button { font-size: 12px; padding: 3px 10px; border-radius: 6px; cursor: pointer; border: 1px solid var(--line); background: var(--bg); }
 .swatch { display: inline-flex; align-items: center; gap: 5px; margin-right: 12px; }
-#map { overflow-x: auto; margin-top: 12px; }
-#map svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-#map.zoomed svg { max-width: none; }
+/* the map frame: fixed height, scrolls; the drawing is sized by the zoom (seatmap.js) */
+#map { margin-top: 12px; height: clamp(340px, calc(100vh - var(--keys-h, 80px) - 150px), 1400px); overflow: auto;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--bg); overscroll-behavior: contain; }
+#map svg { display: block; margin: 0 auto; }
+.zoomctl { display: inline-flex; align-items: center; gap: 4px; }
+.zoomctl button { min-width: 30px; font-size: 13px; line-height: 1.2; }
+.zoomctl .zlevel { min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; }
 .seat rect { fill: var(--seat); stroke: var(--seat-line); stroke-width: 1; }
 .seat text { fill: var(--seat-ink); font-size: 7.5px; text-anchor: middle; dominant-baseline: central; font-variant-numeric: tabular-nums; pointer-events: none; }
 .seat.W rect { fill: var(--w-bg); stroke: var(--w); } .seat.W text { fill: var(--w); font-weight: 700; }

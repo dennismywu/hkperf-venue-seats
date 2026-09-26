@@ -39,6 +39,8 @@ Pit rows are inferred: LCSD states the seats lost, not the rows. Each file says 
 - downloads: the seat list as JSON or CSV (linked to this repository), and the current configuration as
   JSON or CSV;
 - credits, and a note on the map itself that it is a schematic, not the venue's seat plan.
+- the map sits in its own frame: zoom in and out (buttons, or Ctrl/⌘ + wheel or a trackpad pinch), fit the
+  whole plan, or view it at actual size.
 
 "Plan with this configuration" opens the planner with the viewer's current settings.
 
@@ -49,8 +51,8 @@ Pit rows are inferred: LCSD states the seats lost, not the rows. Each file says 
 - **Consent first.** It opens behind a statement of how it treats what you enter; nothing loads until you
   agree. Because nothing is stored, it asks again on every visit.
 - **Nothing sent, nothing stored.** No cookies, no browser storage, no uploads. Close or reload the page and
-  the plan is gone, unless you download it: a plan file (JSON, or CSV to read) is saved on your own device
-  and can be opened in the planner again.
+  the plan is gone, unless you save it: the plan file is saved on your own device and can only be reopened in
+  the planner. There is no spreadsheet export; to share a plan, take a screen capture.
 - **Configuration from the viewer.** The viewer passes its settings in the URL fragment (`#c=…`), which
   browsers never send to the server. Only the seats counted in that configuration can be planned.
 
@@ -63,7 +65,31 @@ What it does:
 - show the ballpark gross, the average ticket price and each category's share;
 - a simple gap analysis: target revenue and expected sell-through → shortfall or surplus, the sell-through
   needed, and the average price needed on all sellable seats or on the seats not yet priced;
-- names on seats, with a People view of who sits where and a list.
+- names on seats, one per seat or one for a group; in the People view each name has its own light shade and
+  each seat's border shows its price category (dashed if reserved); drag names to move or swap them, or drag
+  a selected group to move it in shape; plus a list of who sits where;
+
+### Plan files
+
+A saved plan is yours to keep and to read with your own tools; the format is open.
+
+- **`hkperf-venue-seats/plan@0.2`**: plain JSON with `venue`, `configuration` (as passed from the viewer),
+  `categories` (`id`, `name`, `price`, `colour`), `target`, `sell_through_percent`, and `seats`: a map from
+  `"<part of house>|<row>|<seat>"` to `{category, reserved, name}` (only what is set). `category` is a category
+  `id` or `"blocked"`.
+- **`hkperf-venue-seats/plan-protected@0.1`**: the same plan, encrypted in the browser with a passphrase, which
+  the planner offers by default when a plan holds people's names. `kdf` gives PBKDF2-SHA-256 parameters
+  (`salt`, `iterations`), `cipher` gives AES-256-GCM with its `iv`, and `data` is the ciphertext (base64). To read
+  one outside the planner:
+
+  ```python
+  import base64, hashlib, json
+  from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
+  w = json.load(open("ktt-aud-plan-protected.json"))
+  key = hashlib.pbkdf2_hmac("sha256", b"your passphrase", base64.b64decode(w["kdf"]["salt"]), w["kdf"]["iterations"], dklen=32)
+  plan = json.loads(AESGCM(key).decrypt(base64.b64decode(w["cipher"]["iv"]), base64.b64decode(w["data"]), None))
+  ```
 
 ## Usage statistics
 

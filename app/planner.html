@@ -53,6 +53,11 @@
 .seat.reserved rect { stroke: var(--res); stroke-width: 2; stroke-dasharray: 3 1.6; }
 .seat.public rect { fill: color-mix(in srgb, var(--ok) 26%, var(--seat)); }
 .seat.reserved.status rect { fill: color-mix(in srgb, var(--res) 30%, var(--seat)); }
+/* People view: fill = the name's own light shade; border = the price category's colour (dashed if reserved) */
+#map.people .seat.named rect { fill: var(--grp); }
+#map.people .seat.catline rect { stroke: var(--catline); stroke-width: 2; }
+#map.people .seat.reserved rect { stroke: var(--catline, var(--res)); stroke-width: 2; stroke-dasharray: 3 1.6; }
+#map .seat.sel rect, #map.people .seat.sel rect { stroke: var(--acc); stroke-width: 2.6; stroke-dasharray: none; }
 .seat.drop-ok rect { stroke: var(--ok); stroke-width: 2.8; stroke-dasharray: none; }
 .seat.drop-bad rect { stroke: var(--bad); stroke-width: 2.8; stroke-dasharray: none; }
 .seat.named { cursor: grab; }
@@ -72,6 +77,9 @@
 .legend i.off { opacity: .3; border-style: dashed; }
 .legend i.pub { background: color-mix(in srgb, var(--ok) 26%, var(--seat)); }
 .legend i.resfill { background: color-mix(in srgb, var(--res) 30%, var(--seat)); border: 2px dashed var(--res); }
+.legend i.grpfill { background: linear-gradient(90deg, hsl(30 75% 86%) 50%, hsl(200 75% 86%) 50%); }
+.legend i.catline { border: 2px solid #f4a261; }
+.legend i.catdash { border: 2px dashed #f4a261; }
 .legend i.named { font-style: normal; font-size: 8px; font-weight: 700; line-height: 11px; text-align: center; color: var(--seat-ink); }
 .namebox-alt summary { font-size: 12px; color: var(--muted); cursor: pointer; margin-top: 8px; text-transform: none; letter-spacing: 0; font-weight: 400; }
 .marquee { fill: color-mix(in srgb, var(--acc) 12%, transparent); stroke: var(--acc); stroke-dasharray: 4 3; stroke-width: 1; pointer-events: none; }
@@ -100,6 +108,12 @@ dialog.consent::backdrop { background: rgb(0 0 0 / .45); }
 .consent .agree input { margin-top: 3px; accent-color: var(--acc); }
 .consent .actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 .gated { visibility: hidden; }
+dialog.small { max-width: 460px; }
+.small .field { color: var(--ink); font-size: 13px; }
+.small .opt { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; margin: 10px 0 4px; }
+.small .opt input { margin-top: 3px; accent-color: var(--acc); }
+.small .warn { color: var(--bad); font-size: 13px; margin: 8px 0 0; }
+.small .muted { color: var(--muted); font-size: 12.5px; margin: 4px 0 0 24px; }
 </style>
 </head>
 <body>
@@ -111,8 +125,9 @@ dialog.consent::backdrop { background: rgb(0 0 0 / .45); }
       <li><b>It runs entirely in your browser.</b> Nothing you enter here — price categories, prices, targets,
         people's names, which seats you choose — is sent anywhere or saved by this site. No cookies, no browser
         storage.</li>
-      <li><b>Your plan disappears when you close or reload this page</b>, unless you download it. A downloaded plan is
-        a file on your own device; you can open it here again later. Keep it as safe as the information in it.</li>
+      <li><b>Your plan disappears when you close or reload this page</b>, unless you save it. A saved plan is a file on
+        your own device that you can open here again later. You can protect it with a passphrase, or leave names out.
+        To share a plan, take a screen capture.</li>
       <li><b>Names are personal data.</b> Only add people's names you are entitled to use.</li>
       <li id="consent-stats"></li>
       <li><b>Estimates only.</b> The seat map is a schematic drawn from the seat data, not the venue's seat plan, and
@@ -125,6 +140,40 @@ dialog.consent::backdrop { background: rgb(0 0 0 / .45); }
       <button class="btn primary" id="accept" type="button" disabled>Open the planner</button>
     </div>
   </div>
+</dialog>
+
+<dialog class="consent small" id="savedlg" aria-labelledby="save-h">
+  <form class="in" method="dialog" id="saveform">
+    <h2 id="save-h">Save plan</h2>
+    <p class="sub">The file is saved on your device and contains your categories, prices and seat choices<span id="save-hasnames">,
+      and the names you entered</span>.</p>
+    <label class="opt"><input type="checkbox" id="protect"> <span><b>Protect with a passphrase</b> (encrypts the whole file)</span></label>
+    <div id="passfields">
+      <label class="field">Passphrase<input type="password" id="pass1" autocomplete="new-password" minlength="8"></label>
+      <label class="field">Repeat passphrase<input type="password" id="pass2" autocomplete="new-password"></label>
+      <p class="muted">Needed to reopen the file. It cannot be recovered if lost. Encryption happens in your browser
+        (AES-256-GCM with a key derived from the passphrase); the format is documented in the project's README.</p>
+    </div>
+    <label class="opt" id="nonames-row"><input type="checkbox" id="nonames"> <span>Leave out people's names</span></label>
+    <p class="warn" id="save-warn" hidden></p>
+    <div class="actions" style="margin-top:14px">
+      <button class="btn" value="cancel" type="submit" formnovalidate>Cancel</button>
+      <button class="btn primary" id="save-go" type="button">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="consent small" id="opendlg" aria-labelledby="open-h">
+  <form class="in" method="dialog">
+    <h2 id="open-h">Open protected plan</h2>
+    <p class="sub" id="open-file"></p>
+    <label class="field">Passphrase<input type="password" id="openpass" autocomplete="current-password"></label>
+    <p class="warn" id="open-warn" hidden></p>
+    <div class="actions" style="margin-top:14px">
+      <button class="btn" value="cancel" type="submit" formnovalidate>Cancel</button>
+      <button class="btn primary" id="open-go" type="button">Open</button>
+    </div>
+  </form>
 </dialog>
 
 <div id="app" class="gated">
@@ -168,14 +217,14 @@ dialog.consent::backdrop { background: rgb(0 0 0 / .45); }
       <div id="namebox"></div>
     </div>
     <div class="group">
-      <h3>Your plan file</h3>
+      <h3>Save and reopen</h3>
       <div class="files">
-        <button class="btn small" id="dl-json" type="button">Download plan (JSON)</button>
-        <button class="btn small" id="dl-csv" type="button">Download (CSV)</button>
-        <label class="btn small" for="upload">Open a plan file…</label>
+        <button class="btn small" id="dl-json" type="button">Save plan</button>
+        <label class="btn small" for="upload">Open a saved plan…</label>
         <input type="file" id="upload" accept="application/json,.json">
       </div>
-      <p class="help" id="filenote">Nothing is kept by this site; the file is saved on your device.</p>
+      <p class="help" id="filenote">Saves your work as a file on your device, for reopening here; the site keeps no copy.
+        Plans with names can be protected with a passphrase. To share a plan, take a screen capture of the map and figures.</p>
     </div>
   </aside>
 
@@ -186,7 +235,7 @@ dialog.consent::backdrop { background: rgb(0 0 0 / .45); }
         <button type="button" id="view-status" aria-pressed="false">Public / Reserved</button>
         <button type="button" id="view-people" aria-pressed="false">People</button>
       </div>
-      <button id="zoom" type="button">Actual size</button>
+      <div id="zoomctl" role="group" aria-label="Zoom"></div>
     </div>
     <div class="legend" id="legend" aria-label="Legend"></div>
     <div id="map"></div>
@@ -262,7 +311,7 @@ for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo]]
 
 $("consent-stats").innerHTML = statsEnabled
   ? `<b>Anonymous usage statistics.</b> Like the rest of the site, this page's visits are counted, and once you agree,
-     which planner features are used (by name only, e.g. “category added”, “plan downloaded”), with GoatCounter on
+     which planner features are used (by name only, e.g. “category added”, “plan saved”), with GoatCounter on
      the site's own server: no cookies, no IP addresses kept, never anything you type or choose.
      <a class="privacy-link" href="#">Privacy and usage</a>`
   : `<b>No usage statistics</b> are collected on this page at present.`;
@@ -353,7 +402,7 @@ function draw() {
     g.dataset.label = g.querySelector("text").textContent;
     if (!off) seatsByKey.set(k, { zone: d.zone, row: d.row, seat: d.seat, mark: d.mark, g });
   }
-  $("map").replaceChildren(svg);
+  showMap($("map"), svg);
   wireMap(svg);
 }
 
@@ -368,6 +417,11 @@ function paint() {
     g.classList.toggle("status", view === "status");
     g.classList.toggle("public", view === "status" && a !== "blocked" && !reserved.has(k));
     g.classList.toggle("named", !!name && view === "people");
+    // People view: the name's shade as fill, the category's colour as border
+    const line = view === "people" ? (c ? c.colour : a === "blocked" ? "var(--x)" : "") : "";
+    g.classList.toggle("catline", !!line);
+    line ? g.style.setProperty("--catline", line) : g.style.removeProperty("--catline");
+    view === "people" && name ? g.style.setProperty("--grp", groupShade(name)) : g.style.removeProperty("--grp");
     const rect = g.querySelector("rect"), text = g.querySelector("text");
     if (c && view === "price") { g.style.setProperty("--cat", c.colour); rect.style.fill = c.colour; }
     else { g.style.removeProperty("--cat"); rect.style.fill = ""; }
@@ -380,6 +434,17 @@ function paint() {
     }
   }
 }
+
+// A light shade for each name, stable while you edit (derived from the name itself).
+function groupShade(name) {
+  let h = 2166136261;
+  for (const ch of name) h = Math.imul(h ^ ch.codePointAt(0), 16777619) >>> 0;
+  const hue = (h % 36) * 10, dark = isDark();
+  return dark ? `hsl(${hue} 38% ${26 + (h >> 8) % 3 * 4}%)` : `hsl(${hue} 78% ${84 + (h >> 8) % 3 * 3}%)`;
+}
+const isDark = () => document.documentElement.dataset.theme === "dark" ||
+  (document.documentElement.dataset.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => seatsByKey.size && paint());
 
 function initials(name) {
   const parts = name.trim().split(/\s+/);
@@ -638,11 +703,12 @@ const LEGENDS = {
     ["res", "Reserved / Not for Public (border)"], ["sel", "Selected"], ["off", "Not in this configuration"]],
   status: [["pub", "Public (for sale)"], ["resfill", "Reserved / Not for Public"], ["block", "Blocked / Not for Sale"],
     ["sel", "Selected"], ["off", "Not in this configuration"]],
-  people: [["named", "Named seat (initials); drag to move"], ["", "No name"], ["res", "Reserved / Not for Public (border)"],
-    ["sel", "Selected"], ["off", "Not in this configuration"]],
+  people: [["grpfill named", "Fill: one light shade per name (group); drag to move"], ["catline", "Border: price category colour"],
+    ["catdash", "Dashed border: reserved"], ["", "No name, not priced"], ["sel", "Selected"], ["off", "Not in this configuration"]],
 };
 function legend() {
-  $("legend").innerHTML = LEGENDS[view].map(([c, l]) => `<span><i class="${c}">${c === "named" ? "AB" : ""}</i>${esc(l)}</span>`).join("");
+  $("legend").innerHTML = LEGENDS[view].map(([c, l]) => `<span><i class="${c}">${c.includes("named") ? "AB" : ""}</i>${esc(l)}</span>`).join("");
+  $("map").classList.toggle("people", view === "people");
 }
 for (const [v, id] of Object.entries(VIEWS))
   $(id).onclick = () => {
@@ -757,10 +823,10 @@ function render() {
 
 // ---------------------------------------------------------------- plan files (on the visitor's own device)
 
-function planJSON() {
+function planJSON({ withNames = true } = {}) {
   const seats = {};
   for (const k of seatsByKey.keys()) {
-    const a = assign.get(k), n = names.get(k);
+    const a = assign.get(k), n = withNames ? names.get(k) : null;
     if (a || n || reserved.has(k)) seats[k] = { ...(a ? { category: a } : {}), ...(reserved.has(k) ? { reserved: true } : {}), ...(n ? { name: n } : {}) };
   }
   return {
@@ -777,29 +843,99 @@ function planJSON() {
   };
 }
 
-function planCSV() {
-  const byId = Object.fromEntries(cats.map(c => [c.id, c]));
-  const cols = ["venue_id", "part_of_house", "row", "seat", "category", "price", "reserved", "name"];
-  const lines = [cols.join(",")];
-  for (const z of doc.zones) for (const r of z.rows) for (const s of seatsOf(r)) {
-    const k = keyOf(z.name, r.row, s);
-    if (!seatsByKey.has(k)) continue;
-    const a = assign.get(k), c = byId[a];
-    lines.push([doc.venue.id, z.name, r.row, s, a === "blocked" ? "Blocked / Not for Sale" : c?.name || "", c?.price || "",
-      reserved.has(k) ? 1 : 0, names.get(k) || ""].map(csvCell).join(","));
-  }
-  return "﻿" + lines.join("\r\n") + "\r\n";
-}
-const csvCell = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
-
 function save(blob, name) {
   const url = URL.createObjectURL(blob);
   const a = Object.assign(document.createElement("a"), { href: url, download: name });
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-$("dl-json").onclick = () => { save(new Blob([JSON.stringify(planJSON(), null, 1)], { type: "application/json" }), `${doc.venue.id}-plan.json`); track("planner-download-json"); };
-$("dl-csv").onclick = () => { save(new Blob([planCSV()], { type: "text/csv" }), `${doc.venue.id}-plan.csv`); track("planner-download-csv"); };
+// ---- saving: optionally encrypted with a passphrase, optionally without names
+const PLAN_SCHEMAS = ["hkperf-venue-seats/plan@0.1", "hkperf-venue-seats/plan@0.2"];
+const LOCKED_SCHEMA = "hkperf-venue-seats/plan-protected@0.1";
+const PBKDF2_ITERATIONS = 600000;
+
+function b64(buf) {
+  const u = new Uint8Array(buf); let str = "";
+  for (let i = 0; i < u.length; i += 0x8000) str += String.fromCharCode(...u.subarray(i, i + 0x8000));
+  return btoa(str);
+}
+const unb64 = str => Uint8Array.from(atob(str), c => c.charCodeAt(0));
+async function passKey(pass, salt, iterations) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", hash: "SHA-256", salt, iterations }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+async function lockPlan(plan, pass) {
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await passKey(pass, salt, PBKDF2_ITERATIONS);
+  const data = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(JSON.stringify(plan)));
+  return {
+    schema: LOCKED_SCHEMA,
+    note: "A planner file protected with a passphrase. Open it in the HK Venue Seats planner, or decrypt it yourself: " +
+      "key = PBKDF2-SHA-256(passphrase, salt, iterations) to 256 bits; plaintext = AES-GCM(key, iv).decrypt(data) = the plan as JSON.",
+    venue: { id: plan.venue.id, name_en: plan.venue.name_en },
+    kdf: { name: "PBKDF2", hash: "SHA-256", iterations: PBKDF2_ITERATIONS, salt: b64(salt) },
+    cipher: { name: "AES-GCM", length: 256, iv: b64(iv) },
+    data: b64(data),
+  };
+}
+async function unlockPlan(w, pass) {
+  const key = await passKey(pass, unb64(w.kdf.salt), w.kdf.iterations);
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(w.cipher.iv) }, key, unb64(w.data));
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+
+function saveState() {
+  const has = names.size > 0, protect = $("protect").checked, nonames = $("nonames").checked;
+  $("passfields").hidden = !protect;
+  $("nonames-row").hidden = !has;
+  $("save-hasnames").hidden = !has || nonames;
+  const w = $("save-warn");
+  const p1 = $("pass1").value, p2 = $("pass2").value;
+  w.hidden = true;
+  if (has && !protect && !nonames) { w.hidden = false; w.textContent = `The ${fmt(names.size)} names will be readable by anyone who opens the file.`; }
+  if (protect && p1 && p1.length < 8) { w.hidden = false; w.textContent = "Use a passphrase of at least 8 characters."; }
+  else if (protect && p2 && p1 !== p2) { w.hidden = false; w.textContent = "The two passphrases do not match."; }
+  $("save-go").disabled = protect && (p1.length < 8 || p1 !== p2);
+}
+$("dl-json").onclick = () => {
+  $("protect").checked = names.size > 0;          // on by default when the plan holds names
+  $("nonames").checked = false;
+  $("pass1").value = $("pass2").value = "";
+  saveState();
+  $("savedlg").showModal();
+};
+for (const id of ["protect", "nonames", "pass1", "pass2"]) $(id).addEventListener("input", saveState);
+$("save-go").onclick = async () => {
+  const protect = $("protect").checked, withNames = !$("nonames").checked;
+  const plan = planJSON({ withNames });
+  $("save-go").disabled = true;
+  try {
+    const out = protect ? await lockPlan(plan, $("pass1").value) : plan;
+    save(new Blob([JSON.stringify(out, null, 1)], { type: "application/json" }), `${doc.venue.id}-plan${protect ? "-protected" : ""}.json`);
+    track(protect ? "planner-plan-saved-protected" : withNames && names.size ? "planner-plan-saved-with-names" : "planner-plan-saved");
+    $("pass1").value = $("pass2").value = "";
+    $("savedlg").close();
+  } finally { $("save-go").disabled = false; }
+};
+
+// Ask for the passphrase of a protected file; resolves to the plan, or null if cancelled.
+function askPass(w, fileName) {
+  return new Promise(resolve => {
+    const dlg = $("opendlg");
+    $("open-file").textContent = `${fileName} is protected with a passphrase${w.venue?.name_en ? ` (${w.venue.name_en})` : ""}.`;
+    $("openpass").value = ""; $("open-warn").hidden = true;
+    const go = async () => {
+      $("open-go").disabled = true;
+      try { const plan = await unlockPlan(w, $("openpass").value); $("openpass").value = ""; dlg.close(); resolve(plan); }
+      catch (e) { $("open-warn").hidden = false; $("open-warn").textContent = "That passphrase does not open this file."; }
+      finally { $("open-go").disabled = false; }
+    };
+    $("open-go").onclick = go;
+    $("openpass").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); go(); } };
+    dlg.onclose = () => { $("openpass").value = ""; resolve(null); };
+    dlg.showModal();
+  });
+}
 
 $("upload").onchange = async () => {
   const file = $("upload").files[0];
@@ -807,8 +943,12 @@ $("upload").onchange = async () => {
   if (!file) return;
   const note = $("filenote");
   try {
-    const p = JSON.parse(await file.text());
-    if (!["hkperf-venue-seats/plan@0.1", "hkperf-venue-seats/plan@0.2"].includes(p.schema)) throw new Error("this is not a planner file");
+    let p = JSON.parse(await file.text());
+    if (p.schema === LOCKED_SCHEMA) {
+      p = await askPass(p, file.name);
+      if (!p) return;                              // cancelled
+    }
+    if (!PLAN_SCHEMAS.includes(p.schema)) throw new Error("this is not a planner file");
     if (p.venue?.id !== doc.venue.id) {
       // the plan belongs to another venue: reopen the planner there, carrying nothing but the configuration
       throw new Error(`this plan is for ${p.venue?.name_en || p.venue?.id}; open that venue in the planner first`);
@@ -858,10 +998,7 @@ $("map").addEventListener("pointermove", e => {
   tip.style.top = (e.clientY + 14 + r.height > innerHeight ? e.clientY - r.height - 10 : e.clientY + 14) + "px";
 });
 $("map").addEventListener("pointerleave", () => tip.style.display = "none");
-$("zoom").onclick = () => {
-  const z = $("map").classList.toggle("zoomed");
-  $("zoom").textContent = z ? "Fit to width" : "Actual size";
-};
+zoomControls($("zoomctl"));
 </script>
 </body>
 </html>
