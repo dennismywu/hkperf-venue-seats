@@ -51,7 +51,15 @@ finish({
                          address_zh="香港新界葵涌興寧路12號", district="Kwai Tsing", address_name="Kwai Tsing Theatre"),
     "layout": {
         "seat_1_side": "right",
-        "note": "Drawn with the stage at the top. Seat 1 is at the right-hand end of each row, and blocks are listed from that side. No row I in the stalls; no row BI in the balcony.",
+        "note": "Drawn with the stage at the top. Seat 1 is at the right-hand end of each row, and blocks are listed from that side. No row I in the stalls; no row BI in the balcony. Rows BA-BD are pairs of small boxes on the side walls, between the stalls and the balcony: each box's seats face the stage, numbered from the right (1-2 on the right wall, 3-4 on the left).",
+        "banks": [
+            {"id": "stalls", "side": "front", "rows": [r["row"] for r in stalls], "seat_1": "right"},
+            {"id": "boxes-right", "side": "right", "rows": [{"row": lab, "block": 1} for lab in side], "rows_run": "across",
+             "seat_1": "right", "after": "stalls"},
+            {"id": "boxes-left", "side": "left", "rows": [{"row": lab, "block": 2} for lab in side], "rows_run": "across",
+             "seat_1": "right", "after": "stalls"},
+            {"id": "balcony", "side": "front", "rows": [r["row"] for r in balcony if r["row"] not in side], "seat_1": "right"},
+        ],
     },
     "marks": {
         "W": "Seat suitable for audience on wheelchair (box prints W, no number)",

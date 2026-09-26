@@ -63,7 +63,7 @@ def row(label, *blocks, marks=None, inferred=None, note=None):
     return r
 
 
-BANK_SIDES = {"front": {"left", "right"}, "left": {"downstage", "upstage"}, "right": {"downstage", "upstage"}}
+BANK_SIDES = {"front", "left", "right"}
 BANK_ALIGN = {"downstage", "upstage", "house", "room"}
 
 
@@ -88,11 +88,18 @@ def check_banks(doc):
     if not banks:
         return
     rows = {r["row"]: r for z in doc["zones"] for r in z["rows"]}
+    fronts = {b["id"] for b in banks if b["side"] == "front"}
     placed = {}
     for b in banks:
         assert b["side"] in BANK_SIDES, f"bank {b['id']}: side {b['side']!r}"
-        assert b.get("seat_1", "left" if b["side"] == "front" else "downstage") in BANK_SIDES[b["side"]], f"bank {b['id']}: seat_1"
-        assert b["side"] == "front" or b.get("align", "downstage") in BANK_ALIGN, f"bank {b['id']}: align"
+        run = b.get("rows_run", "along")
+        assert b["side"] == "front" or run in ("along", "across"), f"bank {b['id']}: rows_run {run!r}"
+        level = b["side"] == "front" or run == "across"           # rows drawn level, numbered left/right
+        assert b.get("seat_1", "left" if level else "downstage") in ({"left", "right"} if level else {"downstage", "upstage"}), \
+            f"bank {b['id']}: seat_1 {b.get('seat_1')!r}"
+        assert not b.get("in_line") or (b["side"] != "front" and run == "along"), f"bank {b['id']}: in_line needs upright side rows"
+        assert "after" not in b or (b["side"] != "front" and b["after"] in fronts), f"bank {b['id']}: after {b.get('after')!r}"
+        assert b["side"] == "front" or "after" in b or b.get("align", "downstage") in BANK_ALIGN, f"bank {b['id']}: align"
         for ref in b["rows"]:
             name = ref if isinstance(ref, str) else ref["row"]
             assert name in rows, f"bank {b['id']}: no row {name}"

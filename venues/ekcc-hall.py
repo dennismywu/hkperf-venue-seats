@@ -94,7 +94,15 @@ doc = finish({
                                          "note": "Not in LCSD's venue.json; address as printed on the technical sheet."}),
     "layout": {
         "seat_1_side": "left",
-        "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. The stalls print two areas, Front Stalls (A-E) and Rear Stalls (F-X). Numbering skips where blocks are apart (e.g. 11 and 32-38 in rows R-W; 38-41 in BD-BE). No rows I, BI.",
+        "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. The stalls print two areas, Front Stalls (A-E) and Rear Stalls (F-X). Numbering skips where blocks are apart (e.g. 11 and 32-38 in rows R-W; 38-41 in BD-BE). No rows I, BI. Rows BA-BC are short runs of seats along the side walls, between the stalls and the balcony: 1-5 on the left wall, numbered from the front; 50-54 on the right wall, numbered towards the front.",
+        "banks": [
+            {"id": "stalls", "side": "front", "rows": [r["row"] for r in front + rear], "seat_1": "left"},
+            {"id": "wall-left", "side": "left", "rows": [{"row": lab, "block": 1} for lab in ["BA", "BB", "BC"]],
+             "in_line": True, "seat_1": "upstage", "after": "stalls"},
+            {"id": "wall-right", "side": "right", "rows": [{"row": lab, "block": 2} for lab in ["BA", "BB", "BC"]],
+             "in_line": True, "seat_1": "downstage", "after": "stalls"},
+            {"id": "balcony", "side": "front", "rows": [r["row"] for r in balcony if r["row"] not in ("BA", "BB", "BC")], "seat_1": "left"},
+        ],
     },
     "marks": {
         "W": "Seat suitable for audience on wheel chairs (box prints W, no number)",
