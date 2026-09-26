@@ -177,6 +177,18 @@ A list of facts is lower risk, but not risk-free under Hong Kong law. The intend
 launch is to ask LCSD (enquiries@lcsd.gov.hk) for permission, or for them to host the data themselves.
 This is not legal advice.
 
+## Contributing
+
+- **Corrections**: open an issue with the
+  [seat data correction](https://github.com/dennismywu/hkperf-venue-seats/issues/new?template=correction.yml)
+  form: the venue, the row and seats, and a link to the operator's published plan.
+- **New venues**: use [suggest a venue](https://github.com/dennismywu/hkperf-venue-seats/issues/new?template=venue.yml),
+  with a link to the seating plan the operator publishes.
+- **Code and data**: pull requests are welcome; see [How a venue is added](#how-a-venue-is-added).
+
+Every contribution follows the [sources and rules](#sources-and-rules) above: the operator's own published
+material only, never ticketing data or seat maps drawn by others.
+
 ## Project page
 
 `site/` holds the project page for https://code.denniswu.org/hkperf-venue-seats/, with a public copy of

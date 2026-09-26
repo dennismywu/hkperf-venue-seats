@@ -1,0 +1,70 @@
+name: Seat data correction
+description: A row, seat number, mark or total that does not match the venue's published seating plan.
+title: "[Correction] <venue id>: <row or part of house>"
+labels: ["correction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for checking the data. Corrections are made only from the venue operator's own published
+        material: the seating plan, or a capacity statement on the operator's own pages.
+        Please do not send ticketing or box-office data, or seat maps drawn by others.
+  - type: dropdown
+    id: venue
+    attributes:
+      label: Venue
+      options:
+        - ktt-aud · Kwai Tsing Theatre Auditorium
+        - ylt-aud · Yuen Long Theatre Auditorium
+        - hkch-th · Hong Kong City Hall Theatre
+        - stth-aud · Sha Tin Town Hall Auditorium
+        - ekcc-hall · East Kowloon Cultural Centre, The Hall
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is wrong
+      multiple: true
+      options:
+        - Missing or extra seat
+        - Seat numbering
+        - Row label or row order
+        - Mark (wheelchair W, management X, restricted sightline R, limited legroom L)
+        - Orchestra pit rows or seats lost
+        - Part of house or its total
+        - Address or coordinates
+        - The venue has published a revised plan
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Part of house, row and seat numbers.
+      placeholder: "Stalls, row K, seats 12–14"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What the data says, and what the plan shows
+      description: A screenshot of the viewer is welcome; please do not attach copies of the plan itself, a link is enough.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: Link to the plan or page published by the venue operator (LCSD or the venue), with its date or version if shown.
+      placeholder: "https://www.lcsd.gov.hk/…"
+    validations:
+      required: true
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Source rules
+      options:
+        - label: The source is the venue operator's own published material, not ticketing data or a seat map drawn by others.
+          required: true

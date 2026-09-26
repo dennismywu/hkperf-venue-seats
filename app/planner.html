@@ -318,7 +318,7 @@ let seatsByKey = new Map();       // seat key -> {zone, row, seat, mark, g}
 
 if (CONFIG.repo) $("foot-planner-licence").href = `${CONFIG.repo}/blob/${CONFIG.branch || "main"}/LICENSE-PLANNER.md`;
 document.querySelectorAll(".byline-link").forEach(a => { if (CONFIG.site) a.href = CONFIG.site; });
-for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo], ["foot-issues", CONFIG.repo && CONFIG.repo + "/issues"]]) {
+for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo], ["foot-issues", CONFIG.repo && CONFIG.repo + "/issues/new?template=correction.yml"]]) {
   const a = document.getElementById(id);
   url ? (a.href = url) : (a.hidden = true);
 }
@@ -362,6 +362,7 @@ async function init() {
   $("title").textContent = `Planner · ${doc.venue.name_en}`;
   $("subtitle").textContent = doc.venue.name_zh;
   document.title = `Planner · ${doc.venue.name_en}`;
+  if (CONFIG.repo) $("foot-issues").href = `${CONFIG.repo}/issues/new?template=correction.yml&title=${encodeURIComponent(`[Correction] ${doc.venue.id}: `)}`;
   $("credit-venue").innerHTML = `${esc(doc.source.credit)} Seating plan for this venue: <a href="${esc(doc.source.url)}" rel="noopener">${esc(doc.source.url)}</a>.`;
   $("back").href = `index.html?venue=${encodeURIComponent(doc.venue.id)}#c=${encodeConfig({ venue: doc.venue.id, ...cfg })}`;
   $("decline").href = $("back").href;

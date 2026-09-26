@@ -179,7 +179,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
 const DATA = "../data/";
 const CONFIG = window.SEATS_CONFIG || {};
 document.querySelectorAll(".byline-link").forEach(a => { if (CONFIG.site) a.href = CONFIG.site; });
-for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo], ["foot-issues", CONFIG.repo && CONFIG.repo + "/issues"]]) {
+for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo], ["foot-issues", CONFIG.repo && CONFIG.repo + "/issues/new?template=correction.yml"]]) {
   const a = document.getElementById(id);
   url ? (a.href = url) : (a.hidden = true);
 }
@@ -230,6 +230,7 @@ async function load(v) {
   sources();
   downloads();
   $("layoutnote").textContent = doc.layout?.note || "";
+  if (CONFIG.repo) $("foot-issues").href = `${CONFIG.repo}/issues/new?template=correction.yml&title=${encodeURIComponent(`[Correction] ${doc.venue.id}: `)}`;
   $("credit-venue").innerHTML = `${esc(doc.source.credit)} Seating plan for this venue: ${link(doc.source.url)}.`;
   update(false);
 }

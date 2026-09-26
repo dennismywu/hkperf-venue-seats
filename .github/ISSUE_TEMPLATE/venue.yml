@@ -1,0 +1,50 @@
+name: Suggest a venue
+description: A Hong Kong performing-arts venue to add, with the seating plan its operator publishes.
+title: "[Venue] <venue name>"
+labels: ["venue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A venue can be added when its operator publishes a seating plan that shows rows and seat numbers.
+        Only the operator's own published material is used: never ticketing or box-office data, and never
+        seat maps drawn by others.
+  - type: input
+    id: name
+    attributes:
+      label: Venue
+      description: English and Chinese names, and the hall if the venue has several.
+      placeholder: "Tsuen Wan Town Hall, Auditorium · 荃灣大會堂 演奏廳"
+    validations:
+      required: true
+  - type: input
+    id: operator
+    attributes:
+      label: Operator
+      placeholder: "Leisure and Cultural Services Department (LCSD)"
+    validations:
+      required: true
+  - type: input
+    id: plan
+    attributes:
+      label: Seating plan
+      description: Link to the seating plan as the operator publishes it (PDF or page).
+    validations:
+      required: true
+  - type: textarea
+    id: capacity
+    attributes:
+      label: Capacity statements (optional)
+      description: Links to the operator's own pages or technical sheets that state the capacity, orchestra-pit options or seats lost.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes (optional)
+      description: Layouts, pits, standing places or anything else worth knowing.
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Source rules
+      options:
+        - label: The plan is published by the venue operator, not taken from a ticketing site or drawn by others.
+          required: true
