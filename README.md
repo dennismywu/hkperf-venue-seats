@@ -2,18 +2,18 @@
 
 Open, structured seat lists for Hong Kong performing-arts venues, and a viewer to explore them: every
 row and seat number, the marks the venue prints (wheelchair spaces, management seats, restricted
-sightline, limited legroom), and seat counts for each layout, such as with the orchestra pit in use.
+sightline, limited legroom), and seat counts for each configuration, such as with the orchestra pit in use.
 
 It is for anyone planning a performance in these halls: promoters, ensembles, students, box-office
 and front-of-house teams.
 
 ## Venues
 
-| Venue | Seats (printed) | Areas | With orchestra pit |
+| Venue | Seats (printed) | Parts of house | With orchestra pit |
 |---|---|---|---|
 | Kwai Tsing Theatre Auditorium (`ktt-aud`) | 899 | Stalls 625 · Balcony 274 | 833 (rows A–C) |
 | Yuen Long Theatre Auditorium (`ylt-aud`) | 923 | Stalls 734 · Balcony 189 | small pit 888 (A–B) · large pit 839 (A–D) |
-| Hong Kong City Hall Theatre (`hkch-th`) | 463 + 10 standing | one area | pit formed from forestage traps; no seats lost |
+| Hong Kong City Hall Theatre (`hkch-th`) | 463 + 10 standing | single | pit formed from forestage traps; no seats lost |
 | Sha Tin Town Hall Auditorium (`stth-aud`) | 1,372 | Stalls 589 · Upper Stalls 443 · Balcony 340 | 1,299 (A–B) |
 | East Kowloon Cultural Centre, The Hall (`ekcc-hall`) | 1,200 | Stalls 716 · Balcony 484 | small pit 1,126 (A–C) · large pit 1,063 (A–E) |
 
@@ -21,7 +21,7 @@ Pit rows are inferred: LCSD states the seats lost, not the rows. Each file says 
 
 ## What the data is, and what it is not
 
-- **It is** a list of facts about each hall: its areas, the rows in each area, the seat numbers in each
+- **It is** a list of facts about each hall: its parts of house, the rows in each, the seat numbers in each
   row (split into blocks where the row has aisles), the marks the plan prints, and the totals LCSD
   publishes. Every count is checked against those totals.
 - **It is not** a drawing. There are **no coordinates for seats, no background images and no copy of any
@@ -32,10 +32,13 @@ Pit rows are inferred: LCSD states the seats lost, not the rows. Each file says 
 `app/index.html` loads `data/*.json` and runs entirely in the browser. For each venue it shows:
 
 - a schematic of every seat, with its marks;
-- a layout panel: orchestra pit options, which seat types to count, which areas are open, standing places;
-- key figures that follow the layout, compared with LCSD's own figure for it;
+- a configuration panel: orchestra pit options, which seat types to count, which parts of house are open,
+  standing places; each option shows the seats it would add (+) or remove (−), and outlines them on the map;
+- key figures that follow the configuration, compared with LCSD's own figure for it;
 - facts from the plan, including the venue's address and coordinates, each with its source;
-- downloads: the seat list (linked to this repository) and a JSON file of the current layout.
+- downloads: the seat list as JSON or CSV (linked to this repository), and the current configuration as
+  JSON or CSV;
+- credits, and a note on the map itself that it is a schematic, not the venue's seat plan.
 
 To run it locally, serve the repository root and open `/app/`:
 
@@ -47,7 +50,9 @@ Then visit http://localhost:8770/app/.
 
 ## Data format
 
-One file per venue in `data/`, listed in `data/index.json`. Schema `hkperf-venue-seats/seatlist@0.2`:
+One JSON file per venue in `data/`, listed in `data/index.json`, with a CSV beside it (one line per seat
+box: part of house, row, block, seat, number and its basis, marks, pit rows). Schema
+`hkperf-venue-seats/seatlist@0.2`:
 
 | Key | Holds |
 |---|---|
@@ -56,11 +61,11 @@ One file per venue in `data/`, listed in `data/index.json`. Schema `hkperf-venue
 | `location` | address, district, latitude and longitude, each with its source |
 | `layout` | which end seat 1 is at (`seat_1_side`) and notes on the numbering |
 | `marks` | the meaning of each mark letter: `W` wheelchair, `X` management, `R` restricted sightline, `L` limited legroom |
-| `printed_totals` | the totals printed on the plan, per area and overall |
+| `printed_totals` | the totals printed on the plan, per part of house and overall |
 | `orchestra_pits` | each pit option: rows removed (with basis and reasoning), seats removed, total, quoted source |
-| `zones` | areas → `rows` → `blocks` → `seats` (seat ids in number order, from seat 1's side) |
+| `zones` | parts of house → `rows` → `blocks` → `seats` (seat ids in number order, from seat 1's side) |
 | `references` | other LCSD documents that confirm a figure, with quotes |
-| `count_check` | the counts behind the check, per area |
+| `count_check` | the counts behind the check, per part of house |
 
 A row may also carry `marks` (seat id → one or more mark letters), `inferred_numbers` and a `note`.
 
@@ -70,7 +75,7 @@ printed neighbours fits exactly (e.g. `6 · X X · 9` → 7, 8); otherwise it st
 
 **How counts are checked.** On every plan so far, the printed total equals the boxes drawn minus the
 management seats. Wheelchair, restricted and limited-legroom seats are counted. This rule is our reading;
-the build fails if any area stops matching it.
+the build fails if any part of house stops matching it.
 
 ## How a venue is added
 
@@ -78,8 +83,8 @@ the build fails if any area stops matching it.
 2. `python tools/seatplan.py extract <plan> --name <id> --out work/<id>` finds the seat boxes and reads
    the numbers into `work/<id>/` (git-ignored). `python tools/seatplan.py serve work` opens a review page.
    Scanned or low-resolution plans are read by eye from zoomed crops.
-3. Write `venues/<id>.py` with the checked facts. `venues/common.py` checks every area against the
-   printed totals and every pit against LCSD's stated figure, then writes `data/<id>.json`.
+3. Write `venues/<id>.py` with the checked facts. `venues/common.py` checks every part of house against
+   the printed totals and every pit against LCSD's stated figure, then writes `data/<id>.json` and `.csv`.
 4. Add the venue to `data/index.json`.
 5. `python tools/check_locations.py` confirms each address and coordinate against LCSD's open data.
 

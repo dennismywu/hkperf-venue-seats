@@ -4,6 +4,7 @@ A venue script holds only facts read from LCSD sources. finish() checks them and
   - each zone: boxes on the plan minus management seats (X) = the printed zone total
   - each orchestra pit: seats in its rows (minus X) = the stated loss, and the total follows
 """
+import csv
 import json
 from pathlib import Path
 
@@ -105,7 +106,43 @@ def finish(doc):
     with open(out, "w") as f:
         json.dump(doc, f, ensure_ascii=False, indent=1)
     print(f"wrote {out.relative_to(DATA.parent)}")
+    write_csv(doc, out.with_suffix(".csv"))
+    print(f"wrote {out.with_suffix('.csv').relative_to(DATA.parent)}")
     print(json.dumps(check, indent=1))
     for pit in doc.get("orchestra_pits", []):
         print(f"{pit['name']}: rows {', '.join(pit['rows_removed'])} -> -{pit['seats_removed']} = {pit['total_with_pit']}")
     return doc
+
+
+CSV_COLUMNS = ["venue_id", "part_of_house", "part_of_house_zh", "row", "block", "block_area", "seat",
+               "seat_number", "number_basis", "marks", "wheelchair", "management", "restricted_sightline",
+               "limited_legroom", "orchestra_pits"]
+
+
+def csv_rows(doc):
+    """One record per seat box, in the order of the JSON (the viewer builds its CSV the same way)."""
+    pits = doc.get("orchestra_pits", [])
+    for z in doc["zones"]:
+        for r in z["rows"]:
+            marks = r.get("marks", {})
+            for bi, b in enumerate(r["blocks"], 1):
+                for s in b["seats"]:
+                    m = marks.get(s, "")
+                    inferred = r.get("inferred_numbers", {}).get(s)
+                    number, basis = (s, "printed") if s.isdigit() else (inferred, "inferred") if inferred else ("", "none")
+                    yield {
+                        "venue_id": doc["venue"]["id"], "part_of_house": z["name"], "part_of_house_zh": z.get("name_zh", ""),
+                        "row": r["row"], "block": bi, "block_area": b.get("area") or b.get("side") or "", "seat": s,
+                        "seat_number": number, "number_basis": basis, "marks": m,
+                        "wheelchair": int("W" in m), "management": int("X" in m),
+                        "restricted_sightline": int("R" in m), "limited_legroom": int("L" in m),
+                        "orchestra_pits": "; ".join(p["name"] for p in pits if r["row"] in p["rows_removed"]),
+                    }
+
+
+def write_csv(doc, path):
+    # utf-8 with a byte-order mark, so spreadsheet apps read the Chinese names correctly
+    with open(path, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+        w.writeheader()
+        w.writerows(csv_rows(doc))

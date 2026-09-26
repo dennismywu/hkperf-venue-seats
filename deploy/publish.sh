@@ -9,4 +9,5 @@ cd "$(dirname "$0")/.."
 path="${DEPLOY_PATH:-/var/www/code.denniswu.org/public/hkperf-venue-seats/}"
 
 deploy/build.sh
-rsync -av --delete --chmod=D755,F644 dist/hkperf-venue-seats/ "$DEPLOY_HOST:$path"
+# -rlpt: keep modes and times, not the local owner (macOS openrsync has no --chmod)
+rsync -rlptv --delete dist/hkperf-venue-seats/ "$DEPLOY_HOST:$path"

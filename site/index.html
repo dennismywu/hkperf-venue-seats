@@ -72,7 +72,7 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
     <h2 id="venues-h">Venues</h2>
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Venue</th><th class="num">Seats</th><th>Areas</th><th>With orchestra pit</th><th>Links</th></tr></thead>
+        <thead><tr><th>Venue</th><th class="num">Seats</th><th>Parts of House</th><th>With orchestra pit</th><th>Links</th></tr></thead>
         <tbody id="venues"><tr><td colspan="5" class="note">Loading…</td></tr></tbody>
       </table>
     </div>
@@ -83,13 +83,14 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
   <section aria-labelledby="what-h">
     <h2 id="what-h">What it is</h2>
     <div class="cols">
-      <div class="card"><h3>Facts, not drawings</h3><p>For each hall: its areas, rows, seat numbers in blocks,
+      <div class="card"><h3>Facts, not drawings</h3><p>For each hall: its parts of house, rows, seat numbers in blocks,
         and the marks the plan prints (wheelchair spaces, management seats, restricted sightline, limited
         legroom). No seat positions, images or copies of any plan.</p></div>
-      <div class="card"><h3>Checked against LCSD</h3><p>Every area is counted and must match the total LCSD prints;
+      <div class="card"><h3>Checked against LCSD</h3><p>Every part of house is counted and must match the total LCSD prints;
         every orchestra-pit option must match LCSD's stated seats lost. The build fails otherwise.</p></div>
-      <div class="card"><h3>A viewer for layouts</h3><p>Choose a pit, which seat types to count and which areas are
-        open. The key figures follow, next to LCSD's own figure. Download the seat list or your layout as JSON.</p></div>
+      <div class="card"><h3>A viewer for configurations</h3><p>Choose a pit, which seat types to count and which parts of
+        house are open; each option shows the seats it adds or removes. Download the seat list or your
+        configuration as JSON or CSV.</p></div>
     </div>
   </section>
 
@@ -109,8 +110,8 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
 
   <section aria-labelledby="use-h">
     <h2 id="use-h">Use the data</h2>
-    <p>Each venue is one JSON file (schema <code>hkperf-venue-seats/seatlist@0.2</code>), listed in
-      <code>data/index.json</code>. The format, the counting rule and how a venue is added are described in the
+    <p>Each venue is one JSON file (schema <code>hkperf-venue-seats/seatlist@0.2</code>) with a CSV
+      beside it (one line per seat), listed in <code>data/index.json</code>. The format, the counting rule and how a venue is added are described in the
       repository's <a id="readme-link" href="#" rel="noopener">README</a>.</p>
   </section>
 
@@ -141,10 +142,11 @@ async function venues() {
     const docs = await Promise.all(index.venues.map(v => fetch(`data/${v.file}`).then(r => r.json()).then(d => [v, d])));
     tbody.innerHTML = docs.map(([v, d]) => {
       const t = d.printed_totals;
-      const areas = d.zones.length > 1 ? d.zones.map(z => `${esc(z.name)} ${fmt(t[z.name])}`).join(" · ") : "one area";
+      const areas = d.zones.length > 1 ? d.zones.map(z => `${esc(z.name)} ${fmt(t[z.name])}`).join(" · ") : "single";
       const pits = (d.orchestra_pits || []).map(p => `${esc(p.name)}: ${fmt(p.total_with_pit)} <small>rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))} <span class="tag">inferred</span></small>`).join("") || `<small>no seats lost</small>`;
       const standing = d.standing?.places?.length ? `<small>+ ${d.standing.places.length} standing</small>` : "";
-      const git = repo ? `<a href="${esc(`${repo}/blob/${branch}/data/${v.file}`)}" rel="noopener">JSON</a>` : "";
+      const csv = v.file.replace(/\.json$/, ".csv");
+      const git = repo ? `<a href="${esc(`${repo}/blob/${branch}/data/${v.file}`)}" rel="noopener">JSON</a><a href="${esc(`${repo}/blob/${branch}/data/${csv}`)}" rel="noopener">CSV</a>` : "";
       return `<tr><td><b>${esc(d.venue.name_en)}</b><small>${esc(d.venue.name_zh)} · ${esc(d.location?.district || d.location?.address_en || "")}</small></td>` +
         `<td class="num">${fmt(t.Total)}${standing}</td><td>${areas}</td><td>${pits}</td>` +
         `<td class="links"><a href="viewer/?venue=${encodeURIComponent(v.id)}">View</a>${git}<a href="${esc(d.source.url)}" rel="noopener">Plan (LCSD)</a></td></tr>`;

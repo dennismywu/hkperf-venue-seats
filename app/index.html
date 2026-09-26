@@ -49,7 +49,7 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 @keyframes flash { from { opacity: .3; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .key.flash b { animation: none; } }
 
-.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 16px; padding-top: 16px; align-items: start; }
+.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; padding-top: 16px; align-items: start; }
 @media (max-width: 880px) { .layout { grid-template-columns: 1fr; } }
 @media (max-width: 600px) {
   /* one compact row that scrolls sideways, so the pinned strip stays short */
@@ -61,7 +61,7 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .card { scroll-margin-top: calc(var(--keys-h, 80px) + 12px); }
 .card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 0 0 12px; font-weight: 650; }
 
-/* layout panel */
+/* configuration panel */
 .controls { position: sticky; top: calc(var(--keys-h, 80px) + 12px); }
 @media (max-width: 880px) { .controls { position: static; } }
 .group { padding: 10px 0; border-top: 1px solid var(--line); }
@@ -71,6 +71,20 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .seg label { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 7px; cursor: pointer; font-size: 13px; }
 .seg label:has(input:checked) { border-color: var(--acc); background: var(--acc-bg); }
 .seg input { accent-color: var(--acc); margin: 0; }
+.delta { flex: none; min-width: 42px; text-align: center; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+  padding: 1px 6px; border-radius: 10px; border: 1px solid transparent; }
+.delta.gain { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); border-color: color-mix(in srgb, var(--ok) 40%, transparent); }
+.delta.lose { color: var(--bad); background: color-mix(in srgb, var(--bad) 10%, transparent); border-color: color-mix(in srgb, var(--bad) 35%, transparent); }
+.delta.none { color: var(--muted); border-color: var(--line); }
+.delta.here { color: var(--acc); border-color: var(--acc); }
+.opt .n { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; margin-left: auto; white-space: nowrap; }
+.key-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 12px; color: var(--muted); margin: -4px 0 10px; }
+.key-legend .delta { min-width: 0; }
+.seg label .rows { color: var(--muted); font-size: 12px; margin-left: auto; white-space: nowrap; }
+.seat.gain { opacity: 1; } .seat.gain rect { stroke: var(--ok); stroke-width: 2.2; stroke-dasharray: none; }
+.seat.lose rect { stroke: var(--bad); stroke-width: 2.2; }
+.standing.gain rect { stroke: var(--ok); stroke-width: 2.2; stroke-dasharray: none; }
+.standing.lose rect { stroke: var(--bad); stroke-width: 2.2; }
 .seg small, .opt small { color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .opt { display: flex; align-items: center; gap: 8px; padding: 5px 0; cursor: pointer; font-size: 13px; }
 .opt svg { flex: none; }
@@ -112,6 +126,10 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .zonelabel { fill: var(--ink); font-size: 13px; font-weight: 650; text-anchor: middle; }
 .zonelabel.off { fill: var(--muted); text-decoration: line-through; }
 .stage { fill: var(--bg); stroke: var(--line); }
+.disclaimer rect { fill: var(--bg); stroke: var(--line); }
+.disclaimer text { fill: var(--ink); font-size: 10px; }
+.disclaimer .lead { font-weight: 700; }
+.disclaimer a text { fill: var(--acc); text-decoration: underline; }
 .stagetext { fill: var(--muted); font-size: 11px; text-anchor: middle; dominant-baseline: central; letter-spacing: .1em; }
 .note { color: var(--muted); font-size: 12px; }
 
@@ -149,7 +167,11 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
 #tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); padding: 6px 9px; border-radius: 6px; font-size: 12px; max-width: 280px; display: none; z-index: 10; }
 #tip b { font-size: 13px; }
 #tip .off { color: color-mix(in srgb, var(--bg) 70%, var(--bad)); }
-footer { color: var(--muted); font-size: 12px; padding-bottom: 32px; }
+footer.site { border-top: 1px solid var(--line); margin-top: 8px; padding: 20px 0 36px; font-size: 13px; color: var(--muted); }
+footer.site h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; font-weight: 650; margin: 0 0 8px; }
+footer.site p { margin: 0 0 8px; max-width: 820px; }
+footer.site a { color: inherit; }
+footer.site .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
 .err { color: var(--bad); }
 </style>
 </head>
@@ -167,8 +189,10 @@ footer { color: var(--muted); font-size: 12px; padding-bottom: 32px; }
 </div>
 
 <main class="wrap layout">
-  <aside class="card controls" aria-labelledby="layout-h">
-    <h2 id="layout-h">Layout</h2>
+  <aside class="card controls" aria-labelledby="config-h">
+    <h2 id="config-h">Configuration</h2>
+    <div class="key-legend" aria-hidden="true">If switched:
+      <span class="delta gain">+n</span> adds seats <span class="delta lose">−n</span> removes seats</div>
     <div class="group" id="g-pit">
       <h3>Orchestra pit</h3>
       <div class="seg" role="radiogroup" aria-label="Orchestra pit" id="pitopts"></div>
@@ -178,7 +202,7 @@ footer { color: var(--muted); font-size: 12px; padding-bottom: 32px; }
       <div id="markopts"></div>
     </div>
     <div class="group" id="g-zones">
-      <h3>Areas open</h3>
+      <h3>Parts of House</h3>
       <div id="zoneopts"></div>
     </div>
     <div class="group" id="g-standing">
@@ -186,14 +210,14 @@ footer { color: var(--muted); font-size: 12px; padding-bottom: 32px; }
       <div id="standopt"></div>
     </div>
     <p class="hint" id="hint"></p>
-    <button class="reset" id="reset" type="button">Reset to the printed layout</button>
+    <button class="reset" id="reset" type="button">Reset to the printed configuration</button>
   </aside>
 
   <section class="card" aria-label="Seat map">
     <div class="tools">
       <div>
         <span class="swatch"><svg width="17" height="17" viewBox="-1 -1 17 17"><g class="seat"><rect x="0" y="0" width="15" height="15" rx="2"/></g></svg>Counted</span>
-        <span class="swatch"><svg width="17" height="17" viewBox="-1 -1 17 17"><g class="seat off"><rect x="0" y="0" width="15" height="15" rx="2"/></g></svg>Not counted in this layout</span>
+        <span class="swatch"><svg width="17" height="17" viewBox="-1 -1 17 17"><g class="seat off"><rect x="0" y="0" width="15" height="15" rx="2"/></g></svg>Not counted in this configuration</span>
       </div>
       <button id="zoom" type="button">Actual size</button>
     </div>
@@ -214,11 +238,14 @@ footer { color: var(--muted); font-size: 12px; padding-bottom: 32px; }
       <div class="dlrow">
         <div class="what"><b>Seat list (source data)</b><span id="dl-src-note">The published seat list for this venue, kept in the git repository.</span></div>
         <a class="btn primary" id="dl-src-git" href="#" rel="noopener">JSON on GitHub</a>
-        <button class="btn" id="dl-src" type="button">Download this copy</button>
+        <a class="btn" id="dl-src-git-csv" href="#" rel="noopener">CSV on GitHub</a>
+        <button class="btn" id="dl-src" type="button">Download JSON</button>
+        <button class="btn" id="dl-src-csv" type="button">Download CSV</button>
       </div>
       <div class="dlrow">
-        <div class="what"><b>Current layout</b><span id="dl-layout-note"></span></div>
-        <button class="btn primary" id="dl-layout" type="button">Download JSON</button>
+        <div class="what"><b>Current configuration</b><span id="dl-config-note"></span></div>
+        <button class="btn primary" id="dl-config" type="button">Download JSON</button>
+        <button class="btn" id="dl-config-csv" type="button">Download CSV</button>
       </div>
     </div>
   </section>
@@ -232,7 +259,21 @@ footer { color: var(--muted); font-size: 12px; padding-bottom: 32px; }
     <h2>Sources</h2>
     <ol class="sources" id="sources"></ol>
   </section>
-  <footer id="credit"></footer>
+  <footer class="site" aria-labelledby="credits-h">
+    <h2 id="credits-h">Credits</h2>
+    <p id="credit-venue"></p>
+    <p>Addresses and coordinates: open data published by LCSD on
+      <a href="https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural" rel="noopener">DATA.GOV.HK</a>.</p>
+    <p>HK Venue Seats is an independent project. It is not affiliated with or endorsed by LCSD. The seat map is a
+      schematic drawn from the seat list; it is not the venue's seat plan. Check with the venue before relying on it.</p>
+    <div class="meta">
+      <span>© 2026 Dennis Wu</span>
+      <span>Code: MIT</span>
+      <span>Seat lists: <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a> (this project's contribution)</span>
+      <a id="foot-site" href="#" rel="noopener">Project page</a>
+      <a id="foot-repo" href="#" rel="noopener">Source on GitHub</a>
+    </div>
+  </footer>
 </div>
 <div id="tip"></div>
 
@@ -240,6 +281,10 @@ footer { color: var(--muted); font-size: 12px; padding-bottom: 32px; }
 <script>
 const DATA = "../data/";
 const CONFIG = window.SEATS_CONFIG || {};
+for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo]]) {
+  const a = document.getElementById(id);
+  url ? (a.href = url) : (a.hidden = true);
+}
 const MARK_NAMES = { W: "Wheelchair spaces", X: "Management seats", R: "Restricted sightline", L: "Limited legroom" };
 const MARK_ONE = { W: "Wheelchair space", X: "Management seat", R: "Restricted sightline", L: "Limited legroom" };
 // The printed totals count wheelchair, restricted and limited-legroom seats and leave management seats out.
@@ -307,40 +352,71 @@ async function load(v) {
   sources();
   downloads();
   $("layoutnote").textContent = doc.layout?.note || "";
-  $("credit").textContent = `${doc.source.credit} This page draws a schematic from the seat list; it is not the venue's plan.`;
+  $("credit-venue").innerHTML = `${esc(doc.source.credit)} Seating plan for this venue: ${link(doc.source.url)}.`;
   update(false);
 }
 
 // ---------------------------------------------------------------- what counts
 
-function excluded(zone, row, mark) {
-  // Returns the reason a seat is left out of the current layout, or "" when it counts.
-  if (!state.zones[zone]) return `${zone} closed`;
-  const pit = doc.orchestra_pits?.[state.pit];
+function excluded(zone, row, mark, st = state) {
+  // Returns the reason a seat is left out of configuration st, or "" when it counts.
+  if (!st.zones[zone]) return `${zone} closed`;
+  const pit = doc.orchestra_pits?.[st.pit];
   if (pit?.rows_removed.includes(row)) return `${pit.name} in use`;
-  const off = letters(mark).find(m => !state.marks[m]);
+  const off = letters(mark).find(m => !st.marks[m]);
   if (off) return `${MARK_NAMES[off]} not counted`;
   return "";
 }
 
-function tally() {
+function tally(st = state) {
   const t = { total: 0, zones: {}, marks: { W: 0, X: 0, R: 0, L: 0 }, off: 0 };
   for (const z of doc.zones) {
     t.zones[z.name] = 0;
     for (const r of z.rows) for (const s of seatsOf(r)) {
       const m = markOf(r, s);
-      if (excluded(z.name, r.row, m)) { t.off++; continue; }
+      if (excluded(z.name, r.row, m, st)) { t.off++; continue; }
       t.total++; t.zones[z.name]++;
       for (const l of letters(m)) t.marks[l]++;
     }
   }
-  t.standing = state.standing ? (doc.standing?.places?.length || 0) : 0;
+  t.standing = st.standing ? (doc.standing?.places?.length || 0) : 0;
   return t;
 }
 
 const isDefault = () => JSON.stringify(state) === JSON.stringify(defaults(doc));
 
-// ---------------------------------------------------------------- layout panel
+function refreshEffects(t) {
+  for (const e of effects) {
+    const next = e.whatIf(), n = tally(next);
+    const d = e.unit ? n.standing - t.standing : n.total - t.total;
+    const same = JSON.stringify(next) === JSON.stringify(state);
+    e.badge.className = "delta " + (same ? "here" : d > 0 ? "gain" : d < 0 ? "lose" : "none");
+    e.badge.textContent = same ? "now" : d > 0 ? `+${fmt(d)}` : d < 0 ? `−${fmt(-d)}` : "0";
+    e.badge.title = same ? "Current choice" : d ? `Choosing this ${d > 0 ? "adds" : "removes"} ${fmt(Math.abs(d))}${e.unit || " seats"}` : "No change in seats";
+  }
+}
+
+// Outline on the map the seats a change would add (green) or remove (red); null clears.
+function preview(next) {
+  for (const g of document.querySelectorAll("#map .seat")) {
+    const d = g.dataset;
+    const now = !excluded(d.zone, d.row, d.mark), then = next && !excluded(d.zone, d.row, d.mark, next);
+    g.classList.toggle("gain", !!next && !now && then);
+    g.classList.toggle("lose", !!next && now && !then);
+  }
+  const sg = document.querySelector("#map .standing");
+  if (sg) {
+    sg.classList.toggle("gain", !!next && !state.standing && next.standing);
+    sg.classList.toggle("lose", !!next && state.standing && !next.standing);
+  }
+}
+
+// ---------------------------------------------------------------- configuration panel
+
+// Each option knows the configuration it would lead to; update() turns that into a +/- badge,
+// and hovering the option outlines the seats it would add or remove.
+let effects = [];
+const withChange = f => { const st = structuredClone(state); f(st); return st; };
 
 function glyph(mark) {
   const svg = el("svg", { width: S + 2, height: S + 2, viewBox: `-1 -1 ${S + 2} ${S + 2}`, "aria-hidden": "true" });
@@ -348,18 +424,36 @@ function glyph(mark) {
   return svg;
 }
 
-function switchRow(labelNodes, count, checked, onchange) {
+function badge() {
+  const b = document.createElement("span");
+  b.className = "delta";
+  return b;
+}
+
+function effect(lab, whatIf, unit = "") {
+  const b = badge();
+  lab.append(b);
+  effects.push({ lab, badge: b, whatIf, unit });
+  lab.addEventListener("pointerenter", () => preview(whatIf()));
+  lab.addEventListener("pointerleave", () => preview(null));
+  lab.addEventListener("focusin", () => preview(whatIf()));
+  lab.addEventListener("focusout", () => preview(null));
+}
+
+function switchRow(labelNodes, count, checked, onchange, whatIf, unit) {
   const lab = document.createElement("label");
   lab.className = "opt";
   const cb = document.createElement("input");
   cb.type = "checkbox"; cb.className = "switch"; cb.setAttribute("role", "switch"); cb.checked = checked;
-  cb.onchange = () => onchange(cb.checked);
-  lab.append(cb, ...labelNodes);
-  const sm = document.createElement("small"); sm.textContent = count; lab.append(sm);
+  cb.onchange = () => { onchange(cb.checked); preview(whatIf()); };
+  const n = document.createElement("span"); n.className = "n"; n.textContent = count;
+  lab.append(cb, ...labelNodes, n);
+  effect(lab, whatIf, unit);
   return lab;
 }
 
 function controls() {
+  effects = [];
   const all = doc.zones.flatMap(z => z.rows);
   const markCount = m => all.reduce((a, r) => a + Object.values(r.marks || {}).filter(x => x.includes(m)).length, 0);
 
@@ -367,28 +461,35 @@ function controls() {
   $("g-pit").hidden = !pits.length;
   $("pitopts").innerHTML = [{ name: "Not in use", i: -1 }, ...pits.map((p, i) => ({ ...p, i }))].map(p =>
     `<label><input type="radio" name="pit" value="${p.i}" ${p.i === state.pit ? "checked" : ""}> ${esc(p.name)}` +
-    `${p.i >= 0 ? `<small>rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))} · −${p.seats_removed}</small>` : ""}</label>`).join("");
-  $("pitopts").querySelectorAll("input").forEach(inp => inp.onchange = () => { state.pit = +inp.value; update(); });
+    `${p.i >= 0 ? `<span class="rows">rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))}</span>` : `<span class="rows"></span>`}</label>`).join("");
+  $("pitopts").querySelectorAll("label").forEach(lab => {
+    const inp = lab.querySelector("input"), i = +inp.value;
+    inp.onchange = () => { state.pit = i; update(); preview(null); };
+    effect(lab, () => withChange(st => { st.pit = i; }));
+  });
 
   const marks = $("markopts");
   marks.replaceChildren();
   for (const m of Object.keys(doc.marks || {}))
-    marks.append(switchRow([glyph(m), MARK_NAMES[m] || m], markCount(m), state.marks[m], on => { state.marks[m] = on; update(); }));
+    marks.append(switchRow([glyph(m), MARK_NAMES[m] || m], markCount(m), state.marks[m], on => { state.marks[m] = on; update(); },
+      () => withChange(st => { st.marks[m] = !st.marks[m]; })));
 
   $("g-zones").hidden = doc.zones.length < 2;
   const zones = $("zoneopts");
   zones.replaceChildren();
   for (const z of doc.zones) {
     const n = z.rows.reduce((a, r) => a + seatsOf(r).length, 0);
-    zones.append(switchRow([`${z.name} ${z.name_zh || ""}`.trim()], `${fmt(n)} boxes`, state.zones[z.name], on => { state.zones[z.name] = on; update(); }));
+    zones.append(switchRow([`${z.name} ${z.name_zh || ""}`.trim()], fmt(n), state.zones[z.name], on => { state.zones[z.name] = on; update(); },
+      () => withChange(st => { st.zones[z.name] = !st.zones[z.name]; })));
   }
 
   const st = doc.standing?.places?.length;
   $("g-standing").hidden = !st;
-  $("standopt").replaceChildren(...(st ? [switchRow(["Add standing places"], st, state.standing, on => { state.standing = on; update(); })] : []));
+  $("standopt").replaceChildren(...(st ? [switchRow(["Add standing places"], st, state.standing, on => { state.standing = on; update(); },
+    () => withChange(s => { s.standing = !s.standing; }), " standing")] : []));
 }
 
-$("reset").onclick = () => { state = defaults(doc); controls(); update(); };
+$("reset").onclick = () => { state = defaults(doc); controls(); update(); preview(null); };
 
 // ---------------------------------------------------------------- key figures
 
@@ -399,7 +500,7 @@ function keys(t, flash) {
   const what = pit ? `LCSD figure with ${pit.name}` : "printed total";
   const diff = t.total - printed;
   const items = [
-    ["main", fmt(t.total) + (t.standing ? ` <small style="font-size:14px">+ ${t.standing} standing</small>` : ""), "Seats in this layout"],
+    ["main", fmt(t.total) + (t.standing ? ` <small style="font-size:14px">+ ${t.standing} standing</small>` : ""), "Seats in this configuration"],
     ...doc.zones.length > 1 ? doc.zones.map(z => ["", state.zones[z.name] ? fmt(t.zones[z.name]) : "closed", z.name]) : [],
     ...Object.keys(doc.marks || {}).filter(m => m === "W").map(m => ["", state.marks[m] ? fmt(t.marks[m]) : "0", MARK_NAMES[m]]),
     ["", diff === 0 ? `<span class="ok">= ${fmt(printed)}</span>` : `<span class="${diff < 0 ? "neg" : ""}">${diff > 0 ? "+" : "−"}${fmt(Math.abs(diff))}</span>`,
@@ -422,12 +523,13 @@ function update(flash = true) {
   document.querySelectorAll("#map .pitband").forEach(b => b.classList.toggle("on", +b.dataset.pit === state.pit));
   document.querySelectorAll("#map .zonelabel").forEach(z => z.classList.toggle("off", !state.zones[z.dataset.zone]));
   document.querySelector("#map .standing")?.classList.toggle("on", state.standing);
-  $("dl-layout-note").textContent = layoutSummary(t);
+  $("dl-config-note").textContent = configSummary(t);
+  refreshEffects(t);
   const def = isDefault();
   $("reset").disabled = def;
   $("hint").className = "hint" + (def ? " ok" : "");
   $("hint").textContent = def
-    ? `Printed layout: ${fmt(doc.printed_totals.Total)} seats, management seats not counted.`
+    ? `Printed configuration: ${fmt(doc.printed_totals.Total)} seats, management seats not counted.`
     : "Faded seats on the map are not counted.";
 }
 
@@ -461,6 +563,18 @@ function between(a, b) {
   const p = +a.items.at(-1).id, n = +b.items[0].id;
   const missing = Number.isInteger(p) && Number.isInteger(n) ? Math.abs(n - p) - 1 : 0;
   return missing > 0 ? GAP + missing * (S + GAP) : BLOCK_GAP;
+}
+
+// Split text into lines of at most n characters, at spaces.
+function wrap(text, n) {
+  const out = [];
+  let line = "";
+  for (const w of text.split(" ")) {
+    if (line && (line + " " + w).length > n) { out.push(line); line = w; }
+    else line = line ? line + " " + w : w;
+  }
+  if (line) out.push(line);
+  return out;
 }
 
 function rowWidth(bl) { return bl.reduce((a, b, i) => a + blockWidth(b) + (i ? between(bl[i - 1], b) : 0), 0); }
@@ -545,7 +659,20 @@ function draw() {
     el("text", { class: "rowlabel", x: W / 2, y: y + S + 10, "text-anchor": "middle" }, svg).textContent = "Standing";
     y += S + 24 + ZONE_GAP;
   }
-  const H = y - ZONE_GAP + 8;
+  // Disclaimer inside the drawing, so it stays with any screenshot of the map.
+  y = y - ZONE_GAP + 14;
+  const lines = wrap("This map is drawn from the seat data published with it: a machine-assisted reading of the rows " +
+    "and seats of the venue. It is not the actual seat plan. For the actual seat plan, refer to the version " +
+    "published by LCSD:", Math.floor((W - 24) / 5.1));
+  const box = el("g", { class: "disclaimer" }, svg);
+  const boxH = (lines.length + 2) * 13 + 10;
+  el("rect", { x: 2, y, width: W - 4, height: boxH, rx: 4 }, box);
+  el("text", { class: "lead", x: 12, y: y + 16 }, box).textContent = "Not the venue's seat plan";
+  lines.forEach((l, i) => { el("text", { x: 12, y: y + 16 + (i + 1) * 13 }, box).textContent = l; });
+  const a = el("a", { href: doc.source.url, target: "_blank", rel: "noopener" }, box);
+  el("text", { x: 12, y: y + 16 + (lines.length + 1) * 13 }, a).textContent = doc.source.url;
+  y += boxH + ZONE_GAP;
+  const H = y - ZONE_GAP + 4;
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   svg.setAttribute("width", W); svg.setAttribute("height", H);
   $("map").replaceChildren(svg);
@@ -667,15 +794,39 @@ function sources() {
 // ---------------------------------------------------------------- downloads
 
 function saveJSON(obj, name) {
-  const url = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 1) + "\n"], { type: "application/json" }));
+  save(new Blob([JSON.stringify(obj, null, 1) + "\n"], { type: "application/json" }), name);
+}
+
+function save(blob, name) {
+  const url = URL.createObjectURL(blob);
   const a = Object.assign(document.createElement("a"), { href: url, download: name });
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+// Same columns as data/<venue>.csv (venues/common.py), plus whether each seat counts here.
+const CSV_COLUMNS = ["venue_id", "part_of_house", "part_of_house_zh", "row", "block", "block_area", "seat",
+  "seat_number", "number_basis", "marks", "wheelchair", "management", "restricted_sightline",
+  "limited_legroom", "orchestra_pits", "counted", "not_counted_reason"];
+const csvCell = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
+
+function configCSV() {
+  const lines = [CSV_COLUMNS.join(",")];
+  for (const z of doc.zones) for (const r of z.rows) {
+    const pits = pitsFor(doc, r.row).map(p => p.name).join("; ");
+    r.blocks.forEach((b, bi) => b.seats.forEach(s => {
+      const m = markOf(r, s), inf = r.inferred_numbers?.[s], why = excluded(z.name, r.row, m);
+      const [number, basis] = /^\d+$/.test(s) ? [s, "printed"] : inf ? [inf, "inferred"] : ["", "none"];
+      lines.push([doc.venue.id, z.name, z.name_zh || "", r.row, bi + 1, b.area || b.side || "", s, number, basis, m,
+        +m.includes("W"), +m.includes("X"), +m.includes("R"), +m.includes("L"), pits, why ? 0 : 1, why].map(csvCell).join(","));
+    }));
+  }
+  return "\ufeff" + lines.join("\r\n") + "\r\n";   // byte-order mark: spreadsheet apps then read the Chinese names
+}
+
 const gitURL = file => CONFIG.repo ? `${CONFIG.repo}/blob/${CONFIG.branch || "main"}/data/${file}` : "";
 
-function layoutSummary(t) {
+function configSummary(t) {
   const pit = doc.orchestra_pits?.[state.pit];
   const offMarks = Object.keys(doc.marks || {}).filter(m => !state.marks[m]).map(m => MARK_NAMES[m].toLowerCase());
   const closed = doc.zones.filter(z => !state.zones[z.name]).map(z => z.name);
@@ -684,7 +835,7 @@ function layoutSummary(t) {
     ...closed.length ? [`${closed.join(", ")} closed`] : [], ...t.standing ? [`+ ${t.standing} standing`] : []].join(" · ");
 }
 
-function layoutJSON() {
+function configJSON() {
   const t = tally(), pit = doc.orchestra_pits?.[state.pit];
   const rows = [];
   for (const z of doc.zones) for (const r of z.rows) {
@@ -696,14 +847,14 @@ function layoutJSON() {
     rows.push({ zone: z.name, row: r.row, counted, ...not_counted.length ? { not_counted } : {} });
   }
   return {
-    schema: "hkperf-venue-seats/layout@0.1",
+    schema: "hkperf-venue-seats/configuration@0.1",
     generated: new Date().toISOString(),
     venue: doc.venue,
     seat_list: { file: `data/${venueFile}`, url: gitURL(venueFile) || null, schema: doc.schema, plan_sha256: doc.source.sha256 },
-    layout: {
+    configuration: {
       orchestra_pit: pit ? { name: pit.name, rows_removed: pit.rows_removed, rows_basis: pit.rows_basis } : null,
       count_marks: Object.fromEntries(Object.keys(doc.marks || {}).map(m => [m, { counted: state.marks[m], meaning: doc.marks[m] }])),
-      areas_open: state.zones,
+      parts_of_house_open: state.zones,
       standing: state.standing,
     },
     totals: {
@@ -722,8 +873,14 @@ function downloads() {
   const git = gitURL(venueFile);
   $("dl-src-git").hidden = !git;
   if (git) $("dl-src-git").href = git;
+  const csvFile = venueFile.replace(/\.json$/, ".csv"), gitCSV = gitURL(csvFile);
+  $("dl-src-git-csv").hidden = !gitCSV;
+  if (gitCSV) $("dl-src-git-csv").href = gitCSV;
   $("dl-src").onclick = () => saveJSON(doc, venueFile);
-  $("dl-layout").onclick = () => saveJSON(layoutJSON(), `${doc.venue.id}-layout.json`);
+  // the seat-list CSV is built with the JSON and published beside it; download that exact file
+  $("dl-src-csv").onclick = async () => save(await (await fetch(DATA + csvFile)).blob(), csvFile);
+  $("dl-config").onclick = () => saveJSON(configJSON(), `${doc.venue.id}-configuration.json`);
+  $("dl-config-csv").onclick = () => save(new Blob([configCSV()], { type: "text/csv" }), `${doc.venue.id}-configuration.csv`);
 }
 
 // ---------------------------------------------------------------- tooltip
