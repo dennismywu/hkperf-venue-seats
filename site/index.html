@@ -69,6 +69,19 @@ td.num { text-align: right; font-weight: 650; }
 td small { display: block; color: var(--muted); }
 .links a { margin-right: 10px; white-space: nowrap; }
 .note { color: var(--muted); font-size: 13px; }
+.regions { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 12px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; width: fit-content; max-width: 100%; }
+.regions button { font: inherit; font-size: 13px; font-weight: 600; border: 0; border-right: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 6px 12px; cursor: pointer; }
+.regions button:last-child { border-right: 0; }
+.regions button[aria-pressed="true"] { background: var(--acc); color: var(--panel); }
+.regions button:focus-visible { outline: 2px solid var(--acc); outline-offset: -2px; }
+.regions small { font-weight: 500; opacity: .75; margin-left: 4px; }
+td.date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.faq details { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; }
+.faq summary { cursor: pointer; padding: 11px 16px; font-weight: 650; font-size: 15px; list-style-position: outside; }
+.faq summary:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; border-radius: 10px; }
+.faq details[open] summary { border-bottom: 1px solid var(--line); }
+.faq .a { padding: 10px 16px 12px; font-size: 14px; }
+.faq .a p { margin: 0 0 8px; } .faq .a p:last-child { margin-bottom: 0; }
 .tag { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 4px; background: var(--r-bg); color: var(--r); font-weight: 600; }
 ul.plain { margin: 0; padding-left: 18px; }
 ul.plain li { margin-bottom: 6px; }
@@ -95,10 +108,11 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
 
   <section aria-labelledby="venues-h">
     <h2 id="venues-h">Venues</h2>
+    <div class="regions" id="regions" role="group" aria-label="Show venues in"></div>
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Venue</th><th class="num">Seats</th><th>Parts of House</th><th>With orchestra pit</th><th>Links</th></tr></thead>
-        <tbody id="venues"><tr><td colspan="5" class="note">Loading…</td></tr></tbody>
+        <thead><tr><th>Venue</th><th class="num">Seats</th><th>Parts of House</th><th>With orchestra pit</th><th>Added</th><th>Links</th></tr></thead>
+        <tbody id="venues"><tr><td colspan="6" class="note">Loading…</td></tr></tbody>
       </table>
     </div>
     <p class="note">Seat totals are those printed on each plan. Pit rows are inferred: LCSD states the seats
@@ -141,6 +155,66 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
     <p>Each venue is one JSON file (schema <code>hkperf-venue-seats/seatlist@0.2</code>) with a CSV
       beside it (one line per seat), listed in <code>data/index.json</code>. The format, the counting rule and how a venue is added are described in the
       repository's <a id="readme-link" href="#" rel="noopener">README</a>.</p>
+  </section>
+
+  <section aria-labelledby="faq-h" class="faq">
+    <h2 id="faq-h">Questions</h2>
+    <details>
+      <summary>Is this the venue's official seating plan?</summary>
+      <div class="a"><p>No. The map is a schematic drawn from the seat list: rows centred, blocks side by side, seats in
+        number order. It shows which seats exist, not where they physically sit. For the actual plan, use the version
+        the venue publishes, linked beside each venue. Check with the venue before relying on anything here.</p></div>
+    </details>
+    <details>
+      <summary>Where does the data come from?</summary>
+      <div class="a"><p>Only from what each venue's operator publishes: the seating plan, and capacity statements on
+        the operator's own pages and technical sheets. Addresses and coordinates come from LCSD's open data on
+        DATA.GOV.HK. Nothing comes from ticketing or box-office systems, or from seat maps drawn by others.</p></div>
+    </details>
+    <details>
+      <summary>How do you know the counts are right?</summary>
+      <div class="a"><p>Every part of house is counted and must equal the total printed on the plan; the build fails
+        if it does not. Where the plan has a text layer, every seat number is also matched against it one for one.
+        Each file records the plan's version (its SHA-256), the sources and any conflicting figure found.</p></div>
+    </details>
+    <details>
+      <summary>Why are some seats shown without a number?</summary>
+      <div class="a"><p>Plans often print wheelchair spaces (W) and management seats (X) as boxes with no number. A
+        number is filled in only when it follows exactly, for example two boxes between seats 20 and 23, or when the
+        operator's technical sheet names them. Otherwise the box keeps no number, and the file says why.</p></div>
+    </details>
+    <details>
+      <summary>What are management seats, and are they counted?</summary>
+      <div class="a"><p>Seats the venue keeps for its own use, marked X on the plan. The printed totals leave them
+        out, so the viewer does too by default; you can switch them on to see every box on the plan.</p></div>
+    </details>
+    <details>
+      <summary>Why does a venue with an orchestra pit have no pit option?</summary>
+      <div class="a"><p>A pit option is added only when the operator states how many seats the pit removes. The rows
+        are then inferred as the front rows that give exactly that number, and marked as inferred. Where no figure
+        is published, the pit is described in the sources but no seats are removed.</p></div>
+    </details>
+    <details>
+      <summary>Does the planner keep what I enter?</summary>
+      <div class="a"><p>No. The planner runs in your browser and sends nothing: categories, prices and names stay on the
+        page and are gone when you close it, unless you save a plan file on your own device. A plan with names can be
+        protected with a passphrase. See <a href="privacy.html">Privacy and usage</a>.</p></div>
+    </details>
+    <details>
+      <summary>Can I use the data in my own work, including commercially?</summary>
+      <div class="a"><p>Yes. The seat lists are under CC BY 4.0: use them for any purpose, with credit, keeping the
+        source lines in each file. The code is MIT. The planner's code is for noncommercial use unless agreed in
+        writing, but using the planner on this site is free for anyone. None of this covers LCSD's own plans.</p></div>
+    </details>
+    <details>
+      <summary>Is this project connected to LCSD or the venues?</summary>
+      <div class="a"><p>No. It is an independent project, not affiliated with or endorsed by LCSD or any venue.</p></div>
+    </details>
+    <details>
+      <summary>A venue is missing, or something looks wrong. What should I do?</summary>
+      <div class="a"><p>Use the forms under <a href="#contrib-h">Contribute</a>: one for a correction, one to suggest a
+        venue. Please link to the operator's published plan; ticketing data can't be used.</p></div>
+    </details>
   </section>
 
   <section aria-labelledby="contrib-h">
@@ -202,6 +276,24 @@ if (repo) {
   document.querySelectorAll("a.lic, a.gh").forEach(a => a.remove());
 }
 
+const REGIONS = ["Hong Kong Island", "Kowloon", "New Territories"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const dateText = iso => { const [y, m, d] = iso.split("-").map(Number); return `${d} ${MONTHS[m - 1]} ${y}`; };
+
+// Region buttons: "All" plus each region that has venues; they show or hide the table's rows.
+function regionButtons(list) {
+  const box = document.getElementById("regions");
+  const count = r => list.filter(v => !r || v.region === r).length;
+  const choices = [["", "All"], ...REGIONS.filter(r => count(r)).map(r => [r, r])];
+  box.innerHTML = choices.map(([r, label]) =>
+    `<button type="button" data-region="${esc(r)}" aria-pressed="${r ? "false" : "true"}">${esc(label)}<small>${count(r)}</small></button>`).join("");
+  box.onclick = e => {
+    const b = e.target.closest("button"); if (!b) return;
+    box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    document.querySelectorAll("#venues tr[data-region]").forEach(tr => tr.hidden = !!b.dataset.region && tr.dataset.region !== b.dataset.region);
+  };
+}
+
 async function venues() {
   const tbody = document.getElementById("venues");
   try {
@@ -214,12 +306,14 @@ async function venues() {
       const standing = d.standing?.places?.length ? `<small>+ ${d.standing.places.length} standing</small>` : "";
       const csv = v.file.replace(/\.json$/, ".csv");
       const git = repo ? `<a href="${esc(`${repo}/blob/${branch}/data/${v.file}`)}" rel="noopener">JSON</a><a href="${esc(`${repo}/blob/${branch}/data/${csv}`)}" rel="noopener">CSV</a>` : "";
-      return `<tr><td><b>${esc(d.venue.name_en)}</b><small>${esc(d.venue.name_zh)} · ${esc(d.location?.district || d.location?.address_en || "")}</small></td>` +
-        `<td class="num">${fmt(t.Total)}${standing}</td><td>${areas}</td><td>${pits}</td>` +
+      const added = v.added ? `<time datetime="${esc(v.added)}">${esc(dateText(v.added))}</time>` : "";
+      return `<tr data-region="${esc(v.region || "")}"><td><b>${esc(d.venue.name_en)}</b><small>${esc(d.venue.name_zh)} · ${esc(d.location?.district || d.location?.address_en || "")}</small></td>` +
+        `<td class="num">${fmt(t.Total)}${standing}</td><td>${areas}</td><td>${pits}</td><td class="date">${added}</td>` +
         `<td class="links"><a href="viewer/?venue=${encodeURIComponent(v.id)}">View</a>${git}<a href="${esc(d.source.url)}" rel="noopener">Plan (LCSD)</a></td></tr>`;
     }).join("");
+    regionButtons(index.venues);
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="5" class="note">Could not load the venue list. Open this page over HTTP.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="note">Could not load the venue list. Open this page over HTTP.</td></tr>`;
   }
 }
 venues();

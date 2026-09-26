@@ -149,7 +149,8 @@ the build fails if any part of house stops matching it.
    Scanned or low-resolution plans are read by eye from zoomed crops.
 3. Write `venues/<id>.py` with the checked facts. `venues/common.py` checks every part of house against
    the printed totals and every pit against LCSD's stated figure, then writes `data/<id>.json` and `.csv`.
-4. Add the venue to `data/index.json`.
+4. Add the venue to `data/index.json`, with its `region` (Hong Kong Island, Kowloon or New Territories)
+   and the date it was `added`.
 5. `python tools/check_locations.py` confirms each address and coordinate against LCSD's open data.
 
 Python 3.11+ with the packages in `requirements.txt`. The extractor's OCR uses Apple Vision (macOS).
