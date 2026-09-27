@@ -243,7 +243,7 @@ async function load(v) {
 
 // ---------------------------------------------------------------- what counts
 
-const excluded = (zone, row, mark, st = state) => excludedIn(doc, st, zone, row, mark);
+const excluded = (zone, row, mark, seat, st = state) => excludedIn(doc, st, zone, row, mark, seat);
 
 function tally(st = state) {
   const t = { total: 0, zones: {}, marks: { W: 0, X: 0, R: 0, L: 0 }, off: 0 };
@@ -251,7 +251,7 @@ function tally(st = state) {
     t.zones[z.name] = 0;
     for (const r of z.rows) for (const s of seatsOf(r)) {
       const m = markOf(r, s);
-      if (excluded(z.name, r.row, m, st)) { t.off++; continue; }
+      if (excluded(z.name, r.row, m, s, st)) { t.off++; continue; }
       t.total++; t.zones[z.name]++;
       for (const l of letters(m)) t.marks[l]++;
     }
@@ -277,7 +277,7 @@ function refreshEffects(t) {
 function preview(next) {
   for (const g of document.querySelectorAll("#map .seat")) {
     const d = g.dataset;
-    const now = !excluded(d.zone, d.row, d.mark), then = next && !excluded(d.zone, d.row, d.mark, next);
+    const now = !excluded(d.zone, d.row, d.mark, d.seat), then = next && !excluded(d.zone, d.row, d.mark, d.seat, next);
     g.classList.toggle("gain", !!next && !now && then);
     g.classList.toggle("lose", !!next && now && !then);
   }
@@ -338,7 +338,7 @@ function controls() {
   $("g-pit").hidden = !pits.length;
   $("pitopts").innerHTML = [{ name: "Not in use", i: -1 }, ...pits.map((p, i) => ({ ...p, i }))].map(p =>
     `<label><input type="radio" name="pit" value="${p.i}" ${p.i === state.pit ? "checked" : ""}> ${esc(p.name)}` +
-    `${p.i >= 0 ? `<span class="rows">rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))}</span>` : `<span class="rows"></span>`}</label>`).join("");
+    `${p.i >= 0 ? `<span class="rows">${esc(pitRows(p, true))}</span>` : `<span class="rows"></span>`}</label>`).join("");
   $("pitopts").querySelectorAll("label").forEach(lab => {
     const inp = lab.querySelector("input"), i = +inp.value;
     inp.onchange = () => { state.pit = i; update(); preview(null); };
@@ -371,12 +371,14 @@ $("reset").onclick = () => { state = defaults(doc); controls(); update(); previe
 // ---------------------------------------------------------------- key figures
 
 // Management seats that LCSD's figures count (zones with count_includes X) but this configuration leaves out.
+// A pit figure is the printed total less the pit's seats, so it still counts those outside the pit.
 function lcsdCountsX(st = state) {
   const out = { n: 0, zones: [] };
-  if (st.marks.X !== false || doc.orchestra_pits?.[st.pit]) return out;
+  if (st.marks.X !== false) return out;
+  const pit = doc.orchestra_pits?.[st.pit], inPit = (z, r, s) => pit && pitSeats(doc, pit).has(`${z.name}/${r.row}/${s}`);
   for (const z of doc.zones) {
     if (!z.count_includes?.includes("X") || !st.zones[z.name]) continue;
-    const n = z.rows.reduce((a, r) => a + seatsOf(r).filter(s => letters(markOf(r, s)).includes("X")).length, 0);
+    const n = z.rows.reduce((a, r) => a + seatsOf(r).filter(s => letters(markOf(r, s)).includes("X") && !inPit(z, r, s)).length, 0);
     if (n) { out.n += n; out.zones.push(z.name); }
   }
   return out;
@@ -407,7 +409,7 @@ function update(flash = true) {
   const t = tally();
   keys(t, flash);
   for (const g of document.querySelectorAll("#map .seat")) {
-    const why = excluded(g.dataset.zone, g.dataset.row, g.dataset.mark);
+    const why = excluded(g.dataset.zone, g.dataset.row, g.dataset.mark, g.dataset.seat);
     g.classList.toggle("off", !!why);
     why ? (g.dataset.off = why) : delete g.dataset.off;
   }
@@ -442,6 +444,10 @@ function facts() {
   const zoneBoxes = z => z.rows.reduce((a, r) => a + seatsOf(r).length, 0);
   const boxes = doc.zones.reduce((a, z) => a + zoneBoxes(z), 0);
   const perZone = f => doc.zones.length > 1 ? doc.zones.map(z => `${esc(z.name)} ${f(z)}`).join(" · ") : "";
+  // the parts of house LCSD gives figures for: a zone, or zones it totals together (counted_in)
+  const units = [...new Set(doc.zones.map(z => z.counted_in || z.name))];
+  const members = u => doc.zones.filter(z => (z.counted_in || z.name) === u).map(z => z.name);
+  const perUnit = units.length > 1 ? units.map(u => `${esc(u)}${members(u).length > 1 || members(u)[0] !== u ? ` (${esc(members(u).join(" + "))})` : ""} ${fmt(printed[u])}`).join(" · ") : "";
   const F = [];
   const ok = `<span class="tag ok">checked ✓</span>`;
   const loc = doc.location;
@@ -456,9 +462,9 @@ function facts() {
       `Address: ${esc(as.title || as.publisher)}${as.name_in_source ? ` (“${esc(as.name_in_source)}”)` : ""}. ${esc(loc.note || "")}`, "wide"]);
   }
 
-  F.push([doc.totals_source ? "LCSD total" : "Printed total", fmt(printed.Total), perZone(z => fmt(printed[z.name])),
+  F.push([doc.totals_source ? "LCSD total" : "Printed total", fmt(printed.Total), perUnit,
     esc(doc.totals_source || "Printed on the seating plan")]);
-  const allOk = doc.zones.every(z => (cc[z.name]?.counted_with_X ?? cc[z.name]?.boxes_minus_X) === cc[z.name]?.printed);
+  const allOk = units.every(u => (cc[u]?.counted_with_X ?? cc[u]?.boxes_minus_X) === cc[u]?.printed);
   const exceptions = doc.zones.filter(z => cc[z.name]?.exception).map(z => `${esc(z.name)}: ${esc(cc[z.name].exception)}`);
   F.push(["Seat boxes drawn", fmt(boxes), perZone(z => fmt(zoneBoxes(z))),
     `Counted from the plan. Boxes minus management seats = ${doc.totals_source ? "LCSD's" : "printed"} total ${allOk ? ok : `<span class="tag">mismatch</span>`}` +
@@ -482,7 +488,7 @@ function facts() {
   }
 
   for (const p of doc.orchestra_pits || []) {
-    F.push([p.name, fmt(p.total_with_pit), `Rows ${esc(p.rows_removed.join(", "))} removed, −${p.seats_removed} seats`,
+    F.push([p.name, fmt(p.total_with_pit), `${esc(pitRows(p).replace(/^r/, "R"))} removed, −${p.seats_removed} seats`,
       `“${esc(p.source.quote)}” <span class="tag">rows ${esc(p.rows_basis)}</span>`]);
   }
   if (doc.standing?.places?.length)
@@ -504,7 +510,7 @@ function table() {
     for (const [s, m] of Object.entries(r.marks || {})) for (const l of letters(m)) (byMark[l] ||= []).push(s + (r.inferred_numbers?.[s] ? ` (=${r.inferred_numbers[s]})` : ""));
     const marks = Object.entries(byMark).map(([m, ss]) => `${esc(m)}: ${esc(ss.join(", "))}`).join("<br>");
     rows.push(`<tr><td>${esc(z.name)}</td><td><b>${esc(r.row)}</b></td><td class="num">${seatsOf(r).length}</td><td>${esc(blocks)}</td><td>${marks}</td>` +
-      `<td class="note">${pitsFor(doc, r.row).map(p => `<span class="tag">${esc(p.name)} (${esc(p.rows_basis)})</span> `).join("")}${esc(r.note || "")}</td></tr>`);
+      `<td class="note">${pitsFor(doc, z.name, r).map(p => `<span class="tag">${esc(p.name)} (${esc(p.rows_basis)})</span> `).join("")}${esc(r.note || "")}</td></tr>`);
   }
   $("rows").innerHTML = rows.join("");
 }
@@ -534,7 +540,7 @@ function sources() {
     items.push(`<b>${esc(r.what)}</b>: ${esc(r.title || r.publisher)}, ${link(r.url)} — ${(r.quotes || []).map(q => `“${esc(q)}”`).join("; ")}.` +
       `${r.document_version ? ` Version ${esc(r.document_version)}.` : ""} Retrieved ${esc(r.retrieved)}.${r.note ? ` ${esc(r.note)}` : ""}`);
   for (const p of pits)
-    items.push(`<b>${esc(p.name)}</b>: rows ${esc(p.rows_removed.join(", "))} <span class="tag">${esc(p.rows_basis)}</span> ${esc(p.rows_reasoning)}`);
+    items.push(`<b>${esc(p.name)}</b>: ${esc(pitRows(p))} <span class="tag">${esc(p.rows_basis)}</span> ${esc(p.rows_reasoning)}`);
   $("sources").innerHTML = items.map(i => `<li>${i}</li>`).join("");
 }
 
@@ -566,9 +572,9 @@ function configCSV() {
     row.blocks.forEach((_, i) => { if (all || i === ref.block - 1) bank.set(`${z.name}/${row.row}/${i}`, b.id); });
   }
   for (const z of doc.zones) for (const r of z.rows) {
-    const pits = pitsFor(doc, r.row).map(p => p.name).join("; ");
     r.blocks.forEach((b, bi) => b.seats.forEach(s => {
-      const m = markOf(r, s), inf = r.inferred_numbers?.[s], why = excluded(z.name, r.row, m);
+      const m = markOf(r, s), inf = r.inferred_numbers?.[s], why = excluded(z.name, r.row, m, s);
+      const pits = pitsFor(doc, z.name, r, s).map(p => p.name).join("; ");
       const [number, basis] = /^\d+$/.test(s) ? [s, "printed"] : inf ? [inf, "inferred"] : ["", "none"];
       lines.push([doc.venue.id, z.name, z.name_zh || "", r.row, bi + 1, b.area || b.side || "", bank.get(`${z.name}/${r.row}/${bi}`) || "", s, number, basis, m,
         +m.includes("W"), +m.includes("X"), +m.includes("R"), +m.includes("L"), pits, why ? 0 : 1, why].map(csvCell).join(","));
@@ -622,7 +628,7 @@ function configJSON() {
   for (const z of doc.zones) for (const r of z.rows) {
     const counted = [], not_counted = [];
     for (const s of seatsOf(r)) {
-      const why = excluded(z.name, r.row, markOf(r, s));
+      const why = excluded(z.name, r.row, markOf(r, s), s);
       why ? not_counted.push({ seat: s, reason: why }) : counted.push(s);
     }
     rows.push({ zone: z.name, row: r.row, counted, ...not_counted.length ? { not_counted } : {} });

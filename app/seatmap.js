@@ -21,7 +21,36 @@ const seatsOf = row => row.blocks.flatMap(b => b.seats);
 const markOf = (row, s) => row.marks?.[s] || "";
 const letters = mark => [...mark];
 const fmt = n => n.toLocaleString("en");
-const pitsFor = (doc, row) => (doc.orchestra_pits || []).filter(p => p.rows_removed.includes(row));
+// The seats an orchestra pit removes, as "zone/row/seat" keys. rows_removed takes the same references as a
+// bank: a row label, or {row, zone?, block?} when the label repeats or the pit takes one block of a row.
+const pitKeys = new WeakMap();
+function pitSeats(doc, pit) {
+  if (!pitKeys.has(pit)) {
+    const keys = new Set();
+    for (const ref of pit.rows_removed) {
+      const { z, row } = findRow(doc, ref);
+      row.blocks.forEach((b, i) => {
+        if (typeof ref === "string" || !ref.block || i === ref.block - 1) b.seats.forEach(s => keys.add(`${z.name}/${row.row}/${s}`));
+      });
+    }
+    pitKeys.set(pit, keys);
+  }
+  return pitKeys.get(pit);
+}
+// The pits that remove a seat, or any seat of the row when seat is left out.
+const pitsFor = (doc, zone, row, seat) => (doc.orchestra_pits || []).filter(p => {
+  const keys = pitSeats(doc, p);
+  return (seat === undefined ? seatsOf(row) : [seat]).some(s => keys.has(`${zone}/${row.row}/${s}`));
+});
+// "rows A–B" (short) or "rows A, B"; references to one block, or one part of house, say so.
+function pitRows(pit, short) {
+  const refs = pit.rows_removed.map(r => typeof r === "string" ? { row: r } : r);
+  const zones = [...new Set(refs.map(r => r.zone || ""))];
+  const whole = refs.filter(r => !r.block).map(r => r.row);
+  const parts = [...(short && whole.length > 1 ? [`${whole[0]}–${whole.at(-1)}`] : whole), ];
+  const blocks = refs.filter(r => r.block).map(r => `; block ${r.block} of row ${r.row}`).join("");
+  return `${zones.length === 1 && zones[0] ? zones[0] + " " : ""}rows ${parts.join(", ")}${blocks}`;
+}
 
 async function getJSON(path) {
   const r = await fetch(path);
@@ -50,10 +79,10 @@ const defaults = d => ({
 });
 
 // The reason a seat is left out of configuration st, or "" when it counts.
-function excludedIn(doc, st, zone, row, mark) {
+function excludedIn(doc, st, zone, row, mark, seat) {
   if (!st.zones[zone]) return `${zone} closed`;
   const pit = doc.orchestra_pits?.[st.pit];
-  if (pit?.rows_removed.includes(row)) return `${pit.name} in use`;
+  if (pit && pitSeats(doc, pit).has(`${zone}/${row}/${seat}`)) return `${pit.name} in use`;
   const off = letters(mark).find(m => !st.marks[m]);
   if (off) return `${MARK_NAMES[off]} not counted`;
   return "";
@@ -89,11 +118,13 @@ function seatAt(svg, z, row, s, b, inPits, x, y) {
   if (row.inferred_numbers?.[s]) g.dataset.inferred = row.inferred_numbers[s];
   if (row.note) g.dataset.note = row.note;
   if (b.area) g.dataset.area = b.area;
-  if (inPits) g.dataset.pits = inPits;
+  const pits = inPits(s);
+  if (pits) g.dataset.pits = pits;
   seatGlyph(g, x, y, mark, s);
   return g;
 }
-const pitNote = (doc, row) => pitsFor(doc, row.row).map(p => `${p.name} (rows ${p.rows_basis})`).join(", ");
+// seat -> the pits that remove it, for the seat's tooltip
+const pitNote = (doc, z, row) => s => pitsFor(doc, z.name, row, s).map(p => `${p.name} (rows ${p.rows_basis})`).join(", ");
 
 function rowLayout(row, rightFirst) {
   // Blocks in drawn order, left to right (the file lists them from seat 1's side). Each block's
@@ -170,7 +201,7 @@ function drawSeatMap(doc) {
         t.textContent = row.row;
         Object.assign(t.dataset, { row: row.row, zone: z.name });
       }
-      const inPits = pitNote(doc, row);
+      const inPits = pitNote(doc, z, row);
       bl.forEach((b, i) => b.items.forEach(({ id: s, blocked }, j) => {
         if (blocked) {
           if (j && b.items[j - 1].blocked) return;          // one filled area per run of blocked slots
@@ -187,7 +218,7 @@ function drawSeatMap(doc) {
     y += ZONE_GAP;
   }
   (doc.orchestra_pits || []).forEach((pit, i) => {
-    const ys = pit.rows_removed.map(r => rowY[r]);
+    const ys = pit.rows_removed.map(r => rowY[typeof r === "string" ? r : r.row]);
     const top = Math.min(...ys), bottom = Math.max(...ys) + S;
     pitBand(svg, i, pit, 2, top - 3, W - 4, bottom - top + 6);
   });
@@ -208,11 +239,14 @@ function drawSeatMap(doc) {
   return finishMap(svg, doc, W, y - ZONE_GAP + 14);
 }
 
-function pitBand(svg, i, pit, x, y, w, h) {
+// A pit's dashed outline: a rectangle with its name inside the top-left corner, or the polygon pts with its
+// name at label (outside the outline).
+function pitBand(svg, i, pit, x, y, w, h, pts, label) {
   const band = el("g", { class: "pitband" }, svg);
   band.dataset.pit = i;
-  el("rect", { x, y, width: w, height: h, rx: 4 }, band);
-  el("text", { x: x + 8, y: y + h / 2 }, band).textContent = pit.name;
+  if (pts) el("polygon", { points: pts.map(q => q.join(",")).join(" ") }, band);
+  else el("rect", { x, y, width: w, height: h, rx: 4 }, band);
+  el("text", label || { x: x + 8, y: y + h / 2 }, band).textContent = pit.name;
 }
 
 // Disclaimer inside the drawing, so it stays with any screenshot of the map; then size the drawing.
@@ -386,11 +420,12 @@ function drawBankedMap(doc) {
   const svg = el("svg", { role: "img", "aria-label": `Seat schematic for ${doc.venue.name_en}` });
   el("rect", { class: "stage", x: ox - stageW / 2, y: oy, width: stageW, height: stageH, rx: 3 }, svg);
   el("text", { class: "stagetext", x: ox, y: oy + stageH / 2 }, svg).textContent = "STAGE 舞台";
-  const boxes = {};                                 // row -> bounding box, for the pit bands
-  const grow = (row, x0, y0, x1, y1) => {
-    const r = boxes[row] || (boxes[row] = { x0, y0, x1, y1 });
+  const boxes = {};                                 // "zone/row/block index" -> bounding box, for the pit bands
+  const grow = (p, x0, y0, x1, y1) => p.blocks.forEach(blk => {
+    const k = `${p.z.name}/${p.row.row}/${p.row.blocks.indexOf(blk)}`;
+    const r = boxes[k] || (boxes[k] = { x0, y0, x1, y1 });
     Object.assign(r, { x0: Math.min(r.x0, x0), y0: Math.min(r.y0, y0), x1: Math.max(r.x1, x1), y1: Math.max(r.y1, y1) });
-  };
+  });
   const rowLabel = (piece, x, y, anchor) => {
     const t = el("text", { class: "rowlabel", x, y, "text-anchor": anchor }, svg);
     t.textContent = piece.row.row;
@@ -412,7 +447,7 @@ function drawBankedMap(doc) {
     }
     let run = Y;                                    // in-line columns: where the next row starts
     b.pieces.forEach((p, i) => {
-      const inPits = pitNote(doc, p.row), len = b.lens[i];
+      const inPits = pitNote(doc, p.z, p.row), len = b.lens[i];
       if (b.pos) {
         // level with the front bank's row; its label is already in the aisle, unless the front bank lacks the row
         const q = b.pos[i], x0 = ox + q.x, ry = oy + q.y;
@@ -423,7 +458,7 @@ function drawBankedMap(doc) {
           cx += S;
         });
         if (!q.matched) b.side === "left" ? rowLabel(p, x0 + len + 6, ry + S / 2, "start") : rowLabel(p, x0 - 6, ry + S / 2, "end");
-        grow(p.row.row, x0, ry, x0 + len, ry + S);
+        grow(p, x0, ry, x0 + len, ry + S);
       } else if (b.level && b.side !== "front") {
         // a short row facing the stage, against its side wall; rows one behind another
         const ry = Y + i * (S + ROW_GAP), x0 = b.side === "left" ? X : X + b.w - len;
@@ -435,7 +470,7 @@ function drawBankedMap(doc) {
         });
         rowLabel(p, x0 - 6, ry + S / 2, "end");
         rowLabel(p, x0 + len + 6, ry + S / 2, "start");
-        grow(p.row.row, x0, ry, x0 + len, ry + S);
+        grow(p, x0, ry, x0 + len, ry + S);
       } else if (b.in_line) {
         // upright rows one after another down the side wall, nearest the stage first
         const up = b.seat_1 === "upstage";
@@ -446,7 +481,7 @@ function drawBankedMap(doc) {
         });
         const lx = b.side === "left" ? X - 6 : X + S + 6;
         rowLabel(p, lx, run + len / 2, b.side === "left" ? "end" : "start");
-        grow(p.row.row, X, run, X + S, run + len);
+        grow(p, X, run, X + S, run + len);
         run += len + BLOCK_GAP;
       } else if (b.side === "front") {
         const ry = Y + i * (S + ROW_GAP);
@@ -458,7 +493,7 @@ function drawBankedMap(doc) {
         });
         rowLabel(p, ox - len / 2 - 6, ry + S / 2, "end");
         rowLabel(p, ox + len / 2 + 6, ry + S / 2, "start");
-        grow(p.row.row, ox - len / 2, ry, ox + len / 2, ry + S);
+        grow(p, ox - len / 2, ry, ox + len / 2, ry + S);
       } else {
         // columns: nearest the stage on the stage side of the bank
         const col = b.side === "left" ? b.pieces.length - 1 - i : i;
@@ -473,16 +508,33 @@ function drawBankedMap(doc) {
         });
         rowLabel(p, cx + S / 2, y0 - 7, "middle");
         rowLabel(p, cx + S / 2, y0 + len + 8, "middle");
-        grow(p.row.row, cx, y0, cx + S, y0 + len);
+        grow(p, cx, y0, cx + S, y0 + len);
       }
     });
   }
   (doc.orchestra_pits || []).forEach((pit, i) => {
-    const bx = pit.rows_removed.map(r => boxes[r]).filter(Boolean);
-    if (!bx.length) return;
-    const x0 = Math.min(...bx.map(r => r.x0)), y0 = Math.min(...bx.map(r => r.y0));
-    const x1 = Math.max(...bx.map(r => r.x1)), y1 = Math.max(...bx.map(r => r.y1));
-    pitBand(svg, i, pit, x0 - LABEL_W, y0 - 3, x1 - x0 + 2 * LABEL_W, y1 - y0 + 6);
+    // each row's extent: the blocks the pit takes
+    const rows = pit.rows_removed.map(ref => {
+      const { z, row } = findRow(doc, ref);
+      const bx = row.blocks.map((_, j) => j).filter(j => typeof ref === "string" || !ref.block || j === ref.block - 1)
+        .map(j => boxes[`${z.name}/${row.row}/${j}`]).filter(Boolean);
+      return bx.length && { x0: Math.min(...bx.map(r => r.x0)), y0: Math.min(...bx.map(r => r.y0)),
+        x1: Math.max(...bx.map(r => r.x1)), y1: Math.max(...bx.map(r => r.y1)) };
+    }).filter(Boolean);
+    if (!rows.length) return;
+    const x0 = Math.min(...rows.map(r => r.x0)), y0 = Math.min(...rows.map(r => r.y0));
+    const x1 = Math.max(...rows.map(r => r.x1)), y1 = Math.max(...rows.map(r => r.y1));
+    if (pit.rows_removed.every(ref => typeof ref === "string" || !ref.block)) {
+      pitBand(svg, i, pit, x0 - LABEL_W, y0 - 3, x1 - x0 + 2 * LABEL_W, y1 - y0 + 6);
+      return;
+    }
+    // part rows: a stepped outline, row by row, so the blocks the pit leaves stay outside it
+    rows.sort((a, b) => a.y0 - b.y0);
+    const cut = rows.map((r, k) => k ? (rows[k - 1].y1 + r.y0) / 2 : r.y0 - 3);
+    const end = rows.map((r, k) => k < rows.length - 1 ? cut[k + 1] : r.y1 + 3);
+    const pts = [...rows.flatMap((r, k) => [[r.x1 + LABEL_W, cut[k]], [r.x1 + LABEL_W, end[k]]]),
+      ...rows.flatMap((r, k) => [[r.x0 - LABEL_W, cut[k]], [r.x0 - LABEL_W, end[k]]]).reverse()];
+    pitBand(svg, i, pit, 0, 0, 0, 0, pts, { x: rows[0].x0 - LABEL_W - 6, y: (rows[0].y0 + rows[0].y1) / 2, "text-anchor": "end" });
   });
   const bottom = oy + Math.max(houseBottom, ...ext.map(e => e.y1)) + LBL + 10;
   return finishMap(svg, doc, W, bottom);

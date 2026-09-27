@@ -1,8 +1,9 @@
 """Shared helpers for the venue scripts: build rows, check counts, write data/<id>.json.
 
 A venue script holds only facts read from LCSD sources. finish() checks them and fails loudly:
-  - each zone: boxes on the plan minus management seats (X) = the printed zone total
-  - each orchestra pit: seats in its rows (minus X) = the stated loss, and the total follows
+  - each zone: boxes on the plan minus management seats (X) = the printed zone total (zones with counted_in:
+    together, against the one figure the operator gives for them)
+  - each orchestra pit: seats in its rows or blocks (minus X) = the stated loss, and the total follows
 """
 import csv
 import json
@@ -81,6 +82,24 @@ def find_row(doc, ref):
 def ref_blocks(ref, row):
     """Block indexes a reference covers: all of them, or the one it names."""
     return range(len(row["blocks"])) if isinstance(ref, str) or "block" not in ref else [ref["block"] - 1]
+
+
+def ref_text(ref):
+    """"A", or "Stalls 1 C block 2"."""
+    if isinstance(ref, str):
+        return ref
+    return " ".join(filter(None, [ref.get("zone"), ref["row"], f"block {ref['block']}" if "block" in ref else ""]))
+
+
+def pit_seats(doc, pit):
+    """The seats an orchestra pit removes, as (zone, row, seat). rows_removed takes the same references as
+    a bank: a row label, or {row, zone?, block?} when the label repeats or the pit takes one block of a row."""
+    out = []
+    for ref in pit["rows_removed"]:
+        zone, r = find_row(doc, ref)
+        out += [(zone, r["row"], s) for i in ref_blocks(ref, r) for s in r["blocks"][i]["seats"]]
+    assert len(set(out)) == len(out), f"{pit['name']}: a seat is listed twice"
+    return out
 
 
 def bank_of(doc):
@@ -163,7 +182,7 @@ def finish(doc):
     """Check doc against its printed and stated figures, then write data/<venue id>.json."""
     doc = {"schema": SCHEMA, **doc}
     printed = doc["printed_totals"]
-    all_rows = [r for z in doc["zones"] for r in z["rows"]]
+    rows_by = {(z["name"], r["row"]): r for z in doc["zones"] for r in z["rows"]}
 
     check = {}
     for z in doc["zones"]:
@@ -175,15 +194,31 @@ def finish(doc):
         check[z["name"]] = {"boxes": boxes, "management_X": x, "wheelchair_W": _marked(z["rows"], "W"),
                             "restricted_R": _marked(z["rows"], "R"), "limited_legroom_L": _marked(z["rows"], "L"),
                             "boxes_minus_X": boxes - x,
-                            **({"counted_with_X": boxes, "exception": z["count_note"]} if with_x else {}),
-                            "printed": printed[z["name"]]}
+                            **({"counted_with_X": boxes, "exception": z["count_note"]} if with_x else {})}
+        if "counted_in" in z:
+            # parts of house the operator totals together (counted_in names the shared figure): checked below
+            assert not with_x, f"{z['name']}: count_includes is not supported with counted_in"
+            assert z["counted_in"] not in {y["name"] for y in doc["zones"]}, f"{z['name']}: counted_in names a zone"
+            check[z["name"]]["counted_in"] = z["counted_in"]
+            continue
+        check[z["name"]]["printed"] = printed[z["name"]]
         assert counted == printed[z["name"]], f"{z['name']}: {boxes} boxes - {x} X != {printed[z['name']]}"
-    assert sum(printed[z["name"]] for z in doc["zones"]) == printed["Total"], "zone totals do not add up"
+    groups = {}
+    for z in doc["zones"]:
+        if "counted_in" in z:
+            groups.setdefault(z["counted_in"], []).append(z)
+    for name, zs in groups.items():
+        assert len(zs) > 1, f"{name}: counted_in needs two or more zones"
+        boxes, x = sum(check[z["name"]]["boxes"] for z in zs), sum(check[z["name"]]["management_X"] for z in zs)
+        check[name] = {"zones": [z["name"] for z in zs], "boxes": boxes, "management_X": x, "boxes_minus_X": boxes - x,
+                       "printed": printed[name]}
+        assert boxes - x == printed[name], f"{name} ({', '.join(check[name]['zones'])}): {boxes} boxes - {x} X != {printed[name]}"
+    totals = [z["name"] for z in doc["zones"] if "counted_in" not in z] + list(groups)
+    assert sum(printed[n] for n in totals) == printed["Total"], "zone totals do not add up"
 
     for pit in doc.get("orchestra_pits", []):
-        rows = [r for r in all_rows if r["row"] in pit["rows_removed"]]
-        assert len(rows) == len(pit["rows_removed"]), f"{pit['name']}: unknown rows {pit['rows_removed']}"
-        removed = _seats(rows) - _marked(rows, "X")
+        seats = pit_seats(doc, pit)
+        removed = sum(1 for zone, lab, s in seats if "X" not in rows_by[zone, lab].get("marks", {}).get(s, ""))
         stated = pit.pop("stated")
         if "seats_removed" in stated:
             assert removed == stated["seats_removed"], f"{pit['name']}: rows give {removed}, stated {stated}"
@@ -203,7 +238,7 @@ def finish(doc):
     print(f"wrote {out.with_suffix('.csv').relative_to(DATA.parent)}")
     print(json.dumps(check, indent=1))
     for pit in doc.get("orchestra_pits", []):
-        print(f"{pit['name']}: rows {', '.join(pit['rows_removed'])} -> -{pit['seats_removed']} = {pit['total_with_pit']}")
+        print(f"{pit['name']}: rows {', '.join(map(ref_text, pit['rows_removed']))} -> -{pit['seats_removed']} = {pit['total_with_pit']}")
     return doc
 
 
@@ -214,7 +249,7 @@ CSV_COLUMNS = ["venue_id", "part_of_house", "part_of_house_zh", "row", "block", 
 
 def csv_rows(doc):
     """One record per seat box, in the order of the JSON (the viewer builds its CSV the same way)."""
-    pits = doc.get("orchestra_pits", [])
+    pits = [(p["name"], set(pit_seats(doc, p))) for p in doc.get("orchestra_pits", [])]
     bank = bank_of(doc)
     for z in doc["zones"]:
         for r in z["rows"]:
@@ -230,7 +265,7 @@ def csv_rows(doc):
                         "seat_number": number, "number_basis": basis, "marks": m,
                         "wheelchair": int("W" in m), "management": int("X" in m),
                         "restricted_sightline": int("R" in m), "limited_legroom": int("L" in m),
-                        "orchestra_pits": "; ".join(p["name"] for p in pits if r["row"] in p["rows_removed"]),
+                        "orchestra_pits": "; ".join(name for name, seats in pits if (z["name"], r["row"], s) in seats),
                     }
 
 

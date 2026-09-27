@@ -29,10 +29,12 @@ and front-of-house teams.
 | Tuen Mun Town Hall Auditorium (`tmth-aud`) | 1,368 | Stalls 589 · Upper Stalls 439 · Balcony 340 | 1,295 (rows A–B, stated) |
 | Tuen Mun Town Hall Cultural Activities Hall (`tmth-ca`) | 290 | single (floor A–C, platform D–N) | no pit |
 | Tsuen Wan Town Hall Cultural Activities Hall (`twth-ca`) | 260 | single (floor A–C, platform D–N) | no pit |
-| Hong Kong Cultural Centre Grand Theatre (`hkcc-gt`) | 1,734 | Stalls 1 788 · Stalls 2 425 · Circle and Upper Circle 495 · V.I.P. Boxes 26 | two pit lifts (53 and 102 seats); LCSD publishes no rows |
+| Hong Kong Cultural Centre Grand Theatre (`hkcc-gt`) | 1,734 | Stalls 788 (Stalls 1 A–K + Stalls 2 L–Y) · Circle 425 · Upper Circle 495 · V.I.P. Boxes 26 | small pit lift 1,681 (Stalls 1 A–B, centre block of C) · large pit lift 1,632 (A–D, centre block of E) |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
 Civic Centre Theatre, Tuen Mun Town Hall Auditorium). Each file says which, and gives the arithmetic.
+The Grand Theatre's pit lifts are curved: the rows that fit take whole front rows and the centre block of the row
+behind, so a pit can name one block of a row, and its part of house where row letters repeat.
 The Turns, The Lab and the Cultural Activities Hall are flexible rooms with two seated layouts each, so each layout is its own seat list.
 
 ## What the data is, and what it is not
@@ -140,7 +142,7 @@ box: part of house, row, block, bank, seat, number and its basis, marks, pit row
 | `layout` | which end seat 1 is at (`seat_1_side`), notes on the numbering, and optionally `banks` (below) |
 | `marks` | the meaning of each mark letter: `W` wheelchair, `X` management, `R` restricted sightline, `L` limited legroom |
 | `printed_totals` | the totals printed on the plan, per part of house and overall |
-| `orchestra_pits` | each pit option: rows removed (with basis and reasoning), seats removed, total, quoted source |
+| `orchestra_pits` | each pit option: rows removed (row labels, or `{zone, row, block}` as in banks; with basis and reasoning), seats removed, total, quoted source |
 | `zones` | parts of house → `rows` → `blocks` → `seats` (seat ids in number order, from seat 1's side) |
 | `references` | other LCSD documents that confirm a figure, with quotes |
 | `count_check` | the counts behind the check, per part of house |
@@ -155,7 +157,7 @@ of the stage (a thrust stage, or rows along the side walls). The files still hol
 |---|---|
 | `id` | a name for the bank, e.g. `stalls-left` |
 | `side` | which side of the stage it is on: `front`, `left` or `right` |
-| `rows` | its rows, nearest the stage first: a row label for a whole row, or `{"row": "A", "block": 1}` for one block of it; add `"zone"` where row letters repeat across parts of house, e.g. `{"zone": "Stalls 2", "row": "A", "block": 1}` |
+| `rows` | its rows, nearest the stage first: a row label for a whole row, or `{"row": "A", "block": 1}` for one block of it; add `"zone"` where row letters repeat across parts of house, e.g. `{"zone": "Circle", "row": "A", "block": 1}` |
 | `rows_run` | side banks: `along` (each row upright, running along the side; the default) or `across` (each row level, facing the stage, one behind another, e.g. boxes on a side wall) |
 | `in_line` | side banks whose rows run along: `true` when the rows follow one another down the wall rather than sit side by side |
 | `seat_1` | which end seat 1 is at: `left`/`right` for rows drawn level (front banks, `across`); `downstage`/`upstage` for upright rows |
@@ -176,7 +178,9 @@ printed neighbours fits exactly (e.g. `6 · X X · 9` → 7, 8); otherwise it st
 **Totals from elsewhere, and exceptions.** Where a plan prints no totals, `totals_source` says where the
 checked figures come from (for the Grand Theatre, LCSD's technical sheet). Where LCSD's figure for a part of
 house also counts its management seats, the zone says so with `count_includes` and a `count_note`; the build
-and the viewer both show it.
+and the viewer both show it. Where LCSD gives one figure for parts of house the plan names separately, each of
+those zones names that figure with `counted_in` and they are checked together (Grand Theatre: Stalls 1 and
+Stalls 2, `"counted_in": "Stalls"`, 788).
 
 **How counts are checked.** On every plan so far, the printed total equals the boxes drawn minus the
 management seats. Wheelchair, restricted and limited-legroom seats are counted. This rule is our reading;

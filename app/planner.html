@@ -393,11 +393,11 @@ function describe() {
     off.length ? `${off.join(", ")} not counted` : "all seat types counted", ...closed.length ? [`${closed.join(", ")} closed`] : []].join(" · ") + ".";
 }
 
-const counts = (zone, row, mark) => !excludedIn(doc, cfg, zone, row, mark);
+const counts = (zone, row, mark, seat) => !excludedIn(doc, cfg, zone, row, mark, seat);
 function sellable() {
   const out = [];
   for (const z of doc.zones) for (const r of z.rows) for (const s of seatsOf(r))
-    if (counts(z.name, r.row, markOf(r, s))) out.push(keyOf(z.name, r.row, s));
+    if (counts(z.name, r.row, markOf(r, s), s)) out.push(keyOf(z.name, r.row, s));
   return out;
 }
 
@@ -414,7 +414,7 @@ function draw() {
   seatsByKey = new Map();
   for (const g of svg.querySelectorAll(".seat")) {
     const d = g.dataset, k = keyOf(d.zone, d.row, d.seat);
-    const off = !counts(d.zone, d.row, d.mark);
+    const off = !counts(d.zone, d.row, d.mark, d.seat);
     g.classList.toggle("off", off);
     g.dataset.key = k;
     g.dataset.label = g.querySelector("text").textContent;

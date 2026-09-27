@@ -81,7 +81,7 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .seat:hover rect, .seat:focus rect { stroke: var(--hover); stroke-width: 2; }
 .seat:focus { outline: none; }
 .pitband { display: none; } .pitband.on { display: inline; }
-.pitband rect { fill: none; stroke: var(--r); stroke-dasharray: 4 3; }
+.pitband rect, .pitband polygon { fill: none; stroke: var(--r); stroke-dasharray: 4 3; }
 .pitband text { fill: var(--r); font-size: 11px; font-weight: 650; dominant-baseline: central; }
 .blockedarea { fill: var(--ink); }
 .standing rect { fill: none; stroke: var(--muted); stroke-dasharray: 2 2; }

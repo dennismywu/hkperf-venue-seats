@@ -116,14 +116,16 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   </table></div>
 
   <h2 id="seats">4. Parts of house, rows, blocks, seats</h2>
-  <pre><code>zones[]          a part of house: name, name_zh, optional sections
+  <pre><code>zones[]          a part of house: name, name_zh, optional sections, counted_in, count_includes
   rows[]         a row: its label, optional marks, inferred_numbers and note
     blocks[]     a run of seats between aisles
       seats[]    seat ids, in number order from seat 1's end</code></pre>
   <ul>
     <li><b>Parts of house</b> (<code>zones</code>) are the areas the plan names and totals, e.g. Stalls 堂座,
       Balcony 樓座, Gallery. Where a plan names only the room, there is one zone with the room's name.
-      <code>sections</code> record sub-areas the plan prints without separate totals (e.g. Front and Rear Stalls).</li>
+      <code>sections</code> record sub-areas the plan prints without separate totals (e.g. Front and Rear Stalls).
+      Where the plan names two parts of house but the operator totals them together, both are zones and
+      carry <code>counted_in</code> (see <a href="#counts">Totals</a>).</li>
     <li><b>Rows</b> keep the label printed on the plan: <code>A</code>, <code>AA</code>, <code>BD</code>. Rows
       are listed front to back, as the plan orders them.</li>
     <li><b>Blocks</b> split a row where an aisle or a gap interrupts it, listed from seat 1's side. A block may
@@ -178,6 +180,11 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     minus X, and the printed figure.</p>
   <p><b>Totals from elsewhere.</b> Where a plan prints no totals, <code>totals_source</code> says where the checked
     figures come from, e.g. the operator's technical sheet (Hong Kong Cultural Centre Grand Theatre).</p>
+  <p><b>Parts of house totalled together.</b> Where the operator gives one figure for two or more parts of house
+    the plan names separately, each of those zones carries <code>"counted_in"</code> with the name of that figure in
+    <code>printed_totals</code>, and the zones are checked together against it. The Grand Theatre's Stalls 1 and
+    Stalls 2 have <code>"counted_in": "Stalls"</code> (788); <code>count_check</code> then has an entry for Stalls
+    listing its zones.</p>
   <p><b>Exceptions.</b> Where the operator's figure for a part of house also counts its management seats, that zone
     carries <code>"count_includes": ["X"]</code> and a <code>count_note</code> explaining it; the check then counts
     every box there, and <code>count_check</code> records the exception. Nothing is adjusted to make a figure fit.</p>
@@ -195,6 +202,9 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     <li><code>rows_basis</code> is <code>stated</code> when the operator names the rows, and
       <code>inferred</code> when it gives only the number: the rows are then the run of front rows that gives
       exactly that number, and <code>rows_reasoning</code> shows the arithmetic and why no other run fits.</li>
+    <li>An entry in <code>rows_removed</code> is a row label, or, as in a bank, <code>{"zone": "Stalls 1", "row": "C", "block": 2}</code>:
+      <code>zone</code> where row letters repeat across parts of house, <code>block</code> where the pit takes one block of
+      the row. The Grand Theatre's curved pit lifts take whole front rows and the centre block of the row behind.</li>
     <li><code>stated</code> lists which figures the operator printed; the others are calculated.</li>
     <li>A pit the operator describes without a seat figure is recorded in <code>references</code>, not as an option.</li>
   </ul>
@@ -271,8 +281,8 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <h2 id="checks">14. What the build checks</h2>
   <p>A seat list is written only if all of these hold; otherwise the build stops with the reason.</p>
   <ul>
-    <li>Each part of house: boxes − management seats = the printed total, and the parts add up to the printed overall total.</li>
-    <li>Each pit: the seats in its rows equal the stated loss, or give the stated capacity.</li>
+    <li>Each part of house (or each group with <code>counted_in</code>): boxes − management seats = the printed total, and these add up to the printed overall total.</li>
+    <li>Each pit: the seats in its rows (or blocks) equal the stated loss, or give the stated capacity.</li>
     <li>Banks, where given: every block of every row is in exactly one bank; sides, ends and references to other banks are valid.</li>
     <li>Separately, a script confirms each address, coordinate and region against LCSD's open data.</li>
   </ul>
@@ -333,7 +343,8 @@ LAYOUT RULES
 4. Draw every seat as an equal square with its seat id inside; wheelchair seats show "W". Style marks:
    W filled blue, X crossed out and greyed (not counted by default), R with an inner outline,
    L with a light fill. Add a legend for the marks this file uses (file's top-level marks has the wording).
-5. For each orchestra_pits entry, add a dashed outline around its rows_removed, labelled with its name and
+5. For each orchestra_pits entry, add a dashed outline around its rows_removed (the whole row, or only the
+   block an entry names, found the same way as a bank's rows), labelled with its name and
    "rows stated" or "rows inferred" from rows_basis. If standing.places exists, draw them as round places.
 6. Under the map, add this text, unchanged: "Not the venue's seat plan. This map is drawn from the seat
    data: a machine-assisted reading of the rows and seats of the venue. It is not the actual seat plan.

@@ -267,6 +267,15 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
 const CONFIG = window.SEATS_CONFIG || {};
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fmt = n => Number(n).toLocaleString("en");
+// "rows A–B", or "Stalls 1 rows A–D; block 2 of row E" when a pit names its part of house or takes one block
+function pitRows(pit) {
+  const refs = pit.rows_removed.map(r => typeof r === "string" ? { row: r } : r);
+  const zones = [...new Set(refs.map(r => r.zone || ""))];
+  const whole = refs.filter(r => !r.block).map(r => r.row);
+  const parts = [...(whole.length > 1 ? [`${whole[0]}–${whole.at(-1)}`] : whole), ];
+  const blocks = refs.filter(r => r.block).map(r => `; block ${r.block} of row ${r.row}`).join("");
+  return `${zones.length === 1 && zones[0] ? zones[0] + " " : ""}rows ${parts.join(", ")}${blocks}`;
+}
 const repo = CONFIG.repo, branch = CONFIG.branch || "main";
 if (repo) {
   document.getElementById("repo-link").href = repo;
@@ -303,8 +312,11 @@ async function venues() {
     const docs = await Promise.all(index.venues.map(v => fetch(`data/${v.file}`).then(r => r.json()).then(d => [v, d])));
     tbody.innerHTML = docs.map(([v, d]) => {
       const t = d.printed_totals;
-      const areas = d.zones.length > 1 ? d.zones.map(z => `${esc(z.name)} ${fmt(t[z.name])}`).join(" · ") : "single";
-      const pits = (d.orchestra_pits || []).map(p => `${esc(p.name)}: ${fmt(p.total_with_pit)} <small>rows ${esc(p.rows_removed[0])}–${esc(p.rows_removed.at(-1))} <span class="tag">${esc(p.rows_basis)}</span></small>`).join("") || `<small>none in the data</small>`;
+      // a figure LCSD gives for several zones together (counted_in) is shown once, with the zones it covers
+      const units = [...new Set(d.zones.map(z => z.counted_in || z.name))];
+      const members = u => d.zones.filter(z => z.counted_in === u).map(z => z.name);
+      const areas = d.zones.length > 1 ? units.map(u => `${esc(u)}${members(u).length ? ` <small>(${esc(members(u).join(" + "))})</small>` : ""} ${fmt(t[u])}`).join(" · ") : "single";
+      const pits = (d.orchestra_pits || []).map(p => `${esc(p.name)}: ${fmt(p.total_with_pit)} <small>${esc(pitRows(p))} <span class="tag">${esc(p.rows_basis)}</span></small>`).join("") || `<small>none in the data</small>`;
       const standing = d.standing?.places?.length ? `<small>+ ${d.standing.places.length} standing</small>` : "";
       const csv = v.file.replace(/\.json$/, ".csv");
       const git = repo ? `<a href="${esc(`${repo}/blob/${branch}/data/${v.file}`)}" rel="noopener">JSON</a><a href="${esc(`${repo}/blob/${branch}/data/${csv}`)}" rel="noopener">CSV</a>` : "";
