@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="common.css">
 <style>
 .layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 16px; padding-top: 16px; align-items: start; }
-@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
 .panel { position: sticky; top: calc(var(--keys-h, 80px) + 12px); max-height: calc(100vh - var(--keys-h, 80px) - 24px); overflow: auto; }
 @media (max-width: 900px) { .panel { position: static; max-height: none; } }
 .group { padding: 12px 0; border-top: 1px solid var(--line); }
@@ -84,7 +84,7 @@
 .namebox-alt summary { font-size: 12px; color: var(--muted); cursor: pointer; margin-top: 8px; text-transform: none; letter-spacing: 0; font-weight: 400; }
 .marquee { fill: color-mix(in srgb, var(--acc) 12%, transparent); stroke: var(--acc); stroke-dasharray: 4 3; stroke-width: 1; pointer-events: none; }
 /* summary */
-.below { display: grid; gap: 16px; padding-top: 16px; padding-bottom: 32px; }
+.below { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding-top: 16px; padding-bottom: 32px; }
 .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
 td.num, th.num { text-align: right; }
 tfoot td { font-weight: 700; border-top: 2px solid var(--line); }

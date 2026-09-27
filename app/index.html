@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="common.css">
 <style>
 .layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; padding-top: 16px; align-items: start; }
-@media (max-width: 880px) { .layout { grid-template-columns: 1fr; } }
+@media (max-width: 880px) { .layout { grid-template-columns: minmax(0, 1fr); } }
 /* configuration panel */
 .controls { position: sticky; top: calc(var(--keys-h, 80px) + 12px); }
 @media (max-width: 880px) { .controls { position: static; } }
@@ -27,7 +27,9 @@
 .opt .n { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; margin-left: auto; white-space: nowrap; }
 .key-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 12px; color: var(--muted); margin: -4px 0 10px; }
 .key-legend .delta { min-width: 0; }
-.seg label .rows { color: var(--muted); font-size: 12px; margin-left: auto; white-space: nowrap; }
+/* a pit's name, with the rows it takes on a line of their own, in the space before the badge */
+.seg .pitname { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; overflow-wrap: anywhere; }
+.seg label .rows { color: var(--muted); font-size: 12px; }
 .seat.gain { opacity: 1; } .seat.gain rect { stroke: var(--ok); stroke-width: 2.2; stroke-dasharray: none; }
 .seat.lose rect { stroke: var(--bad); stroke-width: 2.2; }
 .standing.gain rect { stroke: var(--ok); stroke-width: 2.2; stroke-dasharray: none; }
@@ -45,14 +47,14 @@
 .sharebox input { width: 100%; margin-top: 4px; font: inherit; font-size: 12px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
 
 /* facts */
-.below { display: grid; gap: 16px; padding-top: 16px; padding-bottom: 32px; }
+.below { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding-top: 16px; padding-bottom: 32px; }
 .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; margin: 0; }
 .fact { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); margin: 0; min-width: 0; }
 .fact dt { font-size: 12px; color: var(--muted); font-weight: 600; }
 .fact dd { margin: 0; }
 .fact .v { font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.3; }
 .fact .d { font-size: 12.5px; color: var(--ink); margin-top: 2px; overflow-wrap: anywhere; }
-.fact .s { font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+.fact .s { font-size: 11.5px; color: var(--muted); margin-top: 6px; overflow-wrap: anywhere; }
 .fact.wide { grid-column: span 2; }
 @media (max-width: 560px) { .fact.wide { grid-column: auto; } }
 .fact a { color: var(--acc); }
@@ -337,8 +339,8 @@ function controls() {
   const pits = doc.orchestra_pits || [];
   $("g-pit").hidden = !pits.length;
   $("pitopts").innerHTML = [{ name: "Not in use", i: -1 }, ...pits.map((p, i) => ({ ...p, i }))].map(p =>
-    `<label><input type="radio" name="pit" value="${p.i}" ${p.i === state.pit ? "checked" : ""}> ${esc(p.name)}` +
-    `${p.i >= 0 ? `<span class="rows">${esc(pitRows(p, true))}</span>` : `<span class="rows"></span>`}</label>`).join("");
+    `<label><input type="radio" name="pit" value="${p.i}" ${p.i === state.pit ? "checked" : ""}> <span class="pitname">${esc(p.name)}` +
+    `${p.i >= 0 ? `<span class="rows">${esc(pitRows(p, true))}</span>` : ""}</span></label>`).join("");
   $("pitopts").querySelectorAll("label").forEach(lab => {
     const inp = lab.querySelector("input"), i = +inp.value;
     inp.onchange = () => { state.pit = i; update(); preview(null); };
