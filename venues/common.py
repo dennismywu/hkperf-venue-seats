@@ -81,14 +81,16 @@ def find_row(doc, ref):
 
 def ref_blocks(ref, row):
     """Block indexes a reference covers: all of them, or the one it names."""
-    return range(len(row["blocks"])) if isinstance(ref, str) or "block" not in ref else [ref["block"] - 1]
+    if isinstance(ref, str) or "block" not in ref:
+        return range(len(row["blocks"]))
+    return [b - 1 for b in (ref["block"] if isinstance(ref["block"], list) else [ref["block"]])]
 
 
 def ref_text(ref):
     """"A", or "Stalls 1 C block 2"."""
     if isinstance(ref, str):
         return ref
-    return " ".join(filter(None, [ref.get("zone"), ref["row"], f"block {ref['block']}" if "block" in ref else ""]))
+    return " ".join(filter(None, [ref.get("zone"), ref["row"], f"block {'-'.join(map(str, ref['block'])) if isinstance(ref['block'], list) else ref['block']}" if "block" in ref else ""]))
 
 
 def pit_seats(doc, pit):
@@ -116,12 +118,13 @@ def aisle_banks(*parts):
     """Banks for halls whose rows run left block · centre block · right block (seat 1 at the left), with
     the row labels in the aisles. parts: (id prefix, rows) or (id prefix, rows, zone name) per part of
     house; give the zone when row letters repeat across parts. A row with one block is centre only; a
-    row with two blocks has side blocks only, level with the rows either side of it."""
+    row with two blocks has side blocks only, level with the rows either side of it; a row with four
+    has a centre in two runs (blocks 2-3)."""
     banks = []
     for prefix, rows, *zone in parts:
         ref = (lambda r, blk: {"zone": zone[0], "row": r["row"], "block": blk}) if zone else (lambda r, blk: {"row": r["row"], "block": blk})
         centre = f"{prefix}-centre"
-        mid = {3: 2, 1: 1}
+        mid = {3: 2, 1: 1, 4: [2, 3]}
         banks += [
             {"id": centre, "side": "front", "rows": [ref(r, mid[len(r["blocks"])]) for r in rows if len(r["blocks"]) in mid],
              "seat_1": "left"},
@@ -187,22 +190,28 @@ def finish(doc):
     check = {}
     for z in doc["zones"]:
         boxes, x = _seats(z["rows"]), _marked(z["rows"], "X")
-        # A part of house whose official figure also counts its management seats says so, and why.
+        # A part of house whose official figure also counts its management seats (count_includes X), or leaves
+        # out a kind of seat it has (count_excludes, e.g. W), says so, and why.
         with_x = "X" in z.get("count_includes", [])
-        assert not with_x or z.get("count_note"), f"{z['name']}: count_includes needs a count_note"
-        counted = boxes if with_x else boxes - x
+        without = z.get("count_excludes", [])
+        assert set(z.get("count_includes", [])) <= {"X"}, f"{z['name']}: count_includes takes only X"
+        assert "X" not in without, f"{z['name']}: X is left out already"
+        assert not (with_x or without) or z.get("count_note"), f"{z['name']}: count_includes/count_excludes needs a count_note"
+        left_out = sum(_marked(z["rows"], m) for m in without)
+        counted = (boxes if with_x else boxes - x) - left_out
         check[z["name"]] = {"boxes": boxes, "management_X": x, "wheelchair_W": _marked(z["rows"], "W"),
                             "restricted_R": _marked(z["rows"], "R"), "limited_legroom_L": _marked(z["rows"], "L"),
                             "boxes_minus_X": boxes - x,
-                            **({"counted_with_X": boxes, "exception": z["count_note"]} if with_x else {})}
+                            **({"counted_with_X": boxes, "exception": z["count_note"]} if with_x else {}),
+                            **({f"counted_without_{''.join(without)}": counted, "exception": z["count_note"]} if without else {})}
         if "counted_in" in z:
             # parts of house the operator totals together (counted_in names the shared figure): checked below
-            assert not with_x, f"{z['name']}: count_includes is not supported with counted_in"
+            assert not (with_x or without), f"{z['name']}: count_includes/count_excludes is not supported with counted_in"
             assert z["counted_in"] not in {y["name"] for y in doc["zones"]}, f"{z['name']}: counted_in names a zone"
             check[z["name"]]["counted_in"] = z["counted_in"]
             continue
         check[z["name"]]["printed"] = printed[z["name"]]
-        assert counted == printed[z["name"]], f"{z['name']}: {boxes} boxes - {x} X != {printed[z['name']]}"
+        assert counted == printed[z["name"]], f"{z['name']}: {boxes} boxes - {x} X{f' - {left_out} {without}' if without else ''} != {printed[z['name']]}"
     groups = {}
     for z in doc["zones"]:
         if "counted_in" in z:

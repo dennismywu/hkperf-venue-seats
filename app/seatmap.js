@@ -30,7 +30,7 @@ function pitSeats(doc, pit) {
     for (const ref of pit.rows_removed) {
       const { z, row } = findRow(doc, ref);
       row.blocks.forEach((b, i) => {
-        if (typeof ref === "string" || !ref.block || i === ref.block - 1) b.seats.forEach(s => keys.add(`${z.name}/${row.row}/${s}`));
+        if (refBlocks(ref, row).includes(i)) b.seats.forEach(s => keys.add(`${z.name}/${row.row}/${s}`));
       });
     }
     pitKeys.set(pit, keys);
@@ -48,7 +48,7 @@ function pitRows(pit, short) {
   const zones = [...new Set(refs.map(r => r.zone || ""))];
   const whole = refs.filter(r => !r.block).map(r => r.row);
   const parts = [...(short && whole.length > 1 ? [`${whole[0]}–${whole.at(-1)}`] : whole), ];
-  const blocks = refs.filter(r => r.block).map(r => `; block ${r.block} of row ${r.row}`).join("");
+  const blocks = refs.filter(r => r.block).map(r => `; block ${[].concat(r.block).join("–")} of row ${r.row}`).join("");
   return `${zones.length === 1 && zones[0] ? zones[0] + " " : ""}rows ${parts.join(", ")}${blocks}`;
 }
 
@@ -290,18 +290,20 @@ function finishMap(svg, doc, W, y) {
 const BANK_GAP = 18, COL_GAP = 8;
 
 // A bank's rows: "AA" (a whole row), or {row, zone?, block?} where zone names the part of house when row
-// letters repeat across levels, and block picks one block of the row (1 = seat 1's side).
+// letters repeat across levels, and block picks one block of the row (1 = seat 1's side), or a list of them.
 function findRow(doc, ref) {
   const label = typeof ref === "string" ? ref : ref.row, zone = typeof ref === "string" ? null : ref.zone;
   for (const z of doc.zones) if (!zone || z.name === zone) for (const r of z.rows) if (r.row === label) return { z, row: r };
   throw new Error(`no row ${zone ? zone + " " : ""}${label}`);
 }
 const rowKey = (z, row) => `${z.name}/${row.row}`;
+// The block indexes a reference covers: every block, or the one (or list) it names, counted from 1.
+const refBlocks = (ref, row) => typeof ref === "string" || !ref.block ? row.blocks.map((_, i) => i) : [].concat(ref.block).map(b => b - 1);
 
 function bankPieces(doc, bank) {
   return bank.rows.map(ref => {
     const { z, row } = findRow(doc, ref);
-    const blocks = typeof ref === "string" || !ref.block ? row.blocks : [row.blocks[ref.block - 1]];
+    const blocks = refBlocks(ref, row).map(i => row.blocks[i]);
     return { z, row, blocks };
   });
 }
@@ -516,7 +518,7 @@ function drawBankedMap(doc) {
     // each row's extent: the blocks the pit takes
     const rows = pit.rows_removed.map(ref => {
       const { z, row } = findRow(doc, ref);
-      const bx = row.blocks.map((_, j) => j).filter(j => typeof ref === "string" || !ref.block || j === ref.block - 1)
+      const bx = refBlocks(ref, row)
         .map(j => boxes[`${z.name}/${row.row}/${j}`]).filter(Boolean);
       return bx.length && { x0: Math.min(...bx.map(r => r.x0)), y0: Math.min(...bx.map(r => r.y0)),
         x1: Math.max(...bx.map(r => r.x1)), y1: Math.max(...bx.map(r => r.y1)) };

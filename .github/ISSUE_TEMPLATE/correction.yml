@@ -33,6 +33,8 @@ body:
         - tmth-ca · Tuen Mun Town Hall Cultural Activities Hall
         - twth-ca · Tsuen Wan Town Hall Cultural Activities Hall
         - hkcc-gt · Hong Kong Cultural Centre Grand Theatre
+        - twth-aud · Tsuen Wan Town Hall Auditorium
+        - kst-th · Ko Shan Theatre Theatre
     validations:
       required: true
   - type: dropdown

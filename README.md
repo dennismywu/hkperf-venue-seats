@@ -30,9 +30,11 @@ and front-of-house teams.
 | Tuen Mun Town Hall Cultural Activities Hall (`tmth-ca`) | 290 | single (floor A–C, platform D–N) | no pit |
 | Tsuen Wan Town Hall Cultural Activities Hall (`twth-ca`) | 260 | single (floor A–C, platform D–N) | no pit |
 | Hong Kong Cultural Centre Grand Theatre (`hkcc-gt`) | 1,734 | Stalls 788 (Stalls 1 A–K + Stalls 2 L–Y) · Circle 425 · Upper Circle 495 · V.I.P. Boxes 26 | small pit lift 1,681 (Stalls 1 A–B, centre block of C) · large pit lift 1,632 (A–D, centre block of E) |
+| Tsuen Wan Town Hall Auditorium (`twth-aud`) | 1,420 | Stalls 580 · Upper Stalls 469 · Balcony 371 | 1,353 (rows A–B, stated) |
+| Ko Shan Theatre Theatre (`kst-th`) | 1,031 + 6 wheelchair | Stalls 916 · Balcony 115 | pit formed from a trap and the centre lift; no seats lost |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
-Civic Centre Theatre, Tuen Mun Town Hall Auditorium). Each file says which, and gives the arithmetic.
+Civic Centre Theatre, Tuen Mun and Tsuen Wan Town Hall Auditoriums). Each file says which, and gives the arithmetic.
 The Grand Theatre's pit lifts are curved: the rows that fit take whole front rows and the centre block of the row
 behind, so a pit can name one block of a row, and its part of house where row letters repeat.
 The Turns, The Lab and the Cultural Activities Hall are flexible rooms with two seated layouts each, so each layout is its own seat list.
@@ -157,7 +159,7 @@ of the stage (a thrust stage, or rows along the side walls). The files still hol
 |---|---|
 | `id` | a name for the bank, e.g. `stalls-left` |
 | `side` | which side of the stage it is on: `front`, `left` or `right` |
-| `rows` | its rows, nearest the stage first: a row label for a whole row, or `{"row": "A", "block": 1}` for one block of it; add `"zone"` where row letters repeat across parts of house, e.g. `{"zone": "Circle", "row": "A", "block": 1}` |
+| `rows` | its rows, nearest the stage first: a row label for a whole row, or `{"row": "A", "block": 1}` for one block of it (or `"block": [2, 3]` for several); add `"zone"` where row letters repeat across parts of house, e.g. `{"zone": "Circle", "row": "A", "block": 1}` |
 | `rows_run` | side banks: `along` (each row upright, running along the side; the default) or `across` (each row level, facing the stage, one behind another, e.g. boxes on a side wall) |
 | `in_line` | side banks whose rows run along: `true` when the rows follow one another down the wall rather than sit side by side |
 | `seat_1` | which end seat 1 is at: `left`/`right` for rows drawn level (front banks, `across`); `downstage`/`upstage` for upright rows |
@@ -180,7 +182,9 @@ checked figures come from (for the Grand Theatre, LCSD's technical sheet). Where
 house also counts its management seats, the zone says so with `count_includes` and a `count_note`; the build
 and the viewer both show it. Where LCSD gives one figure for parts of house the plan names separately, each of
 those zones names that figure with `counted_in` and they are checked together (Grand Theatre: Stalls 1 and
-Stalls 2, `"counted_in": "Stalls"`, 788).
+Stalls 2, `"counted_in": "Stalls"`, 788). Where LCSD's figure leaves out a kind of seat the plan draws, the
+zone says so with `count_excludes` (Ko Shan Theatre's Stalls: `["W"]`, as the plan adds its six wheelchair
+spaces to the total separately).
 
 **How counts are checked.** On every plan so far, the printed total equals the boxes drawn minus the
 management seats. Wheelchair, restricted and limited-legroom seats are counted. This rule is our reading;

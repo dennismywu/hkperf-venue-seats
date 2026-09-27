@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>香港表演場地座位配置</title>
+<meta name="description" content="以開放數據整理香港表演場地的座位配置：資料讀自康文署公布的座位圖，並與場地總數核對；另附按資料繪出各場館的檢視器，以及不保存任何資料的開放源碼規劃工具。">
+<meta name="author" content="胡銘堯 Dennis Wu">
+<link rel="author" href="https://www.denniswu.com/biography-chinese/">
+<link rel="canonical" href="https://code.denniswu.org/hkperf-venue-seats/zh.html">
+<link rel="alternate" hreflang="en" href="https://code.denniswu.org/hkperf-venue-seats/">
+<link rel="alternate" hreflang="zh-Hant-HK" href="https://code.denniswu.org/hkperf-venue-seats/zh.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="HK Venue Seats">
+<meta property="og:title" content="香港表演場地座位配置">
+<meta property="og:description" content="以開放數據整理香港表演場地的座位配置：資料讀自康文署公布的座位圖，並與場地總數核對；另附按資料繪出各場館的檢視器，以及不保存任何資料的開放源碼規劃工具。">
+<meta property="og:url" content="https://code.denniswu.org/hkperf-venue-seats/zh.html">
+<meta property="og:image" content="https://code.denniswu.org/hkperf-venue-seats/social.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="HK Venue Seats 檢視器，顯示場館座位圖、配置選項及座位數目。">
+<meta property="og:locale" content="zh_HK">
+<meta property="og:locale:alternate" content="en_HK">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="香港表演場地座位配置">
+<meta name="twitter:description" content="以開放數據整理香港表演場地的座位配置：資料讀自康文署公布的座位圖，並與場地總數核對；另附按資料繪出各場館的檢視器，以及不保存任何資料的開放源碼規劃工具。">
+<meta name="twitter:image" content="https://code.denniswu.org/hkperf-venue-seats/social.png">
+<meta name="twitter:image:alt" content="HK Venue Seats 檢視器，顯示場館座位圖、配置選項及座位數目。">
+<style>
+:root {
+  --bg: #f7f6f3; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a65; --line: #d9d7d0;
+  --acc: #16796f; --acc-bg: #e1f1ee; --r: #b86a12; --r-bg: #fbefdf;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936;
+    --acc: #5fc4b8; --acc-bg: #173a36; --r: #e8a656; --r-bg: #3a2a15;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151514; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a09e97; --line: #3a3936;
+  --acc: #5fc4b8; --acc-bg: #173a36; --r: #e8a656; --r-bg: #3a2a15;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.55 system-ui, -apple-system, "PingFang HK", "Noto Sans HK", sans-serif; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+a { color: var(--acc); }
+header { padding: 48px 0 28px; }
+.eyebrow { color: var(--muted); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; margin: 0 0 8px; }
+h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; margin: 0 0 12px; font-weight: 700; letter-spacing: -.01em; }
+.lede { font-size: 17px; max-width: 680px; margin: 0 0 10px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 22px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--panel); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.btn.primary { background: var(--acc); border-color: var(--acc); color: var(--panel); }
+.btn:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+section { padding: 22px 0; border-top: 1px solid var(--line); }
+h2 { font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; font-weight: 650; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.card h3 { margin: 0 0 6px; font-size: 15px; }
+.card p { margin: 0; color: var(--ink); font-size: 14px; }
+.card a.lic, .card a.gh { display: inline-block; margin-top: 6px; font-weight: 600; }
+.tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { color: var(--muted); font-size: 12px; font-weight: 600; }
+td.num { text-align: right; font-weight: 650; }
+td small { display: block; color: var(--muted); }
+.links a { margin-right: 10px; white-space: nowrap; }
+.note { color: var(--muted); font-size: 13px; }
+.regions { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 12px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; width: fit-content; max-width: 100%; }
+.regions button { font: inherit; font-size: 13px; font-weight: 600; border: 0; border-right: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 6px 12px; cursor: pointer; }
+.regions button:last-child { border-right: 0; }
+.regions button[aria-pressed="true"] { background: var(--acc); color: var(--panel); }
+.regions button:focus-visible { outline: 2px solid var(--acc); outline-offset: -2px; }
+.regions small { font-weight: 500; opacity: .75; margin-left: 4px; }
+td.date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.faq details { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; }
+.faq summary { cursor: pointer; padding: 11px 16px; font-weight: 650; font-size: 15px; list-style-position: outside; }
+.faq summary:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; border-radius: 10px; }
+.faq details[open] summary { border-bottom: 1px solid var(--line); }
+.faq .a { padding: 10px 16px 12px; font-size: 14px; }
+.faq .a p { margin: 0 0 8px; } .faq .a p:last-child { margin-bottom: 0; }
+.tag { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 4px; background: var(--r-bg); color: var(--r); font-weight: 600; }
+ul.plain { margin: 0; padding-left: 18px; }
+ul.plain li { margin-bottom: 6px; }
+footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+.pit { white-space: nowrap; }
+.eyebrow .lang { margin-left: 8px; text-transform: none; letter-spacing: 0; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">HK Venue Seats · 開放數據・開放源碼 <a class="lang" href="./" hreflang="en" lang="en">English</a></p>
+    <h1>香港表演場地座位配置</h1>
+    <p class="lede">以開放數據整理香港表演場地的座位配置：每一行、每個座位號碼及座位圖上的標記，均直接讀自康樂及文化事務署（康文署）公布的座位圖；每個座位區及每種樂池安排的座位數目，都與場地本身公布的總數核對。<b>檢視器</b>按資料繪出各場館，並計算任何配置的座位數目；<b>開放源碼規劃工具</b>則在你的瀏覽器內安排票價類別、預留座位及名單，不會保存任何資料。</p>
+    <p class="byline">作者：<a href="https://www.denniswu.com/biography-chinese/" rel="author noopener">胡銘堯</a> · 檢視器及規劃工具暫只有英文版</p>
+    <div class="actions">
+      <a class="btn primary" href="viewer/">開啟檢視器</a>
+      <a class="btn" href="viewer/planner.html">開啟規劃工具</a>
+      <a class="btn" id="repo-link" href="#" rel="noopener">GitHub 上的源碼及數據</a>
+    </div>
+  </header>
+
+  <section aria-labelledby="venues-h">
+    <h2 id="venues-h">場地</h2>
+    <div class="regions" id="regions" role="group" aria-label="顯示場地"></div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>場地</th><th class="num">座位</th><th>座位區</th><th>使用樂池時</th><th>加入日期</th><th>連結</th></tr></thead>
+        <tbody id="venues"><tr><td colspan="6" class="note">載入中…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">座位總數為各座位圖所印的數字。樂池所佔的行數，如康文署有列明，標示為<i>列明</i>；如只公布減少的座位數目，則標示為<i>推算</i>；每個檔案均列出計算過程。</p>
+  </section>
+
+  <section aria-labelledby="what-h">
+    <h2 id="what-h">內容簡介</h2>
+    <div class="cols">
+      <div class="card"><h3>只記事實，不複製圖則</h3><p>每個場館的座位區、各行、分段的座位號碼，以及座位圖印出的標記（輪椅座位、場館留座、視線受阻、腳部空間有限）。不包括座位位置、圖像或任何座位圖的副本。</p></div>
+      <div class="card"><h3>與康文署數字核對</h3><p>每個座位區都經點算，必須與康文署公布的總數相符；每種樂池安排都必須與康文署列明減少的座位數目相符，否則建置即告失敗。</p></div>
+      <div class="card"><h3>不保存任何資料的規劃工具</h3><p>可把檢視器的配置帶進規劃工具：設定票價類別、粗略估算總票房及平均票價、按目標作簡單差距分析，以及在座位上加上名字。所有資料只留在你的瀏覽器內；計劃可儲存為你裝置上的檔案。</p></div>
+      <div class="card"><h3>查看各種配置的檢視器</h3><p>選擇樂池、計算哪類座位、開放哪些座位區；每個選項都會顯示增減的座位數目。可下載座位表或你的配置（JSON 或 CSV）。</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="src-h">
+    <h2 id="src-h">資料來源</h2>
+    <ul class="plain">
+      <li>康樂及文化事務署（康文署）公布的座位圖，直接讀取。</li>
+      <li>康文署網頁及各場地技術資料所載的座位數目，引述時附網址及版本。</li>
+      <li>地址及座標取自康文署在 <a href="https://data.gov.hk/tc-data/dataset/hk-lcsd-event-event-cultural" rel="noopener">DATA.GOV.HK</a> 的開放數據。</li>
+      <li>從不使用票務或售票處資料，亦不使用他人編製的座位圖。</li>
+    </ul>
+    <p class="note">康文署就其座位圖及網站上的資料匯編主張版權（<a href="https://www.lcsd.gov.hk/tc/notice.html" rel="noopener">告示</a>）。本計劃只公布各場館的事實資料，並在每個檔案註明資料來自康文署。以上並非法律意見。</p>
+  </section>
+
+  <section aria-labelledby="use-h">
+    <h2 id="use-h">使用數據</h2>
+    <p>每個場地為一個 JSON 檔（格式 <code>hkperf-venue-seats/seatlist@0.3</code>），並附一個 CSV 檔（每個座位一行），列於 <code>data/index.json</code>。檔案格式及點算規則見<a href="schema.html">數據格式</a>（英文），加入場地的方法見儲存庫的 <a id="readme-link" href="#" rel="noopener">README</a>（英文）。</p>
+  </section>
+
+  <section aria-labelledby="faq-h" class="faq">
+    <h2 id="faq-h">常見問題</h2>
+    <details>
+      <summary>這是場地的官方座位圖嗎？</summary>
+      <div class="a"><p>不是。地圖是按座位表繪出的示意圖：各行置中，各段並排，座位按號碼排列。它顯示有哪些座位，而非座位的實際位置。實際座位圖請參閱場地公布的版本（每個場地旁均附連結）。使用前請先向場地查證。</p></div>
+    </details>
+    <details>
+      <summary>數據從何而來？</summary>
+      <div class="a"><p>只來自各場地營運者公布的資料：座位圖，以及營運者網頁和技術資料所載的座位數目。地址及座標取自康文署在 DATA.GOV.HK 的開放數據。資料從不來自票務或售票系統，亦不來自他人繪製的座位圖。</p></div>
+    </details>
+    <details>
+      <summary>怎樣確保數目正確？</summary>
+      <div class="a"><p>每個座位區都經點算，必須等於座位圖所印的總數，否則建置會失敗。如座位圖有文字層，每個座位號碼亦會逐一與之核對。每個檔案都記錄座位圖的版本（SHA-256）、資料來源及任何互相矛盾的數字。</p></div>
+    </details>
+    <details>
+      <summary>為何有些座位沒有號碼？</summary>
+      <div class="a"><p>座位圖上的輪椅座位（W）及場館留座（X）常印作沒有號碼的方格。只有在號碼可準確推定時才會填上，例如 20 號與 23 號之間的兩個方格，或營運者的技術資料有列明；否則該方格不設號碼，並在檔案內說明原因。</p></div>
+    </details>
+    <details>
+      <summary>甚麼是場館留座？會否計算在內？</summary>
+      <div class="a"><p>場地保留自用的座位，在座位圖上以 X 標示。印出的總數不包括這些座位，因此檢視器預設亦不計算；你可以開啟此選項，以顯示座位圖上的所有方格。</p></div>
+    </details>
+    <details>
+      <summary>為何設有樂池的場地沒有樂池選項？</summary>
+      <div class="a"><p>只有在營運者列明樂池會減少多少座位時，才會加入樂池選項。如營運者同時列明所佔的行數，便採用這些行；否則按剛好得出該數目的前排推算，並標示為推算。如沒有公布數字，樂池只會在資料來源中說明，不會減少任何座位。</p></div>
+    </details>
+    <details>
+      <summary>規劃工具會保存我輸入的資料嗎？</summary>
+      <div class="a"><p>不會。規劃工具在你的瀏覽器內運行，不會傳送任何資料：類別、票價及名字只留在頁面上，關閉頁面後即消失，除非你在自己的裝置上儲存計劃檔案。載有名字的計劃可用密碼保護。詳見<a href="privacy.html">私隱及使用統計</a>（英文）。</p></div>
+    </details>
+    <details>
+      <summary>我可以在自己的工作中使用這些數據，包括商業用途嗎？</summary>
+      <div class="a"><p>可以。座位表以 CC BY 4.0 授權：可作任何用途，但須註明出處，並保留每個檔案內的來源資料。程式碼以 MIT 授權。規劃工具的程式碼除非另有書面協議，只限非商業用途；但在本網站使用規劃工具，任何人均可免費使用。以上均不涵蓋康文署本身的座位圖。</p></div>
+    </details>
+    <details>
+      <summary>本計劃與康文署或各場地有關嗎？</summary>
+      <div class="a"><p>沒有。這是獨立計劃，與康文署或任何場地並無關連，亦未獲其認可。</p></div>
+    </details>
+    <details>
+      <summary>有場地未收錄，或發現錯誤，該怎麼辦？</summary>
+      <div class="a"><p>請使用<a href="#contrib-h">參與貢獻</a>下的表格：一個用作報告更正，一個用作建議場地。請附上營運者公布的座位圖連結；票務數據不能採用。</p></div>
+    </details>
+  </section>
+
+  <section aria-labelledby="contrib-h">
+    <h2 id="contrib-h">參與貢獻</h2>
+    <div class="cols">
+      <div class="card"><h3>報告更正</h3><p>如某行、座位號碼或標記與康文署座位圖不符，或康文署已修訂座位圖：請開立 issue，註明場地、行數及座位圖連結（表格為英文）。
+        <a class="gh" data-path="/issues/new?template=correction.yml" href="#" rel="noopener">開立 issue</a></p></div>
+      <div class="card"><h3>建議場地</h3><p>請提供場地名稱，以及營運者公布的座位圖連結。只採用營運者自行公布的座位圖，從不使用票務資料或他人的座位圖。
+        <a class="gh" data-path="/issues/new?template=venue.yml" href="#" rel="noopener">建議場地</a></p></div>
+      <div class="card"><h3>改進程式或數據</h3><p>歡迎提交 pull request。README 說明如何編寫場地腳本，並與印出的總數核對。
+        <a class="gh" data-path="/pulls" href="#" rel="noopener">Pull requests</a></p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="lic-h">
+    <h2 id="lic-h">授權</h2>
+    <div class="cols">
+      <div class="card"><h3>座位數據 · CC BY 4.0</h3><p><code>data/</code> 內的座位表（JSON 及 CSV），作為本計劃的原創貢獻，以<a href="https://creativecommons.org/licenses/by/4.0/deed.zh-hant" rel="noopener">創用CC 姓名標示 4.0</a> 授權。請保留每個檔案內的鳴謝及來源。
+        <a class="lic" data-file="LICENSE-DATA" href="#" rel="noopener">LICENSE-DATA</a></p></div>
+      <div class="card"><h3>程式碼 · MIT</h3><p>檢視器、建置腳本及擷取工具，以 <a href="https://opensource.org/license/mit" rel="noopener">MIT 授權</a>發布。
+        <a class="lic" data-file="LICENSE" href="#" rel="noopener">LICENSE</a></p></div>
+      <div class="card"><h3>規劃工具程式碼 · PolyForm Noncommercial 1.0.0</h3><p>規劃工具的源碼可供閱讀、修改及分享作非商業用途；商業使用該程式碼須獲書面許可。在本網站使用規劃工具，則任何人（包括商業機構）均可免費使用。
+        <a class="lic" data-file="LICENSE-PLANNER.md" href="#" rel="noopener">LICENSE-PLANNER.md</a></p></div>
+    </div>
+    <p class="note">上述授權均不涉及康文署就其座位圖所擁有的任何權利；該等權利仍屬康文署。授權條款以英文版本為準。</p>
+  </section>
+
+  <footer>
+    <span id="stats-note"></span>
+    <a href="https://www.denniswu.com/biography-chinese/" rel="author noopener">胡銘堯</a>的項目。座位資料整理自香港特別行政區政府康樂及文化事務署公布的座位圖及技術資料。座位數據：CC BY 4.0 · 程式碼：MIT · 規劃工具程式碼：PolyForm Noncommercial 1.0.0（<a href="#lic-h">授權</a>）。
+  </footer>
+</div>
+
+<script src="viewer/config.js"></script>
+<script src="viewer/analytics.js"></script>
+<script>
+const CONFIG = window.SEATS_CONFIG || {};
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = n => Number(n).toLocaleString("en");
+const repo = CONFIG.repo, branch = CONFIG.branch || "main";
+if (repo) {
+  document.getElementById("repo-link").href = repo;
+  document.getElementById("readme-link").href = `${repo}#readme`;
+  document.querySelectorAll("a.lic").forEach(a => a.href = `${repo}/blob/${branch}/${a.dataset.file}`);
+  document.querySelectorAll("a.gh").forEach(a => a.href = repo + a.dataset.path);
+} else {
+  document.getElementById("repo-link").hidden = true;
+  document.querySelectorAll("a.lic, a.gh").forEach(a => a.remove());
+}
+
+// The seat lists are in English with Chinese names for venues and parts of house; this page shows the Chinese.
+const REGIONS = [["Hong Kong Island", "香港島"], ["Kowloon", "九龍"], ["New Territories", "新界"]];
+const DISTRICTS = {
+  "Central & Western": "中西區", "Wan Chai": "灣仔", "Eastern": "東區", "Southern": "南區", "Yau Tsim Mong": "油尖旺",
+  "Sham Shui Po": "深水埗", "Kowloon City": "九龍城", "Wong Tai Sin": "黃大仙", "Kwun Tong": "觀塘", "Kwai Tsing": "葵青",
+  "Tsuen Wan": "荃灣", "Tuen Mun": "屯門", "Yuen Long": "元朗", "North": "北區", "Tai Po": "大埔", "Sha Tin": "沙田",
+  "Sai Kung": "西貢", "Islands": "離島",
+};
+// figures LCSD gives for several parts of house together (counted_in)
+const GROUPS = { "Stalls": "堂座" };
+const PITS = [[/^Small pit lift/, "小升降樂池"], [/^Large pit lift/, "大升降樂池"], [/^Small pit/, "小樂池"], [/^Large pit/, "大樂池"], [/^Orchestra pit/, "樂池"]];
+const BASIS = { stated: "列明", inferred: "推算" };
+const dateText = iso => { const [y, m, d] = iso.split("-").map(Number); return `${y}年${m}月${d}日`; };
+const pitName = n => { for (const [re, zh] of PITS) if (re.test(n)) return n.replace(re, zh).replace(/ \(/, "（").replace(/\)$/, "）"); return n; };
+
+// "A–B 行", or "堂座1 A–D 行；E 行第 2 段" when a pit names its part of house or takes one block
+function pitRows(pit, d) {
+  const zh = name => d.zones.find(z => z.name === name)?.name_zh || name;
+  const refs = pit.rows_removed.map(r => typeof r === "string" ? { row: r } : r);
+  const zones = [...new Set(refs.map(r => r.zone || ""))];
+  const whole = refs.filter(r => !r.block).map(r => r.row);
+  const parts = whole.length > 1 ? [`${whole[0]}–${whole.at(-1)}`] : whole;
+  const blocks = refs.filter(r => r.block).map(r => `；${r.row} 行第 ${[].concat(r.block).join("–")} 段`).join("");
+  return `${zones.length === 1 && zones[0] ? zh(zones[0]) + " " : ""}${parts.join("、")} 行${blocks}`;
+}
+
+// Region buttons: "全部" plus each region that has venues; they show or hide the table's rows.
+function regionButtons(list) {
+  const box = document.getElementById("regions");
+  const count = r => list.filter(v => !r || v.region === r).length;
+  const choices = [["", "全部"], ...REGIONS.filter(([r]) => count(r))];
+  box.innerHTML = choices.map(([r, label]) =>
+    `<button type="button" data-region="${esc(r)}" aria-pressed="${r ? "false" : "true"}">${esc(label)}<small>${count(r)}</small></button>`).join("");
+  box.onclick = e => {
+    const b = e.target.closest("button"); if (!b) return;
+    box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    document.querySelectorAll("#venues tr[data-region]").forEach(tr => tr.hidden = !!b.dataset.region && tr.dataset.region !== b.dataset.region);
+  };
+}
+
+async function venues() {
+  const tbody = document.getElementById("venues");
+  try {
+    const index = await (await fetch("data/index.json")).json();
+    const docs = await Promise.all(index.venues.map(v => fetch(`data/${v.file}`).then(r => r.json()).then(d => [v, d])));
+    tbody.innerHTML = docs.map(([v, d]) => {
+      const t = d.printed_totals;
+      const zh = name => d.zones.find(z => z.name === name)?.name_zh || GROUPS[name] || name;
+      // a figure LCSD gives for several zones together (counted_in) is shown once, with the zones it covers
+      const units = [...new Set(d.zones.map(z => z.counted_in || z.name))];
+      const members = u => d.zones.filter(z => z.counted_in === u).map(z => z.name_zh || z.name);
+      const areas = d.zones.length > 1 ? units.map(u => `${esc(zh(u))}${members(u).length ? ` <small>（${esc(members(u).join("＋"))}）</small>` : ""} ${fmt(t[u])}`).join(" · ") : "單一座位區";
+      const pits = (d.orchestra_pits || []).map(p => `<span class="pit">${esc(pitName(p.name))}：${fmt(p.total_with_pit)}</span> <small>${esc(pitRows(p, d))} <span class="tag">${esc(BASIS[p.rows_basis] || p.rows_basis)}</span></small>`).join("") || `<small>數據中沒有</small>`;
+      const standing = d.standing?.places?.length ? `<small>另加 ${d.standing.places.length} 個企位</small>` : "";
+      const csv = v.file.replace(/\.json$/, ".csv");
+      const git = repo ? `<a href="${esc(`${repo}/blob/${branch}/data/${v.file}`)}" rel="noopener">JSON</a><a href="${esc(`${repo}/blob/${branch}/data/${csv}`)}" rel="noopener">CSV</a>` : "";
+      const added = v.added ? `<time datetime="${esc(v.added)}">${esc(dateText(v.added))}</time>` : "";
+      const place = DISTRICTS[d.location?.district] || d.location?.address_zh || Object.fromEntries(REGIONS)[v.region] || "";
+      return `<tr data-region="${esc(v.region || "")}"><td><b>${esc(d.venue.name_zh)}</b><small lang="en">${esc(d.venue.name_en)}</small><small>${esc(place)}</small></td>` +
+        `<td class="num">${fmt(t.Total)}${standing}</td><td>${areas}</td><td>${pits}</td><td class="date">${added}</td>` +
+        `<td class="links"><a href="viewer/?venue=${encodeURIComponent(v.id)}">檢視</a>${git}<a href="${esc(d.source.url)}" rel="noopener">座位圖（康文署）</a></td></tr>`;
+    }).join("");
+    regionButtons(index.venues);
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="6" class="note">未能載入場地列表。請經 HTTP 開啟本頁。</td></tr>`;
+  }
+}
+venues();
+startStats();
+if (statsEnabled) document.getElementById("stats-note").innerHTML =
+  "<b>匿名使用統計。</b>本網站以自設伺服器上的 GoatCounter 計算瀏覽次數及使用了哪些功能：不使用 cookies，不保留 IP 地址或其他個人資料，" +
+  "亦從不記錄你輸入或選擇的內容。使用本網站即表示你同意。<a href=\"privacy.html\">私隱及使用統計</a>（英文）。<br>";
+</script>
+</body>
+</html>

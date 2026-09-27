@@ -1,0 +1,2033 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.3",
+ "venue": {
+  "id": "kst-th",
+  "name_en": "Ko Shan Theatre Theatre",
+  "name_zh": "高山劇場 劇院"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.lcsd.gov.hk/en/kst/common/forms/KST%20Theatre%20seating%20plan.pdf",
+  "file": "KST Theatre seating plan.pdf",
+  "sha256": "4146b62e71a20bd7f4960b11c5f73cd8dbd0021350420abf4cb5a384d8afe4c4",
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [
+  {
+   "what": "Seat totals and orchestra pit",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/kst-th-lfe.pdf",
+   "title": "Ko Shan Theatre – Theatre, FULL Technical Information",
+   "document_version": "V. 2026.05.27",
+   "sha256": "d27c5b1e6c9e02ba9894b8818e4d08f5bbf01356ac6201990729d85758a7192d",
+   "retrieved": "2026-09-27",
+   "quotes": [
+    "Total Seating: 1031 Stalls: 916 Balcony: 115",
+    "Formed by removing trap and lowering centre lift, maximum for 12 persons"
+   ],
+   "note": "Confirms the plan's totals, which leave out the six wheelchair spaces (the plan adds them separately). The pit is formed from a trap and the centre lift, so no seats are lost to it."
+  }
+ ],
+ "location": {
+  "address_en": "77 Ko Shan Road, Hung Hom, Kowloon, Hong Kong",
+  "address_zh": "香港九龍紅磡高山道77號",
+  "district": "Kowloon City",
+  "latitude": 22.31368,
+  "longitude": 114.18556,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "87610118",
+   "name_in_source": "Ko Shan Theatre (Theatre)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Ko Shan Theatre"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "note": "The plan is drawn with the stage at the bottom and seat 1 at the right-hand end of each row as drawn, which is the left-hand end with the stage at the top. Blocks keep fixed number ranges (stalls 1-12, 13-41, 42-53; balcony about 1-10, 12-24, 26-35), so rows start or end part-way and numbers skip between blocks. No rows I and O. The plan prints no date.",
+  "banks": [
+   {
+    "id": "stalls-centre",
+    "side": "front",
+    "rows": [
+     {
+      "row": "A",
+      "block": 2
+     },
+     {
+      "row": "B",
+      "block": 2
+     },
+     {
+      "row": "C",
+      "block": 2
+     },
+     {
+      "row": "D",
+      "block": 2
+     },
+     {
+      "row": "E",
+      "block": 2
+     },
+     {
+      "row": "F",
+      "block": 2
+     },
+     {
+      "row": "G",
+      "block": 2
+     },
+     {
+      "row": "H",
+      "block": 2
+     },
+     {
+      "row": "J",
+      "block": 2
+     },
+     {
+      "row": "K",
+      "block": 2
+     },
+     {
+      "row": "L",
+      "block": 2
+     },
+     {
+      "row": "M",
+      "block": 2
+     },
+     {
+      "row": "N",
+      "block": 2
+     },
+     {
+      "row": "P",
+      "block": 2
+     },
+     {
+      "row": "Q",
+      "block": 2
+     },
+     {
+      "row": "R",
+      "block": 2
+     },
+     {
+      "row": "S",
+      "block": 2
+     },
+     {
+      "row": "T",
+      "block": 2
+     },
+     {
+      "row": "U",
+      "block": 2
+     },
+     {
+      "row": "V",
+      "block": 2
+     },
+     {
+      "row": "W",
+      "block": 2
+     },
+     {
+      "row": "X",
+      "block": 2
+     }
+    ],
+    "seat_1": "left"
+   },
+   {
+    "id": "stalls-left",
+    "side": "left",
+    "rows": [
+     {
+      "row": "A",
+      "block": 1
+     },
+     {
+      "row": "B",
+      "block": 1
+     },
+     {
+      "row": "C",
+      "block": 1
+     },
+     {
+      "row": "D",
+      "block": 1
+     },
+     {
+      "row": "E",
+      "block": 1
+     },
+     {
+      "row": "F",
+      "block": 1
+     },
+     {
+      "row": "G",
+      "block": 1
+     },
+     {
+      "row": "H",
+      "block": 1
+     },
+     {
+      "row": "J",
+      "block": 1
+     },
+     {
+      "row": "K",
+      "block": 1
+     },
+     {
+      "row": "L",
+      "block": 1
+     },
+     {
+      "row": "M",
+      "block": 1
+     },
+     {
+      "row": "N",
+      "block": 1
+     },
+     {
+      "row": "P",
+      "block": 1
+     },
+     {
+      "row": "Q",
+      "block": 1
+     },
+     {
+      "row": "R",
+      "block": 1
+     },
+     {
+      "row": "S",
+      "block": 1
+     },
+     {
+      "row": "T",
+      "block": 1
+     },
+     {
+      "row": "U",
+      "block": 1
+     },
+     {
+      "row": "V",
+      "block": 1
+     },
+     {
+      "row": "W",
+      "block": 1
+     },
+     {
+      "row": "X",
+      "block": 1
+     }
+    ],
+    "rows_run": "across",
+    "seat_1": "left",
+    "beside": "stalls-centre"
+   },
+   {
+    "id": "stalls-right",
+    "side": "right",
+    "rows": [
+     {
+      "row": "A",
+      "block": 3
+     },
+     {
+      "row": "B",
+      "block": 3
+     },
+     {
+      "row": "C",
+      "block": 3
+     },
+     {
+      "row": "D",
+      "block": 3
+     },
+     {
+      "row": "E",
+      "block": 3
+     },
+     {
+      "row": "F",
+      "block": 3
+     },
+     {
+      "row": "G",
+      "block": 3
+     },
+     {
+      "row": "H",
+      "block": 3
+     },
+     {
+      "row": "J",
+      "block": 3
+     },
+     {
+      "row": "K",
+      "block": 3
+     },
+     {
+      "row": "L",
+      "block": 3
+     },
+     {
+      "row": "M",
+      "block": 3
+     },
+     {
+      "row": "N",
+      "block": 3
+     },
+     {
+      "row": "P",
+      "block": 3
+     },
+     {
+      "row": "Q",
+      "block": 3
+     },
+     {
+      "row": "R",
+      "block": 3
+     },
+     {
+      "row": "S",
+      "block": 3
+     },
+     {
+      "row": "T",
+      "block": 3
+     },
+     {
+      "row": "U",
+      "block": 3
+     },
+     {
+      "row": "V",
+      "block": 3
+     },
+     {
+      "row": "W",
+      "block": 3
+     },
+     {
+      "row": "X",
+      "block": 3
+     }
+    ],
+    "rows_run": "across",
+    "seat_1": "left",
+    "beside": "stalls-centre"
+   },
+   {
+    "id": "balcony-centre",
+    "side": "front",
+    "rows": [
+     {
+      "row": "AA",
+      "block": 2
+     },
+     {
+      "row": "BB",
+      "block": 2
+     },
+     {
+      "row": "CC",
+      "block": 2
+     },
+     {
+      "row": "DD",
+      "block": 2
+     }
+    ],
+    "seat_1": "left"
+   },
+   {
+    "id": "balcony-left",
+    "side": "left",
+    "rows": [
+     {
+      "row": "AA",
+      "block": 1
+     },
+     {
+      "row": "BB",
+      "block": 1
+     },
+     {
+      "row": "CC",
+      "block": 1
+     },
+     {
+      "row": "DD",
+      "block": 1
+     }
+    ],
+    "rows_run": "across",
+    "seat_1": "left",
+    "beside": "balcony-centre"
+   },
+   {
+    "id": "balcony-right",
+    "side": "right",
+    "rows": [
+     {
+      "row": "AA",
+      "block": 3
+     },
+     {
+      "row": "BB",
+      "block": 3
+     },
+     {
+      "row": "CC",
+      "block": 3
+     },
+     {
+      "row": "DD",
+      "block": 3
+     }
+    ],
+    "rows_run": "across",
+    "seat_1": "left",
+    "beside": "balcony-centre"
+   }
+  ]
+ },
+ "marks": {
+  "W": "Seat suitable for audience on wheel chairs (box prints W, no number)",
+  "X": "Management seat (grey box, no number)",
+  "R": "Seat with sightline restrictions (yellow box)"
+ },
+ "printed_totals": {
+  "Stalls": 916,
+  "Balcony": 115,
+  "Total": 1031
+ },
+ "zones": [
+  {
+   "name": "Stalls",
+   "name_zh": "堂座",
+   "rows": [
+    {
+     "row": "A",
+     "blocks": [
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "B",
+     "blocks": [
+      {
+       "seats": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "C",
+     "blocks": [
+      {
+       "seats": [
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "D",
+     "blocks": [
+      {
+       "seats": [
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "E",
+     "blocks": [
+      {
+       "seats": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "F",
+     "blocks": [
+      {
+       "seats": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "G",
+     "blocks": [
+      {
+       "seats": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "H",
+     "blocks": [
+      {
+       "seats": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+       ]
+      },
+      {
+       "seats": [
+        "X1",
+        "X2",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "note": "Two grey management boxes, no number, open the third block before 44 (42-43 likely, as every full row's third block starts at 42; not printed)."
+    },
+    {
+     "row": "J",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "K",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "L",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "M",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "X1",
+        "X2",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "note": "Two grey management boxes, no number, open the centre block before 19 (17-18 likely, as in row L; not printed)."
+    },
+    {
+     "row": "N",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "P",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "Q",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "R",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "S",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "T",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "U",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "V",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "W",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "X",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "X1",
+        "11",
+        "12"
+       ]
+      },
+      {
+       "seats": [
+        "13",
+        "14",
+        "15",
+        "W1",
+        "W2",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "W3",
+        "W4",
+        "W5",
+        "W6",
+        "39",
+        "40",
+        "41"
+       ]
+      },
+      {
+       "seats": [
+        "42",
+        "43",
+        "X2",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X",
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W",
+      "W5": "W",
+      "W6": "W"
+     },
+     "note": "The back row is broken by gaps. First block: 1-6, a gap, a grey management box, 11-12. Centre: 13-15, two wheelchair boxes (W), a gap, 23-30, W W, a gap, W W, 39-41. Third block: 42-43, a management box, a gap, 48-53. No box has a number that fits exactly; by the columns of row W they stand where 10, 16-17, 31-32, 37-38 and 44 are."
+    }
+   ],
+   "count_excludes": [
+    "W"
+   ],
+   "count_note": "The plan's figures leave out the six wheelchair spaces: beside the total it prints \"(另加 輪椅座位數目 add Number of wheel-chair seats: 6)\". LCSD's technical sheet gives the same 916 and 1031."
+  },
+  {
+   "name": "Balcony",
+   "name_zh": "樓座",
+   "rows": [
+    {
+     "row": "AA",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "X1"
+       ]
+      },
+      {
+       "seats": [
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24"
+       ]
+      },
+      {
+       "seats": [
+        "X2",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+       ]
+      }
+     ],
+     "marks": {
+      "1": "R",
+      "2": "R",
+      "3": "R",
+      "4": "R",
+      "5": "R",
+      "6": "R",
+      "7": "R",
+      "8": "R",
+      "9": "R",
+      "10": "R",
+      "12": "R",
+      "13": "R",
+      "14": "R",
+      "15": "R",
+      "16": "R",
+      "17": "R",
+      "18": "R",
+      "19": "R",
+      "20": "R",
+      "21": "R",
+      "22": "R",
+      "23": "R",
+      "24": "R",
+      "26": "R",
+      "27": "R",
+      "28": "R",
+      "29": "R",
+      "30": "R",
+      "31": "R",
+      "32": "R",
+      "33": "R",
+      "34": "R",
+      "35": "R",
+      "X1": "X",
+      "X2": "X"
+     },
+     "inferred_numbers": {
+      "X1": "11",
+      "X2": "25"
+     },
+     "note": "Every numbered seat is yellow (restricted sightline). A grey management box ends the first block after 10 and another opens the third before 26; the numbers either side (12, 24) make them 11 and 25 exactly."
+    },
+    {
+     "row": "BB",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      },
+      {
+       "seats": [
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      },
+      {
+       "seats": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "CC",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      },
+      {
+       "seats": [
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      },
+      {
+       "seats": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "DD",
+     "blocks": [
+      {
+       "seats": [
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+       ]
+      },
+      {
+       "seats": [
+        "X1",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "X2"
+       ]
+      },
+      {
+       "seats": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "note": "Grey management boxes, no number, at both ends of the centre block: before 12 (after 9, so 10 or 11) and after 23 (before 27, so 24-26). Neither fits exactly."
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Stalls": {
+   "boxes": 928,
+   "management_X": 6,
+   "wheelchair_W": 6,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 922,
+   "counted_without_W": 916,
+   "exception": "The plan's figures leave out the six wheelchair spaces: beside the total it prints \"(另加 輪椅座位數目 add Number of wheel-chair seats: 6)\". LCSD's technical sheet gives the same 916 and 1031.",
+   "printed": 916
+  },
+  "Balcony": {
+   "boxes": 119,
+   "management_X": 4,
+   "wheelchair_W": 0,
+   "restricted_R": 33,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 115,
+   "printed": 115
+  }
+ }
+}

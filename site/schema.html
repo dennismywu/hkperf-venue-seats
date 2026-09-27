@@ -116,7 +116,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   </table></div>
 
   <h2 id="seats">4. Parts of house, rows, blocks, seats</h2>
-  <pre><code>zones[]          a part of house: name, name_zh, optional sections, counted_in, count_includes
+  <pre><code>zones[]          a part of house: name, name_zh, optional sections, counted_in, count_includes, count_excludes
   rows[]         a row: its label, optional marks, inferred_numbers and note
     blocks[]     a run of seats between aisles
       seats[]    seat ids, in number order from seat 1's end</code></pre>
@@ -185,6 +185,10 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     <code>printed_totals</code>, and the zones are checked together against it. The Grand Theatre's Stalls 1 and
     Stalls 2 have <code>"counted_in": "Stalls"</code> (788); <code>count_check</code> then has an entry for Stalls
     listing its zones.</p>
+  <p><b>Seats a figure leaves out.</b> Where the operator's figure leaves out a kind of seat the plan draws, the
+    zone carries <code>"count_excludes"</code> with its mark and a <code>count_note</code>: Ko Shan Theatre's plan
+    adds its six wheelchair spaces to the total separately, so its Stalls have <code>"count_excludes": ["W"]</code>
+    and are checked as boxes − X − W.</p>
   <p><b>Exceptions.</b> Where the operator's figure for a part of house also counts its management seats, that zone
     carries <code>"count_includes": ["X"]</code> and a <code>count_note</code> explaining it; the check then counts
     every box there, and <code>count_check</code> records the exception. Nothing is adjusted to make a figure fit.</p>
@@ -235,7 +239,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     <tr><th>Key</th><th>Holds</th></tr>
     <tr><td><code>id</code></td><td>a name for the bank, e.g. <code>stalls-left</code></td></tr>
     <tr><td><code>side</code></td><td><code>front</code>, <code>left</code> or <code>right</code> of the stage</td></tr>
-    <tr><td><code>rows</code></td><td>its rows, nearest the stage first: a label for a whole row, or <code>{"row": "A", "block": 1}</code> for one block; add <code>"zone"</code> where row letters repeat across parts of house</td></tr>
+    <tr><td><code>rows</code></td><td>its rows, nearest the stage first: a label for a whole row, or <code>{"row": "A", "block": 1}</code> for one block (<code>[2, 3]</code> for several); add <code>"zone"</code> where row letters repeat across parts of house</td></tr>
     <tr><td><code>seat_1</code></td><td>which end seat 1 is at: <code>left</code>/<code>right</code> for rows drawn level; <code>downstage</code>/<code>upstage</code> for upright rows</td></tr>
     <tr><td><code>rows_run</code></td><td>side banks: <code>along</code> the side (upright; default) or <code>across</code> (level, facing the stage)</td></tr>
     <tr><td><code>in_line</code></td><td>upright side rows that follow one another down a wall, rather than sit side by side</td></tr>
