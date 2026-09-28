@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Sha Tin Town Hall Auditorium: seat facts read from the LCSD seating plan.
 
-The plan is vector with outlined text. tools/seatplan.py found every seat box (1,376) and read the
+The plan is vector with outlined text. An extraction script found every seat box (1,376) and read the
 block ends; each row's blocks, the marks and the row labels were then checked by eye against zoomed
 renders (sha256 in source). Writes data/stth-aud.json; fails if the counts do not match.
 

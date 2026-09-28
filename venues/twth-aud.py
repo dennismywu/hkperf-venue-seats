@@ -2,7 +2,7 @@
 """Tsuen Wan Town Hall, Auditorium: seat facts read from the LCSD seating plan.
 
 The plan PDF wraps a single scanned image (2061x2568, stored upside down and flipped upright by the
-page), with text only in the totals box. tools/seatplan.py found the seat boxes on a render of the
+page), with text only in the totals box. An extraction script found the seat boxes on a render of the
 page and read their numbers; every block end, row label and mark below was then checked by eye against
 zoomed crops (sha256 in source). Writes data/twth-aud.json; fails if the counts do not match the
 printed totals.

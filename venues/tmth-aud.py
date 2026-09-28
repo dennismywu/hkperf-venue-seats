@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Tuen Mun Town Hall, Auditorium: seat facts read from the LCSD seating plan.
 
-The plan PDF wraps a single scanned image (1240x1754, no text or vector data). tools/seatplan.py found
-the seat boxes and read their numbers; every block end, row label and mark below was then checked by
+The plan PDF wraps a single scanned image (1240x1754, no text or vector data). An extraction script
+found the seat boxes and read their numbers; every block end, row label and mark below was then checked by
 eye against zoomed crops of the scan (sha256 in source). Writes data/tmth-aud.json; fails if the
 counts do not match the printed totals.
 

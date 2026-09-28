@@ -193,16 +193,19 @@ the build fails if any part of house stops matching it.
 ## How a venue is added
 
 1. Download the venue's seating plan into `sources/` (git-ignored; plans are never committed).
-2. `python tools/seatplan.py extract <plan> --name <id> --out work/<id>` finds the seat boxes and reads
-   the numbers into `work/<id>/` (git-ignored). `python tools/seatplan.py serve work` opens a review page.
-   Scanned or low-resolution plans are read by eye from zoomed crops.
+2. `python tools/draft_rows.py <plan> --id <id> [--page N] [--crop x0,y0,x1,y1]` drafts the rows: it
+   finds the seat boxes (the PDF's own rectangles, or boxes found on a render of a scan), reads their
+   numbers (the PDF's text layer, or Apple Vision OCR) and marks, and groups them into rows and blocks. It
+   writes `rows.txt` (a draft of the row calls), `overlay.png` (every box outlined with its reading) and
+   `warnings.txt` to `work/<id>/` (git-ignored). The draft is a starting point, checked row by row against
+   the plan. Scanned or low-resolution plans are read by eye from zoomed crops.
 3. Write `venues/<id>.py` with the checked facts. `venues/common.py` checks every part of house against
    the printed totals and every pit against LCSD's stated figure, then writes `data/<id>.json` and `.csv`.
 4. Add the venue to `data/index.json`, with its `region` (Hong Kong Island, Kowloon or New Territories)
    and the date it was `added`.
 5. `python tools/check_locations.py` confirms each address and coordinate against LCSD's open data.
 
-Python 3.11+ with the packages in `requirements.txt`. The extractor's OCR uses Apple Vision (macOS).
+Python 3.11+ with the packages in `requirements.txt`. The row drafter's OCR uses Apple Vision (macOS).
 
 ## Sources and rules
 

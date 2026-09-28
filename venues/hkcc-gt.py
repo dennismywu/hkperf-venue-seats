@@ -2,7 +2,7 @@
 """Hong Kong Cultural Centre, Grand Theatre: seat facts read from the LCSD seating plan.
 
 The current plan is a one-page vector PDF (August 2025) whose seat numbers are drawn as outlines, not
-text; the earlier 2018 plan (a 4961x5905 GIF) has the same seats. tools/seatplan.py found the boxes
+text; the earlier 2018 plan (a 4961x5905 GIF) has the same seats. An extraction script found the boxes
 on the GIF; every block end, row label and mark below was then read by eye from zoomed renders of both
 (sha256 in source). Rows whose side blocks slope were matched to their labels by where each block's
 aisle end sits, checked against rows whose assignment the row count fixes.

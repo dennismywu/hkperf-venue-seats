@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Yuen Long Theatre Auditorium: seat facts read by hand from the LCSD seating plan.
 
-The plan is a 150 dpi JPEG (no vector data, and too coarse for tools/seatplan.py), so every row end,
+The plan is a 150 dpi JPEG (no vector data, and too coarse for box extraction), so every row end,
 row label and mark below was read by eye from zoomed crops of it (sha256 in source).
 Writes data/ylt-aud.json; fails if the counts do not match the printed or stated totals.
 
