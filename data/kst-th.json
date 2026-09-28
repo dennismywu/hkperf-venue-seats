@@ -2,7 +2,7 @@
  "schema": "hkperf-venue-seats/seatlist@0.3",
  "venue": {
   "id": "kst-th",
-  "name_en": "Ko Shan Theatre Theatre",
+  "name_en": "Ko Shan Theatre (Theatre)",
   "name_zh": "高山劇場 劇院"
  },
  "source": {

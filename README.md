@@ -31,7 +31,7 @@ and front-of-house teams.
 | Tsuen Wan Town Hall Cultural Activities Hall (`twth-ca`) | 260 | single (floor A–C, platform D–N) | no pit |
 | Hong Kong Cultural Centre Grand Theatre (`hkcc-gt`) | 1,734 | Stalls 788 (Stalls 1 A–K + Stalls 2 L–Y) · Circle 425 · Upper Circle 495 · V.I.P. Boxes 26 | small pit lift 1,681 (Stalls 1 A–B, centre block of C) · large pit lift 1,632 (A–D, centre block of E) |
 | Tsuen Wan Town Hall Auditorium (`twth-aud`) | 1,420 | Stalls 580 · Upper Stalls 469 · Balcony 371 | 1,353 (rows A–B, stated) |
-| Ko Shan Theatre Theatre (`kst-th`) | 1,031 + 6 wheelchair | Stalls 916 · Balcony 115 | pit formed from a trap and the centre lift; no seats lost |
+| Ko Shan Theatre (Theatre) (`kst-th`) | 1,031 + 6 wheelchair | Stalls 916 · Balcony 115 | pit formed from a trap and the centre lift; no seats lost |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
 Civic Centre Theatre, Tuen Mun and Tsuen Wan Town Hall Auditoriums). Each file says which, and gives the arithmetic.

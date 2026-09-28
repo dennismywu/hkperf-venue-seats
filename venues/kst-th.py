@@ -62,7 +62,7 @@ balcony = [
 ]
 
 finish({
-    "venue": {"id": "kst-th", "name_en": "Ko Shan Theatre Theatre", "name_zh": "高山劇場 劇院"},
+    "venue": {"id": "kst-th", "name_en": "Ko Shan Theatre (Theatre)", "name_zh": "高山劇場 劇院"},
     "source": {
         "publisher": LCSD,
         "url": "https://www.lcsd.gov.hk/en/kst/common/forms/KST%20Theatre%20seating%20plan.pdf",

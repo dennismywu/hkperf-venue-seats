@@ -20,6 +20,6 @@
   {"id": "twth-ca", "name_en": "Tsuen Wan Town Hall Cultural Activities Hall", "name_zh": "荃灣大會堂 文娛廳", "region": "New Territories", "added": "2026-09-26", "file": "twth-ca.json"},
   {"id": "hkcc-gt", "name_en": "Hong Kong Cultural Centre Grand Theatre", "name_zh": "香港文化中心 大劇院", "region": "Kowloon", "added": "2026-09-26", "file": "hkcc-gt.json"},
   {"id": "twth-aud", "name_en": "Tsuen Wan Town Hall Auditorium", "name_zh": "荃灣大會堂 演奏廳", "region": "New Territories", "added": "2026-09-27", "file": "twth-aud.json"},
-  {"id": "kst-th", "name_en": "Ko Shan Theatre Theatre", "name_zh": "高山劇場 劇院", "region": "Kowloon", "added": "2026-09-27", "file": "kst-th.json"}
+  {"id": "kst-th", "name_en": "Ko Shan Theatre (Theatre)", "name_zh": "高山劇場 劇院", "region": "Kowloon", "added": "2026-09-27", "file": "kst-th.json"}
  ]
 }
