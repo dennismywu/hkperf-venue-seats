@@ -1,5 +1,5 @@
 {
- "schema": "hkperf-venue-seats/seatlist@0.3",
+ "schema": "hkperf-venue-seats/seatlist@0.4",
  "venue": {
   "id": "twth-ca",
   "name_en": "Tsuen Wan Town Hall Cultural Activities Hall",

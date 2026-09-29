@@ -1,84 +1,71 @@
 {
  "schema": "hkperf-venue-seats/seatlist@0.4",
  "venue": {
-  "id": "hkch-th",
-  "name_en": "Hong Kong City Hall Theatre",
-  "name_zh": "香港大會堂 劇院"
+  "id": "ncwcc-th",
+  "name_en": "Ngau Chi Wan Civic Centre Theatre",
+  "name_zh": "牛池灣文娛中心 劇院"
  },
  "source": {
   "publisher": "Leisure and Cultural Services Department (LCSD)",
-  "url": "https://www.lcsd.gov.hk/en/hkch/common/download/hkch-theatre.pdf",
-  "file": "hkch-theatre.pdf",
-  "sha256": "b50a5082c09e56df1fe554ab06fc182a158ac45d487a810702bf7fcee5fa734b",
+  "url": "https://www.lcsd.gov.hk/en/ncwcc/common/form/ncwcc_seating_theatre.pdf",
+  "file": "ncwcc_seating_theatre.pdf",
+  "sha256": "5b6f7640fe6d055d08f0735949b8cf29f85f21937913687c673bfec5aa2031a5",
   "plan_code": null,
   "printed_date": null,
+  "applies": "Applicable to events with ticket sales commencing after 1 December 2018",
   "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
  },
  "references": [
   {
    "what": "Seat total and orchestra pit",
    "publisher": "Leisure and Cultural Services Department (LCSD)",
-   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/hkch-th-sfe.pdf",
-   "title": "Hong Kong City Hall – Theatre, Basic Technical Information",
-   "document_version": "V. 2026.01.07",
-   "sha256": "8b63eb497116012c18dc177d652e6d6b3240b93f256ac44a01149c9af0a8f1df",
-   "retrieved": "2026-09-26",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/ncwcc-th-lfe.pdf",
+   "title": "Ngau Chi Wan Civic Centre – Theatre, FULL Technical Information",
+   "document_version": "V. 2026.01.26",
+   "sha256": "e75648ce2edb9ef5b9f6a4fde9770992a931a649020abe0f1c3648c4d546e828",
+   "retrieved": "2026-09-29",
    "quotes": [
-    "Seats 463",
-    "Orchestra Pit: Formed by removing forestage traps. Capacity for 8-15"
+    "Seating Capacity: 354",
+    "FORESTAGE / ORCHESTRA PIT Not available"
    ],
-   "note": "Confirms the plan's total. The pit is formed from forestage traps, so no seats are lost to it."
+   "note": "Confirms the plan's total and that there is no orchestra pit, so no configuration removes seats."
   }
  ],
  "location": {
-  "address_en": "5 Edinburgh Place, Central, Hong Kong",
-  "address_zh": "香港中環愛丁堡廣場5號",
-  "district": "Central & Western",
-  "latitude": 22.282279,
-  "longitude": 114.161545,
+  "address_en": "2/F & 3/F, Ngau Chi Wan Municipal Services Building, 11 Clear Water Bay Road, Kowloon, Hong Kong",
+  "address_zh": "香港九龍清水灣道11號牛池灣市政大廈2樓及3樓",
+  "district": "Wong Tai Sin",
+  "latitude": 22.334583,
+  "longitude": 114.208766,
   "coordinates_source": {
    "publisher": "Leisure and Cultural Services Department (LCSD)",
    "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
    "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
    "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
    "retrieved": "2026-09-26",
-   "venue_id": "87510010",
-   "name_in_source": "Hong Kong City Hall (Theatre)"
+   "venue_id": "87410030",
+   "name_in_source": "Ngau Chi Wan Civic Centre (Theatre)"
   },
   "address_source": {
    "publisher": "Leisure and Cultural Services Department (LCSD)",
    "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
    "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
    "retrieved": "2026-09-26",
-   "name_in_source": "Hong Kong City Hall"
+   "name_in_source": "Ngau Chi Wan Civic Centre"
   },
   "note": "Coordinates are LCSD's published point for the building, reproduced as given."
  },
  "layout": {
   "seat_1_side": "left",
-  "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. Three blocks per row. No rows I, O or U. The plan names no seating areas, only the space (劇院 THEATRE), so there is one zone."
+  "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, one block per row with no aisle. Rows A-S, with no row I and no row O. The plan names no areas, only the space (劇院 THEATRE), so there is one zone."
  },
  "marks": {
-  "W": "Seat suitable for audience on wheel chairs (box prints W, no number)"
+  "W": "Seat suitable for audiences on wheelchairs (box prints W, no number)",
+  "X": "Management seat (crossed box, no number)"
  },
  "printed_totals": {
-  "Theatre": 463,
-  "Total": 463
- },
- "standing": {
-  "places": [
-   "1",
-   "2",
-   "3",
-   "4",
-   "5",
-   "6",
-   "7",
-   "8",
-   "9",
-   "10"
-  ],
-  "note": "Printed as 'STANDING' with the numbers 1-10 below row W, without boxes. Not part of the seat total."
+  "Theatre": 354,
+  "Total": 354
  },
  "zones": [
   {
@@ -92,13 +79,9 @@
        "seats": [
         "W1",
         "W2",
-        "W3",
-        "W4",
-        "W5"
-       ]
-      },
-      {
-       "seats": [
+        "3",
+        "4",
+        "5",
         "6",
         "7",
         "8",
@@ -107,16 +90,9 @@
         "11",
         "12",
         "13",
-        "14"
-       ]
-      },
-      {
-       "seats": [
-        "15",
-        "16",
-        "17",
-        "18",
-        "19"
+        "14",
+        "W3",
+        "W4"
        ]
       }
      ],
@@ -124,17 +100,15 @@
       "W1": "W",
       "W2": "W",
       "W3": "W",
-      "W4": "W",
-      "W5": "W"
+      "W4": "W"
      },
      "inferred_numbers": {
       "W1": "1",
       "W2": "2",
-      "W3": "3",
-      "W4": "4",
-      "W5": "5"
+      "W3": "15",
+      "W4": "16"
      },
-     "note": "Five wheelchair boxes print no number. They sit before seat 6, so they fill 1-5 exactly."
+     "note": "A wheelchair box at each end of the row: two before 3 (so 1-2) and two after 14 (so 15-16)."
     },
     {
      "row": "B",
@@ -145,11 +119,7 @@
         "2",
         "3",
         "4",
-        "5"
-       ]
-      },
-      {
-       "seats": [
+        "5",
         "6",
         "7",
         "8",
@@ -159,11 +129,7 @@
         "12",
         "13",
         "14",
-        "15"
-       ]
-      },
-      {
-       "seats": [
+        "15",
         "16",
         "17",
         "18",
@@ -182,11 +148,7 @@
         "2",
         "3",
         "4",
-        "5"
-       ]
-      },
-      {
-       "seats": [
+        "5",
         "6",
         "7",
         "8",
@@ -196,16 +158,14 @@
         "12",
         "13",
         "14",
-        "15"
-       ]
-      },
-      {
-       "seats": [
+        "15",
         "16",
         "17",
         "18",
         "19",
-        "20"
+        "20",
+        "21",
+        "22"
        ]
       }
      ]
@@ -219,11 +179,7 @@
         "2",
         "3",
         "4",
-        "5"
-       ]
-      },
-      {
-       "seats": [
+        "5",
         "6",
         "7",
         "8",
@@ -233,16 +189,14 @@
         "12",
         "13",
         "14",
-        "15"
-       ]
-      },
-      {
-       "seats": [
+        "15",
         "16",
         "17",
         "18",
         "19",
-        "20"
+        "20",
+        "21",
+        "22"
        ]
       }
      ]
@@ -256,11 +210,7 @@
         "2",
         "3",
         "4",
-        "5"
-       ]
-      },
-      {
-       "seats": [
+        "5",
         "6",
         "7",
         "8",
@@ -271,16 +221,13 @@
         "13",
         "14",
         "15",
-        "16"
-       ]
-      },
-      {
-       "seats": [
+        "16",
         "17",
         "18",
         "19",
         "20",
-        "21"
+        "21",
+        "22"
        ]
       }
      ]
@@ -294,11 +241,7 @@
         "2",
         "3",
         "4",
-        "5"
-       ]
-      },
-      {
-       "seats": [
+        "5",
         "6",
         "7",
         "8",
@@ -309,16 +252,13 @@
         "13",
         "14",
         "15",
-        "16"
-       ]
-      },
-      {
-       "seats": [
+        "16",
         "17",
         "18",
         "19",
         "20",
-        "21"
+        "21",
+        "22"
        ]
       }
      ]
@@ -333,11 +273,7 @@
         "3",
         "4",
         "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
@@ -348,17 +284,12 @@
         "14",
         "15",
         "16",
-        "17"
-       ]
-      },
-      {
-       "seats": [
+        "17",
         "18",
         "19",
         "20",
         "21",
-        "22",
-        "23"
+        "22"
        ]
       }
      ]
@@ -373,11 +304,7 @@
         "3",
         "4",
         "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
@@ -388,17 +315,12 @@
         "14",
         "15",
         "16",
-        "17"
-       ]
-      },
-      {
-       "seats": [
+        "17",
         "18",
         "19",
         "20",
         "21",
-        "22",
-        "23"
+        "22"
        ]
       }
      ]
@@ -413,11 +335,7 @@
         "3",
         "4",
         "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
@@ -429,17 +347,11 @@
         "15",
         "16",
         "17",
-        "18"
-       ]
-      },
-      {
-       "seats": [
+        "18",
         "19",
         "20",
         "21",
-        "22",
-        "23",
-        "24"
+        "22"
        ]
       }
      ]
@@ -454,11 +366,7 @@
         "3",
         "4",
         "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
@@ -470,17 +378,11 @@
         "15",
         "16",
         "17",
-        "18"
-       ]
-      },
-      {
-       "seats": [
+        "18",
         "19",
         "20",
         "21",
-        "22",
-        "23",
-        "24"
+        "22"
        ]
       }
      ]
@@ -495,11 +397,7 @@
         "3",
         "4",
         "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
@@ -511,17 +409,11 @@
         "15",
         "16",
         "17",
-        "18"
-       ]
-      },
-      {
-       "seats": [
+        "18",
         "19",
         "20",
         "21",
-        "22",
-        "23",
-        "24"
+        "22"
        ]
       }
      ]
@@ -536,11 +428,7 @@
         "3",
         "4",
         "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
@@ -552,17 +440,11 @@
         "15",
         "16",
         "17",
-        "18"
-       ]
-      },
-      {
-       "seats": [
+        "18",
         "19",
         "20",
         "21",
-        "22",
-        "23",
-        "24"
+        "22"
        ]
       }
      ]
@@ -577,11 +459,7 @@
         "3",
         "4",
         "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
@@ -594,17 +472,10 @@
         "16",
         "17",
         "18",
-        "19"
-       ]
-      },
-      {
-       "seats": [
+        "19",
         "20",
         "21",
-        "22",
-        "23",
-        "24",
-        "25"
+        "22"
        ]
       }
      ]
@@ -619,11 +490,7 @@
         "3",
         "4",
         "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
@@ -636,17 +503,10 @@
         "16",
         "17",
         "18",
-        "19"
-       ]
-      },
-      {
-       "seats": [
+        "19",
         "20",
         "21",
-        "22",
-        "23",
-        "24",
-        "25"
+        "22"
        ]
       }
      ]
@@ -661,60 +521,7 @@
         "3",
         "4",
         "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17"
-       ],
-       "blocked": {
-        "slots": 2,
-        "skipped_numbers": [
-         "18",
-         "19"
-        ],
-        "note": "Solid black area about two seats wide; the numbering skips these numbers. The plan's legend does not explain it."
-       }
-      },
-      {
-       "seats": [
-        "20",
-        "21",
-        "22",
-        "23",
-        "24",
-        "25"
-       ]
-      }
-     ],
-     "note": "Centre block ends at 17, then a solid black area where 18-19 would be."
-    },
-    {
-     "row": "R",
-     "blocks": [
-      {
-       "seats": [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
@@ -727,17 +534,39 @@
         "16",
         "17",
         "18",
-        "19"
-       ]
-      },
-      {
-       "seats": [
+        "19",
         "20",
         "21",
-        "22",
-        "23",
-        "24",
-        "25"
+        "22"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "R",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
        ]
       }
      ]
@@ -752,174 +581,27 @@
         "3",
         "4",
         "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
         "10",
         "11",
         "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18",
-        "19",
-        "20"
-       ]
-      },
-      {
-       "seats": [
-        "21",
-        "22",
-        "23",
-        "24",
-        "25",
-        "26"
-       ]
-      }
-     ]
-    },
-    {
-     "row": "T",
-     "blocks": [
-      {
-       "seats": [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18",
-        "19",
-        "20"
-       ]
-      },
-      {
-       "seats": [
-        "21",
-        "22",
-        "23",
-        "24",
-        "25",
-        "26"
-       ]
-      }
-     ]
-    },
-    {
-     "row": "V",
-     "blocks": [
-      {
-       "seats": [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6"
-       ]
-      },
-      {
-       "seats": [
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18",
-        "19",
-        "20"
-       ]
-      },
-      {
-       "seats": [
-        "21",
-        "22",
-        "23",
-        "24",
-        "25",
-        "26"
-       ]
-      }
-     ]
-    },
-    {
-     "row": "W",
-     "blocks": [
-      {
-       "seats": [
-        "1",
-        "2",
-        "3",
-        "4"
-       ],
-       "blocked": {
-        "slots": 2,
-        "skipped_numbers": [
-         "5",
-         "6"
-        ],
-        "note": "Solid black area about two seats wide; the numbering skips these numbers. The plan's legend does not explain it."
-       }
-      },
-      {
-       "seats": [
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18",
-        "19",
-        "20"
-       ]
-      },
-      {
-       "seats": [
-        "21",
-        "22",
-        "23",
-        "24",
-        "25",
-        "26"
+        "X1",
+        "X2"
        ]
       }
      ],
-     "note": "Left block ends at 4, then a solid black area where 5-6 would be."
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "inferred_numbers": {
+      "X1": "13",
+      "X2": "14"
+     },
+     "note": "Two crossed management boxes, no number, end the row after 12, so they fill 13-14 exactly."
     }
    ]
   }
@@ -927,13 +609,13 @@
  "count_check": {
   "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
   "Theatre": {
-   "boxes": 463,
-   "management_X": 0,
-   "wheelchair_W": 5,
+   "boxes": 356,
+   "management_X": 2,
+   "wheelchair_W": 4,
    "restricted_R": 0,
    "limited_legroom_L": 0,
-   "boxes_minus_X": 463,
-   "printed": 463
+   "boxes_minus_X": 354,
+   "printed": 354
   }
  }
 }

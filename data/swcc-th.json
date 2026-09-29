@@ -1,5 +1,5 @@
 {
- "schema": "hkperf-venue-seats/seatlist@0.3",
+ "schema": "hkperf-venue-seats/seatlist@0.4",
  "venue": {
   "id": "swcc-th",
   "name_en": "Sheung Wan Civic Centre Theatre",

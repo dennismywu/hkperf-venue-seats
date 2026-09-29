@@ -1,0 +1,428 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.4",
+ "venue": {
+  "id": "ncwcc-ca-thrust",
+  "name_en": "Ngau Chi Wan Civic Centre Cultural Activities Hall (thrust stage)",
+  "name_zh": "牛池灣文娛中心 文娛廳（三向舞台）"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.lcsd.gov.hk/en/ncwcc/common/form/ncwcc_seating_ca.pdf",
+  "file": "ncwcc_seating_ca.pdf",
+  "sha256": "ef36e8273af99232984a94a5c048409f5abb38ade46edeb9744873472be47912",
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [
+  {
+   "what": "Seat totals for each layout",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/ncwcc-ca-lfe.pdf",
+   "title": "Ngau Chi Wan Civic Centre – Cultural Activities Hall, FULL Technical Information",
+   "document_version": "V. 2026.03.12",
+   "sha256": "d48d030790c738143ef06c2b1a172f77e8e84fcaa283e8c01f83cd58c6be33fb",
+   "retrieved": "2026-09-29",
+   "quotes": [
+    "End stage 93 seats",
+    "Transverse stage 120 seats",
+    "Thrust stage 119 seats",
+    "Arena stage 146 seats"
+   ],
+   "note": "Confirms all four plans' totals. No orchestra pit is described."
+  }
+ ],
+ "location": {
+  "address_en": "2/F & 3/F, Ngau Chi Wan Municipal Services Building, 11 Clear Water Bay Road, Kowloon, Hong Kong",
+  "address_zh": "香港九龍清水灣道11號牛池灣市政大廈2樓及3樓",
+  "district": "Wong Tai Sin",
+  "latitude": 22.334583,
+  "longitude": 114.208766,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "87410028",
+   "name_in_source": "Ngau Chi Wan Civic Centre (Cultural Activities Hall)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Ngau Chi Wan Civic Centre"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "marks": {
+  "W": "Seat suitable for audiences on wheelchairs (box prints W, no number)",
+  "X": "Management seat (crossed box, no number)"
+ },
+ "layout": {
+  "seat_1_side": "right",
+  "note": "On page 3 of the plan (thrust stage): seating on three sides. Rows AA-AG face the stage from the front (seat 1 at the right); upright columns stand along each side of the stage, numbered from the bottom (downstage): BA, BB, BC on the left, DA, DB, DC on the right, each nearest the stage first. This is one of the hall's seating layouts; the other three are separate seat lists.",
+  "banks": [
+   {
+    "id": "front",
+    "side": "front",
+    "seat_1": "right",
+    "rows": [
+     {
+      "row": "AA",
+      "block": 1
+     },
+     {
+      "row": "AB",
+      "block": 1
+     },
+     {
+      "row": "AC",
+      "block": 1
+     },
+     {
+      "row": "AD",
+      "block": 1
+     },
+     {
+      "row": "AE",
+      "block": 1
+     },
+     {
+      "row": "AF",
+      "block": 1
+     },
+     {
+      "row": "AG",
+      "block": 1
+     }
+    ]
+   },
+   {
+    "id": "left",
+    "side": "left",
+    "rows": [
+     {
+      "row": "BA",
+      "block": 1
+     },
+     {
+      "row": "BB",
+      "block": 1
+     },
+     {
+      "row": "BC",
+      "block": 1
+     }
+    ],
+    "seat_1": "downstage",
+    "align": "downstage"
+   },
+   {
+    "id": "right",
+    "side": "right",
+    "rows": [
+     {
+      "row": "DA",
+      "block": 1
+     },
+     {
+      "row": "DB",
+      "block": 1
+     },
+     {
+      "row": "DC",
+      "block": 1
+     }
+    ],
+    "seat_1": "downstage",
+    "align": "downstage"
+   }
+  ]
+ },
+ "printed_totals": {
+  "Cultural Activities Hall": 119,
+  "Total": 119
+ },
+ "zones": [
+  {
+   "name": "Cultural Activities Hall",
+   "name_zh": "文娛廳",
+   "rows": [
+    {
+     "row": "AA",
+     "blocks": [
+      {
+       "seats": [
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W"
+     },
+     "inferred_numbers": {
+      "W1": "1",
+      "W2": "2",
+      "W3": "3",
+      "W4": "4"
+     },
+     "note": "Four wheelchair boxes print W, no number, at seat 1's end, between nothing and 5, so they fill 1-4 exactly."
+    },
+    {
+     "row": "AB",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AC",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AD",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AE",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AF",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AG",
+     "blocks": [
+      {
+       "seats": [
+        "X1",
+        "X2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "inferred_numbers": {
+      "X1": "1",
+      "X2": "2"
+     },
+     "note": "Two crossed management boxes, no number, at seat 1's end, between nothing and 3, so they fill 1-2 exactly."
+    },
+    {
+     "row": "BA",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "BB",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "BC",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "DA",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "DB",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "DC",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Cultural Activities Hall": {
+   "boxes": 121,
+   "management_X": 2,
+   "wheelchair_W": 4,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 119,
+   "printed": 119
+  }
+ }
+}

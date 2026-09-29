@@ -1,5 +1,5 @@
 {
- "schema": "hkperf-venue-seats/seatlist@0.3",
+ "schema": "hkperf-venue-seats/seatlist@0.4",
  "venue": {
   "id": "hkcc-gt",
   "name_en": "Hong Kong Cultural Centre Grand Theatre",

@@ -1,5 +1,5 @@
 {
- "schema": "hkperf-venue-seats/seatlist@0.3",
+ "schema": "hkperf-venue-seats/seatlist@0.4",
  "venue": {
   "id": "swhcc-ca-thrust",
   "name_en": "Sai Wan Ho Civic Centre Cultural Activities Hall (thrust stage)",

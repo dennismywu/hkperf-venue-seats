@@ -44,7 +44,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <p><a href="./">← Hong Kong Performing Arts Venues Seat Configuration</a></p>
   <h1>Data format</h1>
   <p class="sub">How the seat lists are structured, and the rules behind them. Schema
-    <code>hkperf-venue-seats/seatlist@0.3</code>. Last updated 26 September 2026.</p>
+    <code>hkperf-venue-seats/seatlist@0.4</code>. Last updated 29 September 2026.</p>
 
   <div class="card">
     <p style="margin-top:0"><b>In short:</b> one JSON file per seating layout, with a CSV beside it. Each file lists
@@ -100,7 +100,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <h2 id="venue">3. A seat list, top to bottom</h2>
   <div class="tablewrap"><table>
     <tr><th>Key</th><th>Holds</th></tr>
-    <tr><td><code>schema</code></td><td>the format and version, <code>hkperf-venue-seats/seatlist@0.3</code></td></tr>
+    <tr><td><code>schema</code></td><td>the format and version, <code>hkperf-venue-seats/seatlist@0.4</code></td></tr>
     <tr><td><code>venue</code></td><td><code>id</code>, <code>name_en</code>, <code>name_zh</code></td></tr>
     <tr><td><code>source</code></td><td>the seating plan the file was read from (see <a href="#sources">sources</a>)</td></tr>
     <tr><td><code>references</code></td><td>other operator documents that confirm or contradict a figure, with quotes</td></tr>
@@ -238,7 +238,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <div class="tablewrap"><table>
     <tr><th>Key</th><th>Holds</th></tr>
     <tr><td><code>id</code></td><td>a name for the bank, e.g. <code>stalls-left</code></td></tr>
-    <tr><td><code>side</code></td><td><code>front</code>, <code>left</code> or <code>right</code> of the stage</td></tr>
+    <tr><td><code>side</code></td><td><code>front</code>, <code>back</code>, <code>left</code> or <code>right</code> of the stage (<code>back</code> is the far side, e.g. the opposite audience of a transverse or arena stage)</td></tr>
     <tr><td><code>rows</code></td><td>its rows, nearest the stage first: a label for a whole row, or <code>{"row": "A", "block": 1}</code> for one block (<code>[2, 3]</code> for several); add <code>"zone"</code> where row letters repeat across parts of house</td></tr>
     <tr><td><code>seat_1</code></td><td>which end seat 1 is at: <code>left</code>/<code>right</code> for rows drawn level; <code>downstage</code>/<code>upstage</code> for upright rows</td></tr>
     <tr><td><code>rows_run</code></td><td>side banks: <code>along</code> the side (upright; default) or <code>across</code> (level, facing the stage)</td></tr>
@@ -256,9 +256,9 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   {"id": "gallery-left", "side": "left",  "rows": ["BN"], "seat_1": "downstage", "align": "room"},
   ...
 ]</code></pre>
-  <p>The viewer draws the stage in the middle, front banks below it and side banks beside it. Order and
-    neighbours follow the plan; distances do not. Every block of every row must be in exactly one bank. Files
-    without banks are drawn with every row facing the stage.</p>
+  <p>The viewer draws the stage in the middle, front banks below it, back banks above it (rows level and facing
+    the stage) and side banks beside it. Order and neighbours follow the plan; distances do not. Every block of
+    every row must be in exactly one bank. Files without banks are drawn with every row facing the stage.</p>
 
   <h2 id="layouts">12. Rooms with more than one layout</h2>
   <p>Flexible rooms publish one plan per seating layout, e.g. an end stage and a thrust stage. Each layout is its
@@ -296,6 +296,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <h2 id="versions">15. Versions</h2>
   <div class="tablewrap"><table>
     <tr><th>Version</th><th>Changes</th></tr>
+    <tr><td><code>seatlist@0.4</code></td><td>adds the <code>back</code> bank side for a far-side audience (transverse and arena stages); nothing else changed</td></tr>
     <tr><td><code>seatlist@0.3</code></td><td>adds optional <code>layout.banks</code> and the CSV's <code>bank</code> column; nothing else changed</td></tr>
     <tr><td><code>seatlist@0.2</code></td><td>the first published format</td></tr>
   </table></div>
@@ -309,7 +310,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     file's <code>printed_totals</code>.</p>
   <p><button class="copy" type="button" id="copy-prompt">Copy the prompt</button> <span class="note" id="copied" aria-live="polite"></span></p>
   <pre><code id="prompt-text">You are drawing a schematic seat map from a structured seat list. The seat list follows the
-schema hkperf-venue-seats/seatlist@0.3 (https://code.denniswu.org/hkperf-venue-seats/schema.html).
+schema hkperf-venue-seats/seatlist@0.4 (https://code.denniswu.org/hkperf-venue-seats/schema.html).
 It is attached below. Produce one self-contained SVG, then a short check report.
 
 WHAT THE DATA IS

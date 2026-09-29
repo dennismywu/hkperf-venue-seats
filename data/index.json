@@ -21,6 +21,12 @@
   {"id": "hkcc-gt", "name_en": "Hong Kong Cultural Centre Grand Theatre", "name_zh": "香港文化中心 大劇院", "region": "Kowloon", "added": "2026-09-26", "file": "hkcc-gt.json"},
   {"id": "twth-aud", "name_en": "Tsuen Wan Town Hall Auditorium", "name_zh": "荃灣大會堂 演奏廳", "region": "New Territories", "added": "2026-09-27", "file": "twth-aud.json"},
   {"id": "kst-th", "name_en": "Ko Shan Theatre (Theatre)", "name_zh": "高山劇場 劇院", "region": "Kowloon", "added": "2026-09-27", "file": "kst-th.json"},
-  {"id": "tpcc-aud", "name_en": "Tai Po Civic Centre Auditorium", "name_zh": "大埔文娛中心 演藝廳", "region": "New Territories", "added": "2026-09-29", "file": "tpcc-aud.json"}
+  {"id": "tpcc-aud", "name_en": "Tai Po Civic Centre Auditorium", "name_zh": "大埔文娛中心 演藝廳", "region": "New Territories", "added": "2026-09-29", "file": "tpcc-aud.json"},
+  {"id": "ncwcc-th", "name_en": "Ngau Chi Wan Civic Centre Theatre", "name_zh": "牛池灣文娛中心 劇院", "region": "Kowloon", "added": "2026-09-29", "file": "ncwcc-th.json"},
+  {"id": "ekcc-beats", "name_en": "East Kowloon Cultural Centre, The Beats", "name_zh": "東九文化中心 樂館", "region": "Kowloon", "added": "2026-09-29", "file": "ekcc-beats.json"},
+  {"id": "ncwcc-ca-end", "name_en": "Ngau Chi Wan Civic Centre Cultural Activities Hall (end stage)", "name_zh": "牛池灣文娛中心 文娛廳（單向舞台）", "region": "Kowloon", "added": "2026-09-29", "file": "ncwcc-ca-end.json"},
+  {"id": "ncwcc-ca-transverse", "name_en": "Ngau Chi Wan Civic Centre Cultural Activities Hall (transverse stage)", "name_zh": "牛池灣文娛中心 文娛廳（橫向舞台）", "region": "Kowloon", "added": "2026-09-29", "file": "ncwcc-ca-transverse.json"},
+  {"id": "ncwcc-ca-thrust", "name_en": "Ngau Chi Wan Civic Centre Cultural Activities Hall (thrust stage)", "name_zh": "牛池灣文娛中心 文娛廳（三向舞台）", "region": "Kowloon", "added": "2026-09-29", "file": "ncwcc-ca-thrust.json"},
+  {"id": "ncwcc-ca-arena", "name_en": "Ngau Chi Wan Civic Centre Cultural Activities Hall (arena stage)", "name_zh": "牛池灣文娛中心 文娛廳（中央舞台）", "region": "Kowloon", "added": "2026-09-29", "file": "ncwcc-ca-arena.json"}
  ]
 }

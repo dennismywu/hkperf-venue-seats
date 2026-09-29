@@ -33,12 +33,20 @@ and front-of-house teams.
 | Tsuen Wan Town Hall Auditorium (`twth-aud`) | 1,420 | Stalls 580 · Upper Stalls 469 · Balcony 371 | 1,353 (rows A–B, stated) |
 | Ko Shan Theatre (Theatre) (`kst-th`) | 1,031 + 6 wheelchair | Stalls 916 · Balcony 115 | pit formed from a trap and the centre lift; no seats lost |
 | Tai Po Civic Centre Auditorium (`tpcc-aud`) | 644 | single | no pit |
+| Ngau Chi Wan Civic Centre Theatre (`ncwcc-th`) | 354 | single (row A has 4 wheelchair) | no pit |
+| East Kowloon Cultural Centre, The Beats (`ekcc-beats`) | 120 | single (row A has 4 wheelchair) | no pit |
+| Ngau Chi Wan Civic Centre Cultural Activities Hall: end stage (`ncwcc-ca-end`) | 93 | single | no pit |
+| Ngau Chi Wan Civic Centre Cultural Activities Hall: transverse stage (`ncwcc-ca-transverse`) | 120 | both sides of the stage | no pit |
+| Ngau Chi Wan Civic Centre Cultural Activities Hall: thrust stage (`ncwcc-ca-thrust`) | 119 | front + two side columns | no pit |
+| Ngau Chi Wan Civic Centre Cultural Activities Hall: arena stage (`ncwcc-ca-arena`) | 146 | all four sides | no pit |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
 Civic Centre Theatre, Tuen Mun and Tsuen Wan Town Hall Auditoriums). Each file says which, and gives the arithmetic.
 The Grand Theatre's pit lifts are curved: the rows that fit take whole front rows and the centre block of the row
 behind, so a pit can name one block of a row, and its part of house where row letters repeat.
-The Turns, The Lab and the Cultural Activities Hall are flexible rooms with two seated layouts each, so each layout is its own seat list.
+The Turns, The Lab and the cultural-activities halls of Sai Wan Ho and Ngau Chi Wan are flexible rooms with one
+seated layout per stage layout — two each at The Turns and The Lab and Sai Wan Ho, four at Ngau Chi Wan — so each
+layout is its own seat list.
 
 ## What the data is, and what it is not
 
@@ -135,7 +143,7 @@ as [Data format](https://code.denniswu.org/hkperf-venue-seats/schema.html) (`sit
 
 One JSON file per venue in `data/`, listed in `data/index.json`, with a CSV beside it (one line per seat
 box: part of house, row, block, bank, seat, number and its basis, marks, pit rows). Schema
-`hkperf-venue-seats/seatlist@0.3`:
+`hkperf-venue-seats/seatlist@0.4`:
 
 | Key | Holds |
 |---|---|
@@ -159,20 +167,23 @@ of the stage (a thrust stage, or rows along the side walls). The files still hol
 | Key | Holds |
 |---|---|
 | `id` | a name for the bank, e.g. `stalls-left` |
-| `side` | which side of the stage it is on: `front`, `left` or `right` |
+| `side` | which side of the stage it is on: `front`, `back`, `left` or `right` (`back` is the far side, e.g. the opposite audience of a transverse or arena stage) |
 | `rows` | its rows, nearest the stage first: a row label for a whole row, or `{"row": "A", "block": 1}` for one block of it (or `"block": [2, 3]` for several); add `"zone"` where row letters repeat across parts of house, e.g. `{"zone": "Circle", "row": "A", "block": 1}` |
 | `rows_run` | side banks: `along` (each row upright, running along the side; the default) or `across` (each row level, facing the stage, one behind another, e.g. boxes on a side wall) |
 | `in_line` | side banks whose rows run along: `true` when the rows follow one another down the wall rather than sit side by side |
-| `seat_1` | which end seat 1 is at: `left`/`right` for rows drawn level (front banks, `across`); `downstage`/`upstage` for upright rows |
+| `seat_1` | which end seat 1 is at: `left`/`right` for rows drawn level (`front`/`back` banks, `across`); `downstage`/`upstage` for upright rows |
 | `after` | side banks: the `id` of a front bank; the bank sits against the side wall after it (e.g. boxes between the stalls and the balcony) |
 | `level_with` | side banks: a row of a front bank; the bank starts level with that row, against the side wall (e.g. boxes beside the stalls) |
 | `beside` | side banks whose rows run across: the `id` of a front bank; each row sits level with the same row of that bank, across the aisle (e.g. side blocks of the same rows) |
 | `align` | other side banks: beside the stage, level with its front (`downstage`) or back (`upstage`); beside the front banks (`house`); or along the room (`room`) |
 
-The viewer draws the stage in the middle, front banks below it and side banks beside it, or against
-the side walls after a front bank, or level with a front bank's rows across the aisle. Order and neighbours follow the plan; distances do not. Every block of every row must be in
-exactly one bank, or the build fails. Files without `banks` are drawn as before, every row facing the stage.
-Version 0.3 adds `banks` and the CSV's `bank` column; nothing else changed from 0.2.
+The viewer draws the stage in the middle, front banks below it, back banks above it (rows level and facing
+the stage from the far side), and side banks beside it, or against the side walls after a front bank, or level
+with a front bank's rows across the aisle. Order and neighbours follow the plan; distances do not. Every block
+of every row must be in exactly one bank, or the build fails. Files without `banks` are drawn as before, every
+row facing the stage.
+Version 0.4 adds the `back` bank side; version 0.3 added `banks` and the CSV's `bank` column; nothing else
+changed from 0.2.
 
 **Seats with no printed number.** Wheelchair and management boxes often print only `W` or `X`. Such a box
 is labelled `W1`, `W2`… (or `X1`…) in its row. It gets an inferred number only when the gap between its

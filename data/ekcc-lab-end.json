@@ -1,5 +1,5 @@
 {
- "schema": "hkperf-venue-seats/seatlist@0.3",
+ "schema": "hkperf-venue-seats/seatlist@0.4",
  "venue": {
   "id": "ekcc-lab-end",
   "name_en": "East Kowloon Cultural Centre, The Lab (end stage)",

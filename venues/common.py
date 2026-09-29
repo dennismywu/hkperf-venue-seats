@@ -9,7 +9,7 @@ import csv
 import json
 from pathlib import Path
 
-SCHEMA = "hkperf-venue-seats/seatlist@0.3"
+SCHEMA = "hkperf-venue-seats/seatlist@0.4"
 DATA = Path(__file__).resolve().parent.parent / "data"
 
 LCSD = "Leisure and Cultural Services Department (LCSD)"
@@ -64,7 +64,8 @@ def row(label, *blocks, marks=None, inferred=None, note=None):
     return r
 
 
-BANK_SIDES = {"front", "left", "right"}
+BANK_SIDES = {"front", "back", "left", "right"}
+LEVEL_SIDES = ("front", "back")          # banks drawn level, facing the stage
 BANK_ALIGN = {"downstage", "upstage", "house", "room"}
 
 
@@ -141,25 +142,25 @@ def check_banks(doc):
     banks = doc.get("layout", {}).get("banks")
     if not banks:
         return
-    fronts = {b["id"] for b in banks if b["side"] == "front"}
-    front_rows = {(find_row(doc, r)[0], find_row(doc, r)[1]["row"]) for f in banks if f["side"] == "front" for r in f["rows"]}
+    fronts = {b["id"] for b in banks if b["side"] in LEVEL_SIDES}
+    front_rows = {(find_row(doc, r)[0], find_row(doc, r)[1]["row"]) for f in banks if f["side"] in LEVEL_SIDES for r in f["rows"]}
     placed = {}
     for b in banks:
         assert b["side"] in BANK_SIDES, f"bank {b['id']}: side {b['side']!r}"
         run = b.get("rows_run", "along")
-        assert b["side"] == "front" or run in ("along", "across"), f"bank {b['id']}: rows_run {run!r}"
-        level = b["side"] == "front" or run == "across"           # rows drawn level, numbered left/right
+        assert b["side"] in LEVEL_SIDES or run in ("along", "across"), f"bank {b['id']}: rows_run {run!r}"
+        level = b["side"] in LEVEL_SIDES or run == "across"       # rows drawn level, numbered left/right
         assert b.get("seat_1", "left" if level else "downstage") in ({"left", "right"} if level else {"downstage", "upstage"}), \
             f"bank {b['id']}: seat_1 {b.get('seat_1')!r}"
-        assert not b.get("in_line") or (b["side"] != "front" and run == "along"), f"bank {b['id']}: in_line needs upright side rows"
-        assert "after" not in b or (b["side"] != "front" and b["after"] in fronts), f"bank {b['id']}: after {b.get('after')!r}"
-        assert "beside" not in b or (b["side"] != "front" and run == "across" and b["beside"] in fronts and "after" not in b), \
+        assert not b.get("in_line") or (b["side"] not in LEVEL_SIDES and run == "along"), f"bank {b['id']}: in_line needs upright side rows"
+        assert "after" not in b or (b["side"] not in LEVEL_SIDES and b["after"] in fronts), f"bank {b['id']}: after {b.get('after')!r}"
+        assert "beside" not in b or (b["side"] not in LEVEL_SIDES and run == "across" and b["beside"] in fronts and "after" not in b), \
             f"bank {b['id']}: beside {b.get('beside')!r} needs a front bank and rows running across"
         if "level_with" in b:
             zone, r = find_row(doc, b["level_with"])
-            assert b["side"] != "front" and (zone, r["row"]) in front_rows and not {"after", "beside"} & set(b), \
+            assert b["side"] not in LEVEL_SIDES and (zone, r["row"]) in front_rows and not {"after", "beside"} & set(b), \
                 f"bank {b['id']}: level_with {b['level_with']!r} must be a row of a front bank"
-        assert b["side"] == "front" or {"after", "beside", "level_with"} & set(b) or b.get("align", "downstage") in BANK_ALIGN, f"bank {b['id']}: align"
+        assert b["side"] in LEVEL_SIDES or {"after", "beside", "level_with"} & set(b) or b.get("align", "downstage") in BANK_ALIGN, f"bank {b['id']}: align"
         for ref in b["rows"]:
             zone, r = find_row(doc, ref)
             for i in ref_blocks(ref, r):
