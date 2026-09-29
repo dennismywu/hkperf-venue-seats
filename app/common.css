@@ -24,6 +24,9 @@ body { margin: 0; background: var(--bg); color: var(--ink);
   font: 14px/1.45 system-ui, -apple-system, "PingFang HK", "Noto Sans HK", sans-serif; }
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
 header { padding-top: 20px; padding-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: end; justify-content: space-between; }
+header > div { min-width: 0; }
+.headctl { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.headctl #venue { min-width: 0; max-width: min(60vw, 460px); text-overflow: ellipsis; }
 h1 { font-size: 20px; margin: 0 0 2px; font-weight: 650; }
 .sub { color: var(--muted); }
 .byline { color: var(--muted); font-size: 12px; margin-top: 2px; }
@@ -58,6 +61,28 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--panel); transition: transform .15s; box-shadow: 0 1px 2px rgb(0 0 0 / .25); }
 .switch:checked { background: var(--acc); } .switch:checked::after { transform: translateX(12px); }
 .switch:focus-visible, .seg input:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+/* light/dark switch: sun and moon icons with a sliding knob (see theme.js) */
+.themeswitch { position: relative; flex: none; display: inline-flex; align-items: center; justify-content: space-between;
+  width: 64px; height: 30px; padding: 0 9px; border: 1px solid var(--line); border-radius: 15px;
+  background: var(--soft); cursor: pointer; }
+.themeswitch:hover { border-color: var(--muted); }
+.themeswitch:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.themeswitch .knob { position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--panel); border: 1px solid var(--line); box-shadow: 0 1px 2px rgb(0 0 0 / .25);
+  transition: transform .18s ease; }
+.themeswitch .ico { position: relative; z-index: 1; width: 15px; height: 15px; fill: none; stroke: var(--muted);
+  stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: stroke .18s; }
+.themeswitch[aria-checked="true"] .knob { transform: translateX(34px); }
+.themeswitch[aria-checked="false"] .sun { stroke: var(--r); }
+.themeswitch[aria-checked="true"] .moon { stroke: var(--acc); }
+/* before the script runs, follow the system preference so the switch does not flicker */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .themeswitch:not([aria-checked="true"]) .knob { transform: translateX(34px); }
+  :root:not([data-theme="light"]) .themeswitch:not([aria-checked="true"]) .sun { stroke: var(--muted); }
+  :root:not([data-theme="light"]) .themeswitch:not([aria-checked="true"]) .moon { stroke: var(--acc); }
+}
+@media (prefers-reduced-motion: reduce) { .themeswitch .knob, .themeswitch .ico { transition: none; } }
 
 .tools { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
 .tools button { font-size: 12px; padding: 3px 10px; border-radius: 6px; cursor: pointer; border: 1px solid var(--line); background: var(--bg); }
