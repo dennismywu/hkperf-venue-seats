@@ -660,7 +660,21 @@ function drawArcMap(doc) {
         row.blocks.forEach(block => {
           const g = geom(row, block);
           const bo = (g.view + 180) % 360;          // outward normal bearing
-          const at = bearing => { const d = g.offset / Math.cos((bearing - bo) * RAD); return [d * Math.sin(bearing * RAD), -d * Math.cos(bearing * RAD)]; };
+          // chord mode places seats on a straight line perpendicular to the view axis at
+          // distance g.offset; good when the block's angular span is narrow. For wide
+          // spans the chord cuts inward from the seats' true radius by (R - R*cos(half)),
+          // which can be tens of units: Row G seats 30-44 (57 deg span) end up ~38 units
+          // closer to centre than they belong. Switch to arc mode when the span is wide:
+          // each seat sits on the circle of radius R = g.offset / cos(half_span), rotated
+          // to the tangent at its own bearing.
+          const spanDeg = Math.abs(((g.end - g.start + 540) % 360) - 180);
+          const useArc = spanDeg > 20;
+          const seatR = useArc ? g.offset / Math.cos(spanDeg / 2 * RAD) : g.offset;
+          const at = bearing => {
+            if (useArc) return [seatR * Math.sin(bearing * RAD), -seatR * Math.cos(bearing * RAD)];
+            const d = g.offset / Math.cos((bearing - bo) * RAD);
+            return [d * Math.sin(bearing * RAD), -d * Math.cos(bearing * RAD)];
+          };
           const P0 = at(g.start), P1 = at(g.end);
           if (!firstP) firstP = P0;
           lastP = P1;
@@ -683,23 +697,39 @@ function drawArcMap(doc) {
           lt.textContent = `${g.view}° o${g.offset} [${g.inner}-${g.outer}]`;
           const items = [...(block.seats || []).map(id => ({ id })),
                          ...((block.blocked && block.blocked.skipped_numbers) || []).map(id => ({ id, blocked: true }))];
-          // inset each end by half an aisle, so neighbouring blocks keep the aisle gap between them
-          const n = items.length, rot = bo + 90;
+          const n = items.length;
+          // In chord mode seats interpolate linearly between the two chord endpoints, inset
+          // by half an aisle. In arc mode they interpolate in BEARING along the arc, also
+          // inset by half an aisle (converted to degrees along the circle); each seat
+          // rotates to its own tangent so the whole run follows the ring.
           const dx = P1[0] - P0[0], dy = P1[1] - P0[1], L = Math.hypot(dx, dy) || 1;
           const gx = dx / L * S * 0.6, gy = dy / L * S * 0.6;
           const Ax = P0[0] + gx, Ay = P0[1] + gy, Bx = P1[0] - gx, By = P1[1] - gy;
+          const bearingInset = useArc ? Math.atan2(S * 0.6, seatR) / RAD : 0;
+          const bStart = useArc ? g.start + (g.end > g.start ? bearingInset : -bearingInset) : null;
+          const bEnd = useArc ? g.end + (g.end > g.start ? -bearingInset : bearingInset) : null;
           items.forEach((it, i) => {
             const t = n > 1 ? i / (n - 1) : 0.5;
-            const x = Ax + (Bx - Ax) * t, y = Ay + (By - Ay) * t;
+            let x, y, rot;
+            if (useArc) {
+              const deg = bStart + (bEnd - bStart) * t;
+              x = seatR * Math.sin(deg * RAD);
+              y = -seatR * Math.cos(deg * RAD);
+              rot = deg + 90;
+            } else {
+              x = Ax + (Bx - Ax) * t;
+              y = Ay + (By - Ay) * t;
+              rot = bo + 90;
+            }
             remember(x, y);
             if (it.blocked) {
-              const g = el("g", { class: "seat blocked" }, svg);
-              const r = el("rect", { x: -S / 2, y: -S / 2, width: S, height: S, rx: 1 }, g);
+              const g2 = el("g", { class: "seat blocked" }, svg);
+              const r = el("rect", { x: -S / 2, y: -S / 2, width: S, height: S, rx: 1 }, g2);
               el("title", {}, r).textContent = `${row.row}: solid area where ${it.id} would be (not seats)`;
-              g.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? rot : 0})`);
+              g2.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? rot : 0})`);
             } else {
-              const g = seatAt(svg, z, row, it.id, block, inPits, -S / 2, -S / 2);
-              g.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? rot : 0})`);
+              const seatG = seatAt(svg, z, row, it.id, block, inPits, -S / 2, -S / 2);
+              seatG.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? rot : 0})`);
             }
           });
         });
