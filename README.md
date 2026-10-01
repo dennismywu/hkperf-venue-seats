@@ -39,14 +39,18 @@ and front-of-house teams.
 | Ngau Chi Wan Civic Centre Cultural Activities Hall: transverse stage (`ncwcc-ca-transverse`) | 120 | both sides of the stage | no pit |
 | Ngau Chi Wan Civic Centre Cultural Activities Hall: thrust stage (`ncwcc-ca-thrust`) | 119 | front + two side columns | no pit |
 | Ngau Chi Wan Civic Centre Cultural Activities Hall: arena stage (`ncwcc-ca-arena`) | 146 | all four sides | no pit |
+| Sha Tin Town Hall Cultural Activities Hall (`stth-ca`) | 298 | single | no pit |
+| Kwai Tsing Theatre Black Box Theatre: transverse stage (`ktt-bb-tv`) | 130 | both sides of the stage | no pit |
+| Kwai Tsing Theatre Black Box Theatre: thrust stage (`ktt-bb-thrust`) | 150 | front + two side columns | no pit |
+| Kwai Tsing Theatre Black Box Theatre: arena stage (`ktt-bb-arena`) | 160 | all four sides | no pit |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
 Civic Centre Theatre, Tuen Mun and Tsuen Wan Town Hall Auditoriums). Each file says which, and gives the arithmetic.
 The Grand Theatre's pit lifts are curved: the rows that fit take whole front rows and the centre block of the row
 behind, so a pit can name one block of a row, and its part of house where row letters repeat.
-The Turns, The Lab and the cultural-activities halls of Sai Wan Ho and Ngau Chi Wan are flexible rooms with one
-seated layout per stage layout — two each at The Turns and The Lab and Sai Wan Ho, four at Ngau Chi Wan — so each
-layout is its own seat list.
+The Turns, The Lab, the Kwai Tsing Black Box Theatre and the cultural-activities halls of Sai Wan Ho and Ngau Chi
+Wan are flexible rooms with one seated layout per stage layout — two each at The Turns and The Lab, three at the
+Kwai Tsing Black Box Theatre, two at Sai Wan Ho and four at Ngau Chi Wan — so each layout is its own seat list.
 
 ## What the data is, and what it is not
 

@@ -1,0 +1,561 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.4",
+ "venue": {
+  "id": "ktt-bb-arena",
+  "name_en": "Kwai Tsing Theatre Black Box Theatre (arena stage)",
+  "name_zh": "葵青劇院 黑盒劇場（四向舞台）"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.lcsd.gov.hk/en/ktt/common/files/BBT_SeatingPlan-ALL.pdf",
+  "file": "BBT_SeatingPlan-ALL.pdf",
+  "sha256": "2efe6f5c69b6d251b4556a424ab233d032577362c46bd052056065ac9782d0c1",
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [
+  {
+   "what": "Seat totals for each layout",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/ktt-bb-lfe.pdf",
+   "title": "Kwai Tsing Theatre – Black Box Theatre, FULL Technical Information",
+   "document_version": "V. 2026.07.20",
+   "sha256": "7168ae28c93465e1d0f4d9fb5c722ea654d58d09b79db36382e0d028ffd813fb",
+   "retrieved": "2026-09-29",
+   "quotes": [
+    "Transverse Stage: 130 seats",
+    "Thrust Stage: 150 seats",
+    "Arena Stage: 160 seats"
+   ],
+   "note": "Confirms all three plans' totals. No orchestra pit is described."
+  }
+ ],
+ "location": {
+  "address_en": "12 Hing Ning Road, Kwai Chung, New Territories, Hong Kong",
+  "address_zh": "香港新界葵涌興寧路12號",
+  "district": "Kwai Tsing",
+  "latitude": 22.35665,
+  "longitude": 114.12623,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "87112562",
+   "name_in_source": "Kwai Tsing Theatre (Black Box Theatre)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Kwai Tsing Theatre"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "marks": {
+  "W": "Seat suitable for audience on wheel chairs (box prints W, no number)",
+  "X": "Management seat (crossed box, no number)"
+ },
+ "layout": {
+  "seat_1_side": "right",
+  "note": "Seating on all four sides. Rows CA, CC, CE, CG face the stage from the front (seat 1 at the left) and AA, AC, AE from the far side (seat 1 at the right, AA nearest the stage), each split by an aisle; upright columns stand along each side: DA, DC, DE, DG on the left (DA nearest the stage) with seat 1 at the top, and BA, BC, BE, BG on the right (BA nearest the stage) with seat 1 at the bottom, each cut by a cross-aisle into two blocks. This is one of the room's seating layouts; the transverse- and thrust-stage layouts are separate seat lists.",
+  "banks": [
+   {
+    "id": "front",
+    "side": "front",
+    "seat_1": "left",
+    "rows": [
+     {
+      "row": "CA"
+     },
+     {
+      "row": "CC"
+     },
+     {
+      "row": "CE"
+     },
+     {
+      "row": "CG"
+     }
+    ]
+   },
+   {
+    "id": "back",
+    "side": "back",
+    "seat_1": "right",
+    "rows": [
+     {
+      "row": "AA"
+     },
+     {
+      "row": "AC"
+     },
+     {
+      "row": "AE"
+     }
+    ]
+   },
+   {
+    "id": "left",
+    "side": "left",
+    "seat_1": "upstage",
+    "rows": [
+     {
+      "row": "DG"
+     },
+     {
+      "row": "DE"
+     },
+     {
+      "row": "DC"
+     },
+     {
+      "row": "DA"
+     }
+    ]
+   },
+   {
+    "id": "right",
+    "side": "right",
+    "seat_1": "downstage",
+    "rows": [
+     {
+      "row": "BA"
+     },
+     {
+      "row": "BC"
+     },
+     {
+      "row": "BE"
+     },
+     {
+      "row": "BG"
+     }
+    ]
+   }
+  ]
+ },
+ "printed_totals": {
+  "Black Box Theatre": 160,
+  "Total": 160
+ },
+ "zones": [
+  {
+   "name": "Black Box Theatre",
+   "name_zh": "黑盒劇場",
+   "rows": [
+    {
+     "row": "AA",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      },
+      {
+       "seats": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      }
+     ],
+     "note": "One row with an aisle after 6; seat 1 at the right."
+    },
+    {
+     "row": "AC",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      },
+      {
+       "seats": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      }
+     ],
+     "note": "One row with an aisle after 6; seat 1 at the right."
+    },
+    {
+     "row": "AE",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ],
+     "note": "One row with an aisle after 7; seat 1 at the right."
+    },
+    {
+     "row": "CA",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ]
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ]
+      }
+     ],
+     "note": "One row with an aisle after 5."
+    },
+    {
+     "row": "CC",
+     "blocks": [
+      {
+       "seats": [
+        "X1",
+        "X2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      },
+      {
+       "seats": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "inferred_numbers": {
+      "X1": "1",
+      "X2": "2"
+     },
+     "note": "Two crossed management boxes, no number, at seat 1's end; an aisle after 6."
+    },
+    {
+     "row": "CE",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      },
+      {
+       "seats": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      }
+     ],
+     "note": "One row with an aisle after 6."
+    },
+    {
+     "row": "CG",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+       ]
+      },
+      {
+       "seats": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ],
+     "note": "One row with an aisle after 7."
+    },
+    {
+     "row": "DG",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ]
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ]
+      }
+     ],
+     "note": "A cross-aisle divides the column after 5."
+    },
+    {
+     "row": "DE",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ]
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ]
+      }
+     ],
+     "note": "A cross-aisle divides the column after 5."
+    },
+    {
+     "row": "DC",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      }
+     ],
+     "note": "A cross-aisle divides the column after 4."
+    },
+    {
+     "row": "DA",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ]
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "W1",
+        "W2"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W"
+     },
+     "inferred_numbers": {
+      "W1": "9",
+      "W2": "10"
+     },
+     "note": "Two wheelchair boxes, no number, end the column after 8; a cross-aisle divides it after 5."
+    },
+    {
+     "row": "BA",
+     "blocks": [
+      {
+       "seats": [
+        "W1",
+        "W2",
+        "3",
+        "4",
+        "5"
+       ]
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W"
+     },
+     "inferred_numbers": {
+      "W1": "1",
+      "W2": "2"
+     },
+     "note": "Two wheelchair boxes, no number, at seat 1's end; a cross-aisle divides the column after 5."
+    },
+    {
+     "row": "BC",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ]
+      },
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8"
+       ]
+      }
+     ],
+     "note": "A cross-aisle divides the column after 4."
+    },
+    {
+     "row": "BE",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ]
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ]
+      }
+     ],
+     "note": "A cross-aisle divides the column after 5."
+    },
+    {
+     "row": "BG",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ]
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ]
+      }
+     ],
+     "note": "A cross-aisle divides the column after 5."
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Black Box Theatre": {
+   "boxes": 162,
+   "management_X": 2,
+   "wheelchair_W": 4,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 160,
+   "printed": 160
+  }
+ }
+}

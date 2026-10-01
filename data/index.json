@@ -27,6 +27,10 @@
   {"id": "ncwcc-ca-end", "name_en": "Ngau Chi Wan Civic Centre Cultural Activities Hall (end stage)", "name_zh": "牛池灣文娛中心 文娛廳（單向舞台）", "region": "Kowloon", "added": "2026-09-29", "file": "ncwcc-ca-end.json"},
   {"id": "ncwcc-ca-transverse", "name_en": "Ngau Chi Wan Civic Centre Cultural Activities Hall (transverse stage)", "name_zh": "牛池灣文娛中心 文娛廳（橫向舞台）", "region": "Kowloon", "added": "2026-09-29", "file": "ncwcc-ca-transverse.json"},
   {"id": "ncwcc-ca-thrust", "name_en": "Ngau Chi Wan Civic Centre Cultural Activities Hall (thrust stage)", "name_zh": "牛池灣文娛中心 文娛廳（三向舞台）", "region": "Kowloon", "added": "2026-09-29", "file": "ncwcc-ca-thrust.json"},
-  {"id": "ncwcc-ca-arena", "name_en": "Ngau Chi Wan Civic Centre Cultural Activities Hall (arena stage)", "name_zh": "牛池灣文娛中心 文娛廳（中央舞台）", "region": "Kowloon", "added": "2026-09-29", "file": "ncwcc-ca-arena.json"}
+  {"id": "ncwcc-ca-arena", "name_en": "Ngau Chi Wan Civic Centre Cultural Activities Hall (arena stage)", "name_zh": "牛池灣文娛中心 文娛廳（中央舞台）", "region": "Kowloon", "added": "2026-09-29", "file": "ncwcc-ca-arena.json"},
+  {"id": "stth-ca", "name_en": "Sha Tin Town Hall Cultural Activities Hall", "name_zh": "沙田大會堂 文娛廳", "region": "New Territories", "added": "2026-09-29", "file": "stth-ca.json"},
+  {"id": "ktt-bb-tv", "name_en": "Kwai Tsing Theatre Black Box Theatre (transverse stage)", "name_zh": "葵青劇院 黑盒劇場（橫向舞台）", "region": "New Territories", "added": "2026-09-29", "file": "ktt-bb-tv.json"},
+  {"id": "ktt-bb-thrust", "name_en": "Kwai Tsing Theatre Black Box Theatre (thrust stage)", "name_zh": "葵青劇院 黑盒劇場（三向舞台）", "region": "New Territories", "added": "2026-09-29", "file": "ktt-bb-thrust.json"},
+  {"id": "ktt-bb-arena", "name_en": "Kwai Tsing Theatre Black Box Theatre (arena stage)", "name_zh": "葵青劇院 黑盒劇場（四向舞台）", "region": "New Territories", "added": "2026-09-29", "file": "ktt-bb-arena.json"}
  ]
 }
