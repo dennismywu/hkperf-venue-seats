@@ -192,13 +192,14 @@ def finish(doc):
     for z in doc["zones"]:
         boxes, x = _seats(z["rows"]), _marked(z["rows"], "X")
         # A part of house whose official figure also counts its management seats (count_includes X), or leaves
-        # out a kind of seat it has (count_excludes, e.g. W), says so, and why.
+        # out a kind of seat it has (count_excludes, e.g. W, or "*" for a zone the operator gives no figure
+        # for at all), says so, and why.
         with_x = "X" in z.get("count_includes", [])
         without = z.get("count_excludes", [])
         assert set(z.get("count_includes", [])) <= {"X"}, f"{z['name']}: count_includes takes only X"
         assert "X" not in without, f"{z['name']}: X is left out already"
         assert not (with_x or without) or z.get("count_note"), f"{z['name']}: count_includes/count_excludes needs a count_note"
-        left_out = sum(_marked(z["rows"], m) for m in without)
+        left_out = boxes if "*" in without else sum(_marked(z["rows"], m) for m in without)
         counted = (boxes if with_x else boxes - x) - left_out
         check[z["name"]] = {"boxes": boxes, "management_X": x, "wheelchair_W": _marked(z["rows"], "W"),
                             "restricted_R": _marked(z["rows"], "R"), "limited_legroom_L": _marked(z["rows"], "L"),

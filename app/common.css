@@ -109,8 +109,10 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .pitband rect, .pitband polygon { fill: none; stroke: var(--r); stroke-dasharray: 4 3; }
 .pitband text { fill: var(--r); font-size: 11px; font-weight: 650; dominant-baseline: central; }
 .blockedarea { fill: var(--ink); }
+.standing { opacity: .22; }
 .standing rect { fill: none; stroke: var(--muted); stroke-dasharray: 2 2; }
 .standing text { fill: var(--muted); font-size: 7.5px; text-anchor: middle; dominant-baseline: central; }
+.standing.on { opacity: 1; }
 .standing.on rect { stroke: var(--acc); stroke-dasharray: none; fill: var(--acc-bg); } .standing.on text { fill: var(--acc); }
 .rowlabel { fill: var(--muted); font-size: 10px; font-weight: 600; dominant-baseline: central; }
 .zonelabel { fill: var(--ink); font-size: 13px; font-weight: 650; text-anchor: middle; }

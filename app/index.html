@@ -32,6 +32,7 @@
 .seg label .rows { color: var(--muted); font-size: 12px; }
 .seat.gain { opacity: 1; } .seat.gain rect { stroke: var(--ok); stroke-width: 2.2; stroke-dasharray: none; }
 .seat.lose rect { stroke: var(--bad); stroke-width: 2.2; }
+.standing.gain, .standing.lose { opacity: 1; }
 .standing.gain rect { stroke: var(--ok); stroke-width: 2.2; stroke-dasharray: none; }
 .standing.lose rect { stroke: var(--bad); stroke-width: 2.2; }
 .seg small, .opt small { color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -417,9 +418,12 @@ function lcsdAdjust(st = state) {
       if (n) { out.n += n; out.notes.push(`also counts ${plural(n, "management seat")} in ${z.name}`); }
     }
     for (const m of z.count_excludes || []) {
-      if (st.marks[m] === false) continue;
-      const n = count(z, m);
-      if (n) { out.n -= n; out.notes.push(`leaves out ${n} ${(MARK_NAMES[m] || m).toLowerCase()} in ${z.name}`); }
+      if (m !== "*" && st.marks[m] === false) continue;
+      // "*" leaves out the whole part of house: LCSD gives it no figure of its own
+      const n = m === "*" ? z.rows.reduce((a, r) => a + seatsOf(r).filter(s => !inPit(z, r, s)).length, 0) : count(z, m);
+      if (n) out.n -= n;
+      if (n) out.notes.push(m === "*" ? `leaves out ${plural(n, "seat")} in ${z.name}`
+                                      : `leaves out ${n} ${(MARK_NAMES[m] || m).toLowerCase()} in ${z.name}`);
     }
   }
   return out;

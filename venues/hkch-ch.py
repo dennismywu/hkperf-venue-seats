@@ -20,7 +20,6 @@ TECH_SHEET = {
     "retrieved": "2026-10-01",
 }
 W = lambda *ids: {i: "W" for i in ids}
-P = lambda *ids: {i: "P" for i in ids}
 
 
 def blocked(seats, numbers):
@@ -70,13 +69,15 @@ balcony = [row(lab, rng(1, a), rng(a + 1, b), rng(b + 1, c)) for lab, (a, b, c) 
     "BL": (7, 22, 29), "BM": (7, 19, 26), "BN": (7, 20, 27),
 }.items()]
 
-# the promenade seats: one upright row down each side wall, drawn as diamonds and not counted in
-# LCSD's tier figures
+# the promenade seats: one upright row down each side wall, drawn as diamonds and numbered 1-6 with no
+# row letter; LCSD's tier figures do not count them
 promenade = [
-    row("LP", rng(1, 6), marks=P(*rng(1, 6)),
-        note="Left promenade: one upright column of six diamond-marked seats down the left wall."),
-    row("RP", rng(1, 6), marks=P(*rng(1, 6)),
-        note="Right promenade: one upright column of six diamond-marked seats down the right wall."),
+    row("Left Promenade", rng(1, 6),
+        note="Left promenade: one upright column of six diamond-marked seats down the left wall, below "
+             "the plan's words 左邊走廊 LEFT PROMENADE. The plan prints no row letter for them."),
+    row("Right Promenade", rng(1, 6),
+        note="Right promenade: one upright column of six diamond-marked seats down the right wall, below "
+             "the plan's words 右邊走廊 RIGHT PROMENADE. The plan prints no row letter for them."),
 ]
 
 finish({
@@ -109,22 +110,22 @@ finish({
         "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks "
                 "are listed from that side. Three blocks per row, save the first three rear-stall rows "
                 "(Q-S), which carry a further short outer block each side. No rows I, O or U. The two "
-                "upright promenade rows LP and RP run down the side walls; LCSD's tier figures do not "
-                "count them. The plan also draws fixed side boxes (左廂座 / 右廂座) and a large solid black "
-                "area behind the rear stalls, which hold no seats.",
+                "upright promenade rows (Left Promenade and Right Promenade, one down each side wall) "
+                "carry no row letter; LCSD's tier figures do not count them. The plan also draws fixed "
+                "side boxes (左廂座 / 右廂座) and a large solid black area behind the rear stalls, which "
+                "hold no seats.",
         "banks": [
             {"id": "stalls", "side": "front", "seat_1": "left", "rows": whole(front)},
             {"id": "rear", "side": "front", "seat_1": "left", "rows": whole(rear)},
             {"id": "balcony", "side": "front", "seat_1": "left", "rows": whole(balcony)},
             {"id": "promenade-left", "side": "left", "seat_1": "upstage", "align": "room",
-             "label": "LP 左邊走廊", "rows": ["LP"]},
+             "rows": ["Left Promenade"]},
             {"id": "promenade-right", "side": "right", "seat_1": "upstage", "align": "room",
-             "label": "RP 右邊走廊", "rows": ["RP"]},
+             "rows": ["Right Promenade"]},
         ],
     },
     "marks": {
         "W": "Seat suitable for audience on wheelchairs (box prints W, no number)",
-        "P": "Promenade seat (diamond marker on the plan; LCSD's tier figures do not count these)",
     },
     "orchestra_pits": [{
         "name": "Orchestra pit / extension stage",
@@ -147,11 +148,11 @@ finish({
         {"name": "Front Stalls", "name_zh": "大堂前座", "rows": front},
         {"name": "Rear Stalls", "name_zh": "大堂後座", "rows": rear},
         {"name": "Balcony", "name_zh": "樓座", "rows": balcony},
-        {"name": "Promenade", "name_zh": "走廊", "rows": promenade,
-         "count_excludes": ["P"],
+        {"name": "Promenade", "name_zh": "走廊", "rows": promenade, "default_off": True,
+         "count_excludes": ["*"],
          "count_note": "LCSD's tier figures (Front Stall 578, Rear Stall 465, Balcony 387) do not count "
                        "the twelve promenade seats the plan draws as diamonds down the side walls, so "
                        "this part of house carries no figure of its own; counted as every box less the "
-                       "twelve promenade seats = 0."},
+                       "whole part of house = 0. Off in the default configuration."},
     ],
 })

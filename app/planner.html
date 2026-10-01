@@ -396,7 +396,7 @@ function sanitize(c) {
   return {
     pit: Number.isInteger(c.pit) && doc.orchestra_pits?.[c.pit] ? c.pit : -1,
     marks: Object.fromEntries(Object.keys(d.marks).map(k => [k, typeof c.marks?.[k] === "boolean" ? c.marks[k] : d.marks[k]])),
-    zones: Object.fromEntries(Object.keys(d.zones).map(k => [k, typeof c.zones?.[k] === "boolean" ? c.zones[k] : true])),
+    zones: Object.fromEntries(Object.keys(d.zones).map(k => [k, typeof c.zones?.[k] === "boolean" ? c.zones[k] : d.zones[k]])),
     standing: !!c.standing,
   };
 }

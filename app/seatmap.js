@@ -1,8 +1,8 @@
 // Shared by the viewer and the planner: seat-list helpers, what counts in a configuration,
 // and the seat-map drawing. Loaded as a plain script; its top-level names are global.
 
-const MARK_NAMES = { W: "Wheelchair spaces", X: "Management seats", R: "Restricted sightline", L: "Limited legroom", P: "Promenade seats" };
-const MARK_ONE = { W: "Wheelchair space", X: "Management seat", R: "Restricted sightline", L: "Limited legroom", P: "Promenade seat" };
+const MARK_NAMES = { W: "Wheelchair spaces", X: "Management seats", R: "Restricted sightline", L: "Limited legroom" };
+const MARK_ONE = { W: "Wheelchair space", X: "Management seat", R: "Restricted sightline", L: "Limited legroom" };
 // The printed totals count wheelchair, restricted and limited-legroom seats and leave management seats out.
 const DEFAULT_MARKS = { W: true, X: false, R: true, L: true };
 const S = 15, GAP = 2, BLOCK_GAP = 14, ROW_GAP = 5, LABEL_W = 30, ZONE_GAP = 34;
@@ -74,7 +74,7 @@ function runs(seats) {
 const defaults = d => ({
   pit: -1,
   marks: Object.fromEntries(Object.keys(d.marks || {}).map(m => [m, DEFAULT_MARKS[m] ?? true])),
-  zones: Object.fromEntries(d.zones.map(z => [z.name, true])),
+  zones: Object.fromEntries(d.zones.map(z => [z.name, !z.default_off])),
   standing: false,
 });
 
@@ -447,8 +447,11 @@ function drawBankedMap(doc) {
   // extents: whole banks, or each row of a bank placed row by row
   const ext = place.filter(p => p.b).flatMap(p => p.b.pos ? p.b.pos.map((q, i) => ({ x0: q.x, x1: q.x + p.b.lens[i], y0: q.y, y1: q.y + S }))
     : [{ x0: p.x, x1: p.x + p.b.w, y0: p.y, y1: p.y + p.b.h }]);
-  const minX = Math.min(-stageW / 2, ...ext.map(e => e.x0)) - LABEL_W;
-  const maxX = Math.max(stageW / 2, ...ext.map(e => e.x1)) + LABEL_W;
+  // room for the row labels: side banks carry theirs at the column's centre, so long names need more
+  const labelHalf = Math.max(0, ...sides.flatMap(b => b.pieces.map(p => String(p.row.row).length))) * 3.2;
+  const pad = Math.max(LABEL_W, labelHalf + 6);
+  const minX = Math.min(-stageW / 2, ...ext.map(e => e.x0)) - pad;
+  const maxX = Math.max(stageW / 2, ...ext.map(e => e.x1)) + pad;
   const minY = Math.min(0, ...ext.map(e => e.y0)) - LBL - 18;
   const W = maxX - minX, ox = -minX, oy = -minY + 4;
 

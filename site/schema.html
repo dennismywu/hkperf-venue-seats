@@ -116,7 +116,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   </table></div>
 
   <h2 id="seats">4. Parts of house, rows, blocks, seats</h2>
-  <pre><code>zones[]          a part of house: name, name_zh, optional sections, counted_in, count_includes, count_excludes
+  <pre><code>zones[]          a part of house: name, name_zh, optional sections, counted_in, count_includes, count_excludes, default_off
   rows[]         a row: its label, optional marks, inferred_numbers and note
     blocks[]     a run of seats between aisles
       seats[]    seat ids, in number order from seat 1's end</code></pre>
@@ -190,7 +190,10 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <p><b>Seats a figure leaves out.</b> Where the operator's figure leaves out a kind of seat the plan draws, the
     zone carries <code>"count_excludes"</code> with its mark and a <code>count_note</code>: Ko Shan Theatre's plan
     adds its six wheelchair spaces to the total separately, so its Stalls have <code>"count_excludes": ["W"]</code>
-    and are checked as boxes − X − W.</p>
+    and are checked as boxes − X − W. A part of house the operator gives no figure for at all — a promenade the
+    plan draws but the tier figures leave out — carries <code>"count_excludes": ["*"]</code> (every box in it is
+    left out) and <code>"default_off": true</code>, so it is closed in the default configuration and the checked
+    total still matches. The Hong Kong City Hall Concert Hall's promenade is one.</p>
   <p><b>Exceptions.</b> Where the operator's figure for a part of house also counts its management seats, that zone
     carries <code>"count_includes": ["X"]</code> and a <code>count_note</code> explaining it; the check then counts
     every box there, and <code>count_check</code> records the exception. Nothing is adjusted to make a figure fit.</p>

@@ -207,7 +207,9 @@ and the viewer both show it. Where LCSD gives one figure for parts of house the 
 those zones names that figure with `counted_in` and they are checked together (Grand Theatre: Stalls 1 and
 Stalls 2, `"counted_in": "Stalls"`, 788). Where LCSD's figure leaves out a kind of seat the plan draws, the
 zone says so with `count_excludes` (Ko Shan Theatre's Stalls: `["W"]`, as the plan adds its six wheelchair
-spaces to the total separately).
+spaces to the total separately). A part of house the operator gives no figure for at all — Hong Kong City Hall
+Concert Hall's promenade, drawn but left out of the tier figures — carries `count_excludes: ["*"]` (every box
+left out) and `default_off`, so it is closed in the default configuration.
 
 **How counts are checked.** On every plan so far, the printed total equals the boxes drawn minus the
 management seats. Wheelchair, restricted and limited-legroom seats are counted. This rule is our reading;
