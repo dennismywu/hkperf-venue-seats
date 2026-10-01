@@ -410,10 +410,17 @@ function describe() {
 }
 
 const counts = (zone, row, mark, seat) => !excludedIn(doc, cfg, zone, row, mark, seat);
+// Every seat in the plan's order: the parts of house, then the standing places (part of the count only
+// when the configuration adds them).
+function* seatList() {
+  for (const z of doc.zones) for (const r of z.rows) for (const s of seatsOf(r))
+    yield { zone: z.name, row: r.row, seat: s, mark: markOf(r, s) };
+  for (const p of doc.standing?.places || []) yield { zone: "Standing", row: "Standing", seat: p, mark: "" };
+}
 function sellable() {
   const out = [];
-  for (const z of doc.zones) for (const r of z.rows) for (const s of seatsOf(r))
-    if (counts(z.name, r.row, markOf(r, s), s)) out.push(keyOf(z.name, r.row, s));
+  for (const { zone, row, seat, mark } of seatList())
+    if (counts(zone, row, mark, seat)) out.push(keyOf(zone, row, seat));
   return out;
 }
 
@@ -720,9 +727,9 @@ function nameBox() {
 // Selected seats in the seat list's own order (part of house, row, seat number).
 function orderedSel() {
   const out = [];
-  for (const z of doc.zones) for (const r of z.rows) for (const s of seatsOf(r)) {
-    const k = keyOf(z.name, r.row, s);
-    if (sel.has(k)) out.push({ key: k, zone: z.name, row: r.row, seat: s });
+  for (const { zone, row, seat } of seatList()) {
+    const k = keyOf(zone, row, seat);
+    if (sel.has(k)) out.push({ key: k, zone, row, seat });
   }
   return out;
 }
@@ -828,12 +835,12 @@ function people() {
   const byId = Object.fromEntries(cats.map(c => [c.id, c]));
   // one line per name: its seats as row ranges, in seat-list order
   const groups = new Map();
-  for (const z of doc.zones) for (const r of z.rows) for (const s of seatsOf(r)) {
-    const k = keyOf(z.name, r.row, s), n = names.get(k);
+  for (const { zone, row, seat } of seatList()) {
+    const k = keyOf(zone, row, seat), n = names.get(k);
     if (!n) continue;
     if (!groups.has(n)) groups.set(n, { seats: [], cats: new Set(), reserved: 0 });
     const g = groups.get(n);
-    g.seats.push([z.name, r.row, s]);
+    g.seats.push([zone, row, seat]);
     g.cats.add(assign.get(k) === "blocked" ? "Blocked" : byId[assign.get(k)]?.name || "not priced");
     if (reserved.has(k)) g.reserved++;
   }
@@ -1042,7 +1049,8 @@ $("map").addEventListener("pointermove", e => {
   if (!g) return (tip.style.display = "none");
   const k = g.dataset.key, st = seatsByKey.get(k);
   const c = cats.find(x => x.id === assign.get(k));
-  let h = `<b>${esc(g.dataset.row)} ${esc(g.dataset.seat)}</b> · ${esc(g.dataset.zone)}`;
+  let h = `<b>${esc(g.dataset.row)} ${esc(g.dataset.seat)}</b>` +
+    (g.dataset.zone && g.dataset.zone !== g.dataset.row ? ` · ${esc(g.dataset.zone)}` : "");
   if (g.dataset.mark) h += `<br>${letters(g.dataset.mark).map(l => esc(MARK_ONE[l] || l)).join(" · ")}`;
   if (!st) h += `<br>Not in this configuration`;
   else {

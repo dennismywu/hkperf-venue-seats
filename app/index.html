@@ -32,7 +32,6 @@
 .seg label .rows { color: var(--muted); font-size: 12px; }
 .seat.gain { opacity: 1; } .seat.gain rect { stroke: var(--ok); stroke-width: 2.2; stroke-dasharray: none; }
 .seat.lose rect { stroke: var(--bad); stroke-width: 2.2; }
-.standing.gain, .standing.lose { opacity: 1; }
 .standing.gain rect { stroke: var(--ok); stroke-width: 2.2; stroke-dasharray: none; }
 .standing.lose rect { stroke: var(--bad); stroke-width: 2.2; }
 .seg small, .opt small { color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -721,7 +720,8 @@ function downloads() {
 const tip = $("tip");
 function showTip(g, x, y) {
   const d = g.dataset, m = d.mark;
-  let h = `<b>${esc(d.row)} ${esc(d.seat)}</b> · ${esc(d.zone)}${d.area ? ` · ${esc(d.area)}` : ""}`;
+  let h = `<b>${esc(d.row)} ${esc(d.seat)}</b>` + (d.zone && d.zone !== d.row ? ` · ${esc(d.zone)}` : "") +
+    (d.area ? ` · ${esc(d.area)}` : "");
   if (m) h += `<br>${letters(m).map(l => esc(MARK_ONE[l] || l)).join(" · ")}`;
   if (!/^\d+$/.test(d.seat)) h += d.inferred ? `<br>No printed number; fits seat ${esc(d.inferred)}` : `<br>No printed number`;
   if (d.off) h += `<br><span class="off">Not counted: ${esc(d.off)}</span>`;

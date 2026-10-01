@@ -80,6 +80,7 @@ const defaults = d => ({
 
 // The reason a seat is left out of configuration st, or "" when it counts.
 function excludedIn(doc, st, zone, row, mark, seat) {
+  if (zone === "Standing") return st.standing ? "" : "standing places not added";
   if (!st.zones[zone]) return `${zone} closed`;
   const pit = doc.orchestra_pits?.[st.pit];
   if (pit && pitSeats(doc, pit).has(`${zone}/${row}/${seat}`)) return `${pit.name} in use`;
@@ -169,8 +170,11 @@ function drawStanding(svg, doc, cx, y) {
   let x = cx - w / 2;
   const g = el("g", { class: "standing" }, svg);
   (rightFirst ? [...places].reverse() : places).forEach(pl => {
-    el("rect", { x, y, width: S, height: S, rx: 7 }, g);
-    el("text", { x: x + S / 2, y: y + S / 2 + .5 }, g).textContent = pl;
+    // each place is a seat-like element, so hover, tooltip and the planner treat it as one
+    const place = el("g", { class: "seat place", tabindex: 0 }, g);
+    Object.assign(place.dataset, { zone: "Standing", row: "Standing", seat: pl, mark: "" });
+    el("rect", { x, y, width: S, height: S, rx: 7 }, place);
+    el("text", { x: x + S / 2, y: y + S / 2 + .5 }, place).textContent = pl;
     x += S + GAP;
   });
   el("text", { class: "rowlabel", x: cx, y: y + S + 10, "text-anchor": "middle" }, svg).textContent = "Standing";
