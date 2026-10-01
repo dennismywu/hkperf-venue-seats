@@ -56,7 +56,7 @@
  },
  "layout": {
   "seat_1_side": "left",
-  "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and numbering runs on through the blocks. No row I in the stalls; no row U in the upper stalls. Rows Q-S of the upper stalls also have three seats in each side corridor (左邊走廊, 右邊走廊). Balcony rows BA-BC have a centre in two runs. The plan also marks a left and right box (左包廂, 右包廂) and promenade boxes on the stalls' side walls, with no seats drawn in them; circles along the side walls are not seats. The plan prints no date.",
+  "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and numbering runs on through the blocks. No row I in the stalls; no row U in the upper stalls. Rows Q-S of the upper stalls carry a further outer block each side (seats 1-3 and 34-36), part of the upper stalls. Balcony rows BA-BC have a centre in two runs. The plan also marks left and right boxes (左包廂, 右包廂) and promenade boxes along the side walls (左邊走廊 / 右邊走廊) with no seats drawn in them; circles along the side walls are not seats. The plan prints no date.",
   "banks": [
    {
     "id": "stalls-centre",
@@ -347,17 +347,26 @@
      {
       "zone": "Upper Stalls",
       "row": "Q",
-      "block": 2
+      "block": [
+       1,
+       2
+      ]
      },
      {
       "zone": "Upper Stalls",
       "row": "R",
-      "block": 2
+      "block": [
+       1,
+       2
+      ]
      },
      {
       "zone": "Upper Stalls",
       "row": "S",
-      "block": 2
+      "block": [
+       1,
+       2
+      ]
      },
      {
       "zone": "Upper Stalls",
@@ -426,17 +435,26 @@
      {
       "zone": "Upper Stalls",
       "row": "Q",
-      "block": 4
+      "block": [
+       4,
+       5
+      ]
      },
      {
       "zone": "Upper Stalls",
       "row": "R",
-      "block": 4
+      "block": [
+       4,
+       5
+      ]
      },
      {
       "zone": "Upper Stalls",
       "row": "S",
-      "block": 4
+      "block": [
+       4,
+       5
+      ]
      },
      {
       "zone": "Upper Stalls",
@@ -687,62 +705,6 @@
     "rows_run": "across",
     "seat_1": "left",
     "beside": "balcony-centre"
-   },
-   {
-    "id": "corridor-left",
-    "side": "left",
-    "rows_run": "across",
-    "seat_1": "left",
-    "level_with": {
-     "zone": "Upper Stalls",
-     "row": "Q"
-    },
-    "rows": [
-     {
-      "zone": "Upper Stalls",
-      "row": "Q",
-      "block": 1
-     },
-     {
-      "zone": "Upper Stalls",
-      "row": "R",
-      "block": 1
-     },
-     {
-      "zone": "Upper Stalls",
-      "row": "S",
-      "block": 1
-     }
-    ],
-    "label": "Left corridor"
-   },
-   {
-    "id": "corridor-right",
-    "side": "right",
-    "rows_run": "across",
-    "seat_1": "left",
-    "level_with": {
-     "zone": "Upper Stalls",
-     "row": "Q"
-    },
-    "rows": [
-     {
-      "zone": "Upper Stalls",
-      "row": "Q",
-      "block": 5
-     },
-     {
-      "zone": "Upper Stalls",
-      "row": "R",
-      "block": 5
-     },
-     {
-      "zone": "Upper Stalls",
-      "row": "S",
-      "block": 5
-     }
-    ],
-    "label": "Right corridor"
    }
   ]
  },
@@ -1636,8 +1598,7 @@
         "1",
         "2",
         "3"
-       ],
-       "area": "left corridor (左邊走廊)"
+       ]
       },
       {
        "seats": [
@@ -1686,8 +1647,7 @@
         "34",
         "35",
         "36"
-       ],
-       "area": "right corridor (右邊走廊)"
+       ]
       }
      ],
      "marks": {
@@ -1698,7 +1658,7 @@
       "X1": "10",
       "X2": "11"
      },
-     "note": "Two crossed management boxes end the left block after 9; the centre block starts at 12, so they fill 10-11 exactly. Seats 1-3 and 34-36 are in the side corridors."
+     "note": "Aisle, then an outer block of 1-3. Two crossed management boxes end the left-inner block after 9; the centre block starts at 12, so they fill 10-11 exactly. A further outer block of 34-36 ends the row."
     },
     {
      "row": "R",
@@ -1708,8 +1668,7 @@
         "1",
         "2",
         "3"
-       ],
-       "area": "left corridor (左邊走廊)"
+       ]
       },
       {
        "seats": [
@@ -1759,11 +1718,10 @@
         "35",
         "36",
         "37"
-       ],
-       "area": "right corridor (右邊走廊)"
+       ]
       }
      ],
-     "note": "Seats 1-3 and 35-37 are in the side corridors."
+     "note": "Aisle, then an outer block of 1-3; a further outer block of 35-37 ends the row."
     },
     {
      "row": "S",
@@ -1773,8 +1731,7 @@
         "1",
         "2",
         "3"
-       ],
-       "area": "left corridor (左邊走廊)"
+       ]
       },
       {
        "seats": [
@@ -1823,11 +1780,10 @@
         "34",
         "35",
         "36"
-       ],
-       "area": "right corridor (右邊走廊)"
+       ]
       }
      ],
-     "note": "Seats 1-3 and 34-36 are in the side corridors."
+     "note": "Aisle, then an outer block of 1-3; a further outer block of 34-36 ends the row."
     },
     {
      "row": "T",

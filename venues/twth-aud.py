@@ -36,19 +36,17 @@ stalls = [three(lab, *ends) for lab, ends in [
     ("L", (13, 28, 41)), ("M", (13, 27, 40)), ("N", (13, 28, 41)), ("O", (12, 26, 38)), ("P", (11, 26, 37)),
 ]]
 
-# ---- Upper Stalls (大堂後座): rows Q-S also have three seats in each side corridor (左邊走廊 / 右邊走廊),
-# numbered on from the row; no row U
-LEFT_CORRIDOR = "left corridor (左邊走廊)"
-RIGHT_CORRIDOR = "right corridor (右邊走廊)"
+# ---- Upper Stalls (大堂後座): rows Q-S carry a further outer block each side (seats 1-3 and 34-36),
+# part of the upper stalls, an aisle not a corridor from the block within; no row U
 upper = [
-    row("Q", {"seats": rng(1, 3), "area": LEFT_CORRIDOR}, rng(4, 9) + ["X1", "X2"], rng(12, 25), rng(26, 33),
-        {"seats": rng(34, 36), "area": RIGHT_CORRIDOR}, marks=X("X1", "X2"), inferred={"X1": "10", "X2": "11"},
-        note="Two crossed management boxes end the left block after 9; the centre block starts at 12, so they fill 10-11 exactly. "
-             "Seats 1-3 and 34-36 are in the side corridors."),
-    row("R", {"seats": rng(1, 3), "area": LEFT_CORRIDOR}, rng(4, 11), rng(12, 26), rng(27, 34),
-        {"seats": rng(35, 37), "area": RIGHT_CORRIDOR}, note="Seats 1-3 and 35-37 are in the side corridors."),
-    row("S", {"seats": rng(1, 3), "area": LEFT_CORRIDOR}, rng(4, 11), rng(12, 25), rng(26, 33),
-        {"seats": rng(34, 36), "area": RIGHT_CORRIDOR}, note="Seats 1-3 and 34-36 are in the side corridors."),
+    row("Q", rng(1, 3), rng(4, 9) + ["X1", "X2"], rng(12, 25), rng(26, 33), rng(34, 36),
+        marks=X("X1", "X2"), inferred={"X1": "10", "X2": "11"},
+        note="Aisle, then an outer block of 1-3. Two crossed management boxes end the left-inner block after 9; "
+             "the centre block starts at 12, so they fill 10-11 exactly. A further outer block of 34-36 ends the row."),
+    row("R", rng(1, 3), rng(4, 11), rng(12, 26), rng(27, 34), rng(35, 37),
+        note="Aisle, then an outer block of 1-3; a further outer block of 35-37 ends the row."),
+    row("S", rng(1, 3), rng(4, 11), rng(12, 25), rng(26, 33), rng(34, 36),
+        note="Aisle, then an outer block of 1-3; a further outer block of 34-36 ends the row."),
 ]
 upper += [three(lab, *ends) for lab, ends in [
     ("T", (9, 24, 33)), ("V", (9, 23, 32)), ("W", (9, 24, 33)), ("X", (9, 23, 32)), ("Y", (9, 24, 33)),
@@ -73,19 +71,17 @@ balcony += [three(lab, *ends) for lab, ends in [
     ("BJ", (9, 24, 33)), ("BK", (7, 21, 28)), ("BL", (7, 22, 29)), ("BM", (7, 19, 26)), ("BN", (7, 18, 25)),
 ]]
 
-# ---- banks: the side corridors' seats against the walls, level with row Q
+# ---- banks: rows Q-S' outer blocks are part of the upper stalls, so both left blocks go in the left
+# bank and both right blocks in the right bank (an aisle, not a corridor, from the block within)
 UP = "Upper Stalls"
 BANKS = aisle_banks(("stalls", stalls), ("upper", [r for r in upper if len(r["blocks"]) == 3], UP), ("balcony", balcony))
 for b in BANKS:
-    if b["id"].startswith("upper-"):
-        k = {"upper-centre": 3, "upper-left": 2, "upper-right": 4}[b["id"]]
-        b["rows"] = [{"zone": UP, "row": lab, "block": k} for lab in "QRS"] + b["rows"]
-BANKS += [
-    {"id": "corridor-left", "side": "left", "rows_run": "across", "seat_1": "left", "level_with": {"zone": UP, "row": "Q"},
-     "rows": [{"zone": UP, "row": lab, "block": 1} for lab in "QRS"], "label": "Left corridor"},
-    {"id": "corridor-right", "side": "right", "rows_run": "across", "seat_1": "left", "level_with": {"zone": UP, "row": "Q"},
-     "rows": [{"zone": UP, "row": lab, "block": 5} for lab in "QRS"], "label": "Right corridor"},
-]
+    if b["id"] == "upper-centre":
+        b["rows"] = [{"zone": UP, "row": lab, "block": 3} for lab in "QRS"] + b["rows"]
+    elif b["id"] == "upper-left":
+        b["rows"] = [{"zone": UP, "row": lab, "block": [1, 2]} for lab in "QRS"] + b["rows"]
+    elif b["id"] == "upper-right":
+        b["rows"] = [{"zone": UP, "row": lab, "block": [4, 5]} for lab in "QRS"] + b["rows"]
 
 finish({
     "venue": {"id": "twth-aud", "name_en": "Tsuen Wan Town Hall Auditorium", "name_zh": "荃灣大會堂 演奏廳"},
@@ -112,10 +108,11 @@ finish({
     "layout": {
         "seat_1_side": "left",
         "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and numbering runs on through "
-                "the blocks. No row I in the stalls; no row U in the upper stalls. Rows Q-S of the upper stalls also have "
-                "three seats in each side corridor (左邊走廊, 右邊走廊). Balcony rows BA-BC have a centre in two runs. "
-                "The plan also marks a left and right box (左包廂, 右包廂) and promenade boxes on the stalls' side walls, "
-                "with no seats drawn in them; circles along the side walls are not seats. The plan prints no date.",
+                "the blocks. No row I in the stalls; no row U in the upper stalls. Rows Q-S of the upper stalls carry a "
+                "further outer block each side (seats 1-3 and 34-36), part of the upper stalls. Balcony rows BA-BC have a "
+                "centre in two runs. The plan also marks left and right boxes (左包廂, 右包廂) and promenade boxes along "
+                "the side walls (左邊走廊 / 右邊走廊) with no seats drawn in them; circles along the side walls are not "
+                "seats. The plan prints no date.",
         "banks": BANKS,
     },
     "marks": {
