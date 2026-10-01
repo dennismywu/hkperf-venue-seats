@@ -68,6 +68,12 @@ table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-nu
 th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
 tr:last-child td { border-bottom: 0; }
 th { color: var(--muted); font-size: 12px; font-weight: 600; }
+th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+th.sortable:hover { color: var(--ink); }
+th.sortable::after { content: "↕"; margin-left: 4px; font-weight: 500; opacity: .45; }
+th.sortable[aria-sort="ascending"]::after { content: "↑"; opacity: 1; color: var(--acc); }
+th.sortable[aria-sort="descending"]::after { content: "↓"; opacity: 1; color: var(--acc); }
+th.sortable:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
 td.num { text-align: right; font-weight: 650; }
 td small { display: block; color: var(--muted); }
 .links a { margin-right: 10px; white-space: nowrap; }
@@ -115,7 +121,7 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
     <div class="regions" id="regions" role="group" aria-label="Show venues in"></div>
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Venue</th><th class="num">Seats</th><th>Parts of House</th><th>With orchestra pit</th><th>Added</th><th>Links</th></tr></thead>
+        <thead><tr><th class="sortable" data-sort="venue" tabindex="0" aria-sort="ascending">Venue</th><th class="num sortable" data-sort="total" tabindex="0">Seats</th><th>Parts of House</th><th>With orchestra pit</th><th class="sortable" data-sort="added" tabindex="0">Added</th><th>Links</th></tr></thead>
         <tbody id="venues"><tr><td colspan="6" class="note">Loading…</td></tr></tbody>
       </table>
     </div>
@@ -324,6 +330,33 @@ function regionButtons(list) {
   };
 }
 
+// Sort the table by Venue / Seats / Added; venue name ascending by default.
+let venueRows = [];
+let sortKey = "venue", sortDir = 1;
+const SORTS = {
+  venue: (a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }),
+  total: (a, b) => a.total - b.total,
+  added: (a, b) => (a.added || "").localeCompare(b.added || ""),
+};
+function sortVenues() {
+  venueRows.sort((a, b) => sortDir * SORTS[sortKey](a, b));
+  document.getElementById("venues").append(...venueRows.map(r => r.tr));
+  document.querySelectorAll("th.sortable").forEach(th =>
+    th.setAttribute("aria-sort", th.dataset.sort === sortKey ? (sortDir > 0 ? "ascending" : "descending") : "none"));
+}
+function wireSort() {
+  document.querySelectorAll("th.sortable").forEach(th => {
+    const go = () => {
+      const k = th.dataset.sort;
+      if (k === sortKey) sortDir = -sortDir; else { sortKey = k; sortDir = 1; }
+      sortVenues();
+    };
+    th.addEventListener("click", go);
+    th.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+  });
+}
+wireSort();
+
 async function venues() {
   const tbody = document.getElementById("venues");
   try {
@@ -344,7 +377,9 @@ async function venues() {
         `<td class="num">${fmt(t.Total)}${standing}</td><td>${areas}</td><td>${pits}</td><td class="date">${added}</td>` +
         `<td class="links"><a href="viewer/?venue=${encodeURIComponent(v.id)}">View</a>${git}<a href="${esc(d.source.url)}" rel="noopener">Plan (LCSD)</a></td></tr>`;
     }).join("");
+    venueRows = docs.map(([v, d], i) => ({ name: d.venue.name_en, total: d.printed_totals.Total, added: v.added || "", tr: tbody.children[i] }));
     regionButtons(index.venues);
+    sortVenues();
   } catch (e) {
     tbody.innerHTML = `<tr><td colspan="6" class="note">Could not load the venue list. Open this page over HTTP.</td></tr>`;
   }

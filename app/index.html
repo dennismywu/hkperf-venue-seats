@@ -215,8 +215,21 @@ async function init() {
   try { venues = (await getJSON(DATA + "index.json")).venues; }
   catch (e) { $("subtitle").innerHTML = `<span class="err">Could not load data/index.json. Serve the repo root over HTTP (e.g. <code>python -m http.server</code>) and open /app/.</span>`; return; }
   const sel = $("venue");
-  const sorted = [...venues].sort((a, b) => a.name_en.localeCompare(b.name_en, "en"));
-  for (const v of sorted) sel.add(new Option(`${v.name_en} · ${v.name_zh}`, v.id));
+  // grouped by region, venues by name within each group
+  const REGION_ORDER = ["Hong Kong Island", "Kowloon", "New Territories"];
+  const byRegion = new Map();
+  for (const v of [...venues].sort((a, b) => a.name_en.localeCompare(b.name_en, "en"))) {
+    const r = v.region || "Other";
+    if (!byRegion.has(r)) byRegion.set(r, []);
+    byRegion.get(r).push(v);
+  }
+  const order = [...REGION_ORDER, ...[...byRegion.keys()].filter(r => !REGION_ORDER.includes(r))].filter(r => byRegion.has(r));
+  for (const r of order) {
+    const group = document.createElement("optgroup");
+    group.label = r;
+    for (const v of byRegion.get(r)) group.append(new Option(`${v.name_en} · ${v.name_zh}`, v.id));
+    sel.append(group);
+  }
   const want = new URLSearchParams(location.search).get("venue");
   if (want && venues.some(v => v.id === want)) sel.value = want;
   sel.hidden = venues.length < 2;
