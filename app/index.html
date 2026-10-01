@@ -525,8 +525,9 @@ function facts() {
       n += ids.length;
       where.push(`${r.row} ${runs(ids.map(s => r.inferred_numbers?.[s] ? `${s} (=${r.inferred_numbers[s]})` : s))}`);
     }
+    const leftOut = doc.zones.some(z => (z.count_excludes || []).includes(m));
     F.push([MARK_NAMES[m] || m, fmt(n), esc(where.join(" · ")),
-      esc(doc.marks[m]) + (m === "X" ? ". Not in the printed total." : m in DEFAULT_MARKS ? ". Included in the printed total." : "")]);
+      esc(doc.marks[m]) + (m === "X" || leftOut ? ". Not in the printed total." : m in DEFAULT_MARKS ? ". Included in the printed total." : "")]);
   }
 
   for (const p of doc.orchestra_pits || []) {

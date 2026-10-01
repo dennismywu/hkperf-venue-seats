@@ -59,10 +59,180 @@
  },
  "layout": {
   "seat_1_side": "left",
-  "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. Three blocks per row, save the first three rear-stall rows (Q-S), which carry a further short outer block each side. No rows I, O or U. The plan also draws side boxes (左廂座 / 右廂座) and numbered markers along the left and right promenades, and a large solid black area behind the rear stalls; LCSD's tier figures count none of these. The plan names only the space (音樂廳 CONCERT HALL), so there is one zone per part of house."
+  "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks are listed from that side. Three blocks per row, save the first three rear-stall rows (Q-S), which carry a further short outer block each side. No rows I, O or U. The two upright promenade rows LP and RP run down the side walls; LCSD's tier figures do not count them. The plan also draws fixed side boxes (左廂座 / 右廂座) and a large solid black area behind the rear stalls, which hold no seats.",
+  "banks": [
+   {
+    "id": "stalls",
+    "side": "front",
+    "seat_1": "left",
+    "rows": [
+     {
+      "row": "A"
+     },
+     {
+      "row": "B"
+     },
+     {
+      "row": "C"
+     },
+     {
+      "row": "D"
+     },
+     {
+      "row": "E"
+     },
+     {
+      "row": "F"
+     },
+     {
+      "row": "G"
+     },
+     {
+      "row": "H"
+     },
+     {
+      "row": "J"
+     },
+     {
+      "row": "K"
+     },
+     {
+      "row": "L"
+     },
+     {
+      "row": "M"
+     },
+     {
+      "row": "N"
+     },
+     {
+      "row": "O"
+     },
+     {
+      "row": "P"
+     }
+    ]
+   },
+   {
+    "id": "rear",
+    "side": "front",
+    "seat_1": "left",
+    "rows": [
+     {
+      "row": "Q"
+     },
+     {
+      "row": "R"
+     },
+     {
+      "row": "S"
+     },
+     {
+      "row": "T"
+     },
+     {
+      "row": "V"
+     },
+     {
+      "row": "W"
+     },
+     {
+      "row": "X"
+     },
+     {
+      "row": "Y"
+     },
+     {
+      "row": "Z"
+     },
+     {
+      "row": "ZA"
+     },
+     {
+      "row": "ZB"
+     },
+     {
+      "row": "ZC"
+     },
+     {
+      "row": "ZD"
+     },
+     {
+      "row": "ZE"
+     }
+    ]
+   },
+   {
+    "id": "balcony",
+    "side": "front",
+    "seat_1": "left",
+    "rows": [
+     {
+      "row": "BA"
+     },
+     {
+      "row": "BB"
+     },
+     {
+      "row": "BC"
+     },
+     {
+      "row": "BD"
+     },
+     {
+      "row": "BE"
+     },
+     {
+      "row": "BF"
+     },
+     {
+      "row": "BG"
+     },
+     {
+      "row": "BH"
+     },
+     {
+      "row": "BJ"
+     },
+     {
+      "row": "BK"
+     },
+     {
+      "row": "BL"
+     },
+     {
+      "row": "BM"
+     },
+     {
+      "row": "BN"
+     }
+    ]
+   },
+   {
+    "id": "promenade-left",
+    "side": "left",
+    "seat_1": "upstage",
+    "align": "room",
+    "label": "LP 左邊走廊",
+    "rows": [
+     "LP"
+    ]
+   },
+   {
+    "id": "promenade-right",
+    "side": "right",
+    "seat_1": "upstage",
+    "align": "room",
+    "label": "RP 右邊走廊",
+    "rows": [
+     "RP"
+    ]
+   }
+  ]
  },
  "marks": {
-  "W": "Seat suitable for audience on wheelchairs (box prints W, no number)"
+  "W": "Seat suitable for audience on wheelchairs (box prints W, no number)",
+  "P": "Promenade seat (diamond marker on the plan; LCSD's tier figures do not count these)"
  },
  "orchestra_pits": [
   {
@@ -93,6 +263,7 @@
   "Front Stalls": 578,
   "Rear Stalls": 465,
   "Balcony": 387,
+  "Promenade": 0,
   "Total": 1430
  },
  "standing": {
@@ -118,7 +289,8 @@
    "19",
    "20"
   ],
-  "note": "Printed as 'Standing' with 1-10 on the left and 11-20 on the right below row ZE, without boxes. Not part of the seat total."
+  "after": "Rear Stalls",
+  "note": "Printed as 'Standing' with 1-10 on the left and 11-20 on the right, between the rear stalls (row ZE) and the balcony, without boxes. Not part of the seat total."
  },
  "zones": [
   {
@@ -2334,6 +2506,64 @@
      ]
     }
    ]
+  },
+  {
+   "name": "Promenade",
+   "name_zh": "走廊",
+   "rows": [
+    {
+     "row": "LP",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      }
+     ],
+     "marks": {
+      "1": "P",
+      "2": "P",
+      "3": "P",
+      "4": "P",
+      "5": "P",
+      "6": "P"
+     },
+     "note": "Left promenade: one upright column of six diamond-marked seats down the left wall."
+    },
+    {
+     "row": "RP",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ]
+      }
+     ],
+     "marks": {
+      "1": "P",
+      "2": "P",
+      "3": "P",
+      "4": "P",
+      "5": "P",
+      "6": "P"
+     },
+     "note": "Right promenade: one upright column of six diamond-marked seats down the right wall."
+    }
+   ],
+   "count_excludes": [
+    "P"
+   ],
+   "count_note": "LCSD's tier figures (Front Stall 578, Rear Stall 465, Balcony 387) do not count the twelve promenade seats the plan draws as diamonds down the side walls, so this part of house carries no figure of its own; counted as every box less the twelve promenade seats = 0."
   }
  ],
  "count_check": {
@@ -2364,6 +2594,17 @@
    "limited_legroom_L": 0,
    "boxes_minus_X": 387,
    "printed": 387
+  },
+  "Promenade": {
+   "boxes": 12,
+   "management_X": 0,
+   "wheelchair_W": 0,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 12,
+   "counted_without_P": 0,
+   "exception": "LCSD's tier figures (Front Stall 578, Rear Stall 465, Balcony 387) do not count the twelve promenade seats the plan draws as diamonds down the side walls, so this part of house carries no figure of its own; counted as every box less the twelve promenade seats = 0.",
+   "printed": 0
   }
  }
 }

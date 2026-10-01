@@ -1,8 +1,8 @@
 // Shared by the viewer and the planner: seat-list helpers, what counts in a configuration,
 // and the seat-map drawing. Loaded as a plain script; its top-level names are global.
 
-const MARK_NAMES = { W: "Wheelchair spaces", X: "Management seats", R: "Restricted sightline", L: "Limited legroom" };
-const MARK_ONE = { W: "Wheelchair space", X: "Management seat", R: "Restricted sightline", L: "Limited legroom" };
+const MARK_NAMES = { W: "Wheelchair spaces", X: "Management seats", R: "Restricted sightline", L: "Limited legroom", P: "Promenade seats" };
+const MARK_ONE = { W: "Wheelchair space", X: "Management seat", R: "Restricted sightline", L: "Limited legroom", P: "Promenade seat" };
 // The printed totals count wheelchair, restricted and limited-legroom seats and leave management seats out.
 const DEFAULT_MARKS = { W: true, X: false, R: true, L: true };
 const S = 15, GAP = 2, BLOCK_GAP = 14, ROW_GAP = 5, LABEL_W = 30, ZONE_GAP = 34;
@@ -161,6 +161,22 @@ function wrap(text, n) {
 
 function rowWidth(bl) { return bl.reduce((a, b, i) => a + blockWidth(b) + (i ? between(bl[i - 1], b) : 0), 0); }
 
+// Numbered standing places, drawn as round places in a row centred at cx; the numbers run with seat 1
+// (right to left when the hall's seat 1 is at the right). Returns the y just below the row.
+function drawStanding(svg, doc, cx, y) {
+  const places = doc.standing.places, n = places.length, w = n * S + (n - 1) * GAP;
+  const rightFirst = (doc.layout?.seat_1_side || "right") === "right";
+  let x = cx - w / 2;
+  const g = el("g", { class: "standing" }, svg);
+  (rightFirst ? [...places].reverse() : places).forEach(pl => {
+    el("rect", { x, y, width: S, height: S, rx: 7 }, g);
+    el("text", { x: x + S / 2, y: y + S / 2 + .5 }, g).textContent = pl;
+    x += S + GAP;
+  });
+  el("text", { class: "rowlabel", x: cx, y: y + S + 10, "text-anchor": "middle" }, svg).textContent = "Standing";
+  return y + S + 24;
+}
+
 // Draws the whole map for doc and returns the <svg>; the caller places it and styles the seats.
 function drawSeatMap(doc) {
   if (doc.layout?.banks?.length) return drawBankedMap(doc);
@@ -176,10 +192,11 @@ function drawSeatMap(doc) {
   let y = 4;
   const stageW = Math.min(260, maxW * .45);
   el("rect", { class: "stage", x: (W - stageW) / 2, y, width: stageW, height: 30, rx: 3 }, svg);
-  el("text", { class: "stagetext", x: W / 2, y: y + 15 }, svg).textContent = "STAGE 舞台";
+  el("text", { class: "stagetext", x: W / 2, y: y + 15 }, svg).textContent = doc.layout?.stage_label || "STAGE 舞台";
   y += 30 + 22;
   const x0 = LABEL_W + 4;
   const rowY = {};
+  let standingDrawn = false;
 
   for (const z of doc.zones) {
     const zl = el("text", { class: "zonelabel", x: W / 2, y: y + 4 }, svg);
@@ -215,6 +232,11 @@ function drawSeatMap(doc) {
       rowY[row.row] = y;
       y += S + ROW_GAP;
     }
+    // standing places sit after the part of house the plan prints them by (default: after every zone)
+    if (doc.standing?.places?.length && doc.standing.after === z.name) {
+      y = drawStanding(svg, doc, x0 + maxW / 2, y + 6) + ZONE_GAP;
+      standingDrawn = true;
+    }
     y += ZONE_GAP;
   }
   (doc.orchestra_pits || []).forEach((pit, i) => {
@@ -222,19 +244,8 @@ function drawSeatMap(doc) {
     const top = Math.min(...ys), bottom = Math.max(...ys) + S;
     pitBand(svg, i, pit, 2, top - 3, W - 4, bottom - top + 6);
   });
-  if (doc.standing?.places?.length) {
-    const places = doc.standing.places, n = places.length;
-    y -= ZONE_GAP - 10;
-    const w = n * S + (n - 1) * GAP;
-    let x = x0 + (maxW - w) / 2;
-    const g = el("g", { class: "standing" }, svg);
-    (rightFirst ? [...places].reverse() : places).forEach(pl => {
-      el("rect", { x, y, width: S, height: S, rx: 7 }, g);
-      el("text", { x: x + S / 2, y: y + S / 2 + .5 }, g).textContent = pl;
-      x += S + GAP;
-    });
-    el("text", { class: "rowlabel", x: W / 2, y: y + S + 10, "text-anchor": "middle" }, svg).textContent = "Standing";
-    y += S + 24 + ZONE_GAP;
+  if (doc.standing?.places?.length && !standingDrawn) {
+    y = drawStanding(svg, doc, x0 + maxW / 2, y - ZONE_GAP + 10) + ZONE_GAP;
   }
   return finishMap(svg, doc, W, y - ZONE_GAP + 14);
 }
@@ -348,6 +359,7 @@ function drawBankedMap(doc) {
   const zonesSeen = new Set();
   let outerHalf = frontW / 2;                       // half-width of the rows so far, side blocks included
   const frontRowY = new Map();                      // "zone/row" -> its y in a front bank
+  let standingPlaced = false;
   for (const b of front) {
     // a heading for the bank's own label, or for the first front bank of each part of house
     b.heading = b.label || (!zonesSeen.has(b.pieces[0].z.name) ? `${b.pieces[0].z.name} ${b.pieces[0].z.name_zh || ""}`.trim() : "");
@@ -384,6 +396,12 @@ function drawBankedMap(doc) {
       place.push({ b: s, x: 0, y });
     }
     y += b.h + Math.max(0, extra) * (S + ROW_GAP) + BANK_GAP;
+    // standing places sit after the part of house the plan prints them by (default: after every front bank)
+    if (doc.standing?.places?.length && doc.standing.after === b.pieces[0].z.name) {
+      place.push({ standing: true, x: 0, y });
+      y += S + 24 + BANK_GAP;
+      standingPlaced = true;
+    }
     // side banks that follow this front bank: against the side walls, before the next front bank
     const band = sides.filter(s => s.after === b.id);
     if (band.length) {
@@ -394,6 +412,10 @@ function drawBankedMap(doc) {
       }
       y += Math.max(...band.map(s => s.h)) + 2 * LBL + BANK_GAP;
     }
+  }
+  if (doc.standing?.places?.length && !standingPlaced) {
+    place.push({ standing: true, x: 0, y });
+    y += S + 24 + BANK_GAP;
   }
   // banks on the far side of the stage: drawn above it, first row nearest the stage
   let backBottom = -BANK_GAP;
@@ -423,7 +445,7 @@ function drawBankedMap(doc) {
     }
   }
   // extents: whole banks, or each row of a bank placed row by row
-  const ext = place.flatMap(p => p.b.pos ? p.b.pos.map((q, i) => ({ x0: q.x, x1: q.x + p.b.lens[i], y0: q.y, y1: q.y + S }))
+  const ext = place.filter(p => p.b).flatMap(p => p.b.pos ? p.b.pos.map((q, i) => ({ x0: q.x, x1: q.x + p.b.lens[i], y0: q.y, y1: q.y + S }))
     : [{ x0: p.x, x1: p.x + p.b.w, y0: p.y, y1: p.y + p.b.h }]);
   const minX = Math.min(-stageW / 2, ...ext.map(e => e.x0)) - LABEL_W;
   const maxX = Math.max(stageW / 2, ...ext.map(e => e.x1)) + LABEL_W;
@@ -432,7 +454,7 @@ function drawBankedMap(doc) {
 
   const svg = el("svg", { role: "img", "aria-label": `Seat schematic for ${doc.venue.name_en}` });
   el("rect", { class: "stage", x: ox - stageW / 2, y: oy, width: stageW, height: stageH, rx: 3 }, svg);
-  el("text", { class: "stagetext", x: ox, y: oy + stageH / 2 }, svg).textContent = "STAGE 舞台";
+  el("text", { class: "stagetext", x: ox, y: oy + stageH / 2 }, svg).textContent = doc.layout?.stage_label || "STAGE 舞台";
   const boxes = {};                                 // "zone/row/block index" -> bounding box, for the pit bands
   const grow = (p, x0, y0, x1, y1) => p.blocks.forEach(blk => {
     const k = `${p.z.name}/${p.row.row}/${p.row.blocks.indexOf(blk)}`;
@@ -449,7 +471,9 @@ function drawBankedMap(doc) {
     el("title", {}, r).textContent = `${row.row}: solid area where ${id} would be (not seats)`;
   };
 
-  for (const { b, x, y: top } of place) {
+  for (const piece of place) {
+    if (piece.standing) { drawStanding(svg, doc, ox + piece.x, oy + piece.y); continue; }
+    const { b, x, y: top } = piece;
     const X = ox + x, Y = oy + top;
     const flat = b.side === "front" || b.side === "back";
     const heading = flat ? b.heading : b.label || "";

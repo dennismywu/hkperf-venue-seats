@@ -20,11 +20,17 @@ TECH_SHEET = {
     "retrieved": "2026-10-01",
 }
 W = lambda *ids: {i: "W" for i in ids}
+P = lambda *ids: {i: "P" for i in ids}
 
 
 def blocked(seats, numbers):
     """A block followed (in number order) by a solid black area where `numbers` would be."""
     return {"seats": seats, "blocked": {"slots": len(numbers), "skipped_numbers": numbers, "note": BLACK}}
+
+
+def whole(rows):
+    """One bank row reference per hall row; the viewer draws all of the row's blocks together."""
+    return [{"row": r["row"]} for r in rows]
 
 
 # left block, centre block, right block (seat 1 at the left), as row -> (end of left, end of centre,
@@ -64,6 +70,15 @@ balcony = [row(lab, rng(1, a), rng(a + 1, b), rng(b + 1, c)) for lab, (a, b, c) 
     "BL": (7, 22, 29), "BM": (7, 19, 26), "BN": (7, 20, 27),
 }.items()]
 
+# the promenade seats: one upright row down each side wall, drawn as diamonds and not counted in
+# LCSD's tier figures
+promenade = [
+    row("LP", rng(1, 6), marks=P(*rng(1, 6)),
+        note="Left promenade: one upright column of six diamond-marked seats down the left wall."),
+    row("RP", rng(1, 6), marks=P(*rng(1, 6)),
+        note="Right promenade: one upright column of six diamond-marked seats down the right wall."),
+]
+
 finish({
     "venue": {"id": "hkch-ch", "name_en": "Hong Kong City Hall Concert Hall",
               "name_zh": "香港大會堂 音樂廳"},
@@ -93,14 +108,23 @@ finish({
         "seat_1_side": "left",
         "note": "Drawn with the stage at the top. Seat 1 is at the left-hand end of each row, and blocks "
                 "are listed from that side. Three blocks per row, save the first three rear-stall rows "
-                "(Q-S), which carry a further short outer block each side. No rows I, O or U. The plan "
-                "also draws side boxes (左廂座 / 右廂座) and numbered markers along the left and right "
-                "promenades, and a large solid black area behind the rear stalls; LCSD's tier figures "
-                "count none of these. The plan names only the space (音樂廳 CONCERT HALL), so there is one "
-                "zone per part of house.",
+                "(Q-S), which carry a further short outer block each side. No rows I, O or U. The two "
+                "upright promenade rows LP and RP run down the side walls; LCSD's tier figures do not "
+                "count them. The plan also draws fixed side boxes (左廂座 / 右廂座) and a large solid black "
+                "area behind the rear stalls, which hold no seats.",
+        "banks": [
+            {"id": "stalls", "side": "front", "seat_1": "left", "rows": whole(front)},
+            {"id": "rear", "side": "front", "seat_1": "left", "rows": whole(rear)},
+            {"id": "balcony", "side": "front", "seat_1": "left", "rows": whole(balcony)},
+            {"id": "promenade-left", "side": "left", "seat_1": "upstage", "align": "room",
+             "label": "LP 左邊走廊", "rows": ["LP"]},
+            {"id": "promenade-right", "side": "right", "seat_1": "upstage", "align": "room",
+             "label": "RP 右邊走廊", "rows": ["RP"]},
+        ],
     },
     "marks": {
         "W": "Seat suitable for audience on wheelchairs (box prints W, no number)",
+        "P": "Promenade seat (diamond marker on the plan; LCSD's tier figures do not count these)",
     },
     "orchestra_pits": [{
         "name": "Orchestra pit / extension stage",
@@ -111,15 +135,23 @@ finish({
         "stated": {"seats_removed": 59},
         "source": {**TECH_SHEET, "quote": "Formed by removal of Seats at Row A & B which will reduce 59 seats."},
     }],
-    "printed_totals": {"Front Stalls": 578, "Rear Stalls": 465, "Balcony": 387, "Total": 1430},
+    "printed_totals": {"Front Stalls": 578, "Rear Stalls": 465, "Balcony": 387, "Promenade": 0,
+                       "Total": 1430},
     "standing": {
         "places": rng(1, 20),
-        "note": "Printed as 'Standing' with 1-10 on the left and 11-20 on the right below row ZE, without "
-                "boxes. Not part of the seat total.",
+        "after": "Rear Stalls",
+        "note": "Printed as 'Standing' with 1-10 on the left and 11-20 on the right, between the rear "
+                "stalls (row ZE) and the balcony, without boxes. Not part of the seat total.",
     },
     "zones": [
         {"name": "Front Stalls", "name_zh": "大堂前座", "rows": front},
         {"name": "Rear Stalls", "name_zh": "大堂後座", "rows": rear},
         {"name": "Balcony", "name_zh": "樓座", "rows": balcony},
+        {"name": "Promenade", "name_zh": "走廊", "rows": promenade,
+         "count_excludes": ["P"],
+         "count_note": "LCSD's tier figures (Front Stall 578, Rear Stall 465, Balcony 387) do not count "
+                       "the twelve promenade seats the plan draws as diamonds down the side walls, so "
+                       "this part of house carries no figure of its own; counted as every box less the "
+                       "twelve promenade seats = 0."},
     ],
 })

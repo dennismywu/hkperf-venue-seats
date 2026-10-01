@@ -105,12 +105,12 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     <tr><td><code>source</code></td><td>the seating plan the file was read from (see <a href="#sources">sources</a>)</td></tr>
     <tr><td><code>references</code></td><td>other operator documents that confirm or contradict a figure, with quotes</td></tr>
     <tr><td><code>location</code></td><td>address and coordinates, each with its source</td></tr>
-    <tr><td><code>layout</code></td><td><code>seat_1_side</code>, a note on how the plan is numbered, and optionally <code>banks</code></td></tr>
+    <tr><td><code>layout</code></td><td><code>seat_1_side</code>, an optional <code>stage_label</code>, a note on how the plan is numbered, and optionally <code>banks</code></td></tr>
     <tr><td><code>marks</code></td><td>what each mark letter means on this plan</td></tr>
     <tr><td><code>printed_totals</code></td><td>the totals printed on the plan, per part of house and <code>Total</code></td></tr>
     <tr><td><code>totals_source</code></td><td>where the totals come from, when the plan prints none (optional)</td></tr>
     <tr><td><code>orchestra_pits</code></td><td>each pit option and the rows it removes (optional)</td></tr>
-    <tr><td><code>standing</code></td><td>numbered standing places, where the plan prints them (optional)</td></tr>
+    <tr><td><code>standing</code></td><td>numbered standing places, where the plan prints them (optional); <code>after</code> names the part of house they follow</td></tr>
     <tr><td><code>zones</code></td><td>the seats: parts of house → rows → blocks → seats</td></tr>
     <tr><td><code>count_check</code></td><td>the counts behind the build check, per part of house</td></tr>
   </table></div>
@@ -144,7 +144,9 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
           wheelchair boxes before 9. The four boxes between 4 and 9 fill 5-8 exactly. No centre block."}</code></pre>
   <p><code>layout.seat_1_side</code> says which end of each row seat 1 is at, as drawn with the stage at the top
     (<code>left</code> or <code>right</code>), and <code>layout.note</code> explains anything unusual: skipped
-    numbers, missing row letters, rows that restart their numbering.</p>
+    numbers, missing row letters, rows that restart their numbering. Where the front is not a stage,
+    <code>layout.stage_label</code> gives what to draw in its place, e.g. <code>"SCREEN 銀幕"</code> for a
+    cinema.</p>
 
   <h2 id="marks">5. Marks</h2>
   <p>A row's <code>marks</code> map a seat id to one or more letters. Each file's top-level <code>marks</code>
@@ -350,7 +352,8 @@ LAYOUT RULES
    L with a light fill. Add a legend for the marks this file uses (file's top-level marks has the wording).
 5. For each orchestra_pits entry, add a dashed outline around its rows_removed (the whole row, or only the
    block an entry names, found the same way as a bank's rows), labelled with its name and
-   "rows stated" or "rows inferred" from rows_basis. If standing.places exists, draw them as round places.
+   "rows stated" or "rows inferred" from rows_basis. If standing.places exists, draw them as round places in a
+   row, after the part of house <code>standing.after</code> names (the last part of house when it is absent).
 6. Under the map, add this text, unchanged: "Not the venue's seat plan. This map is drawn from the seat
    data: a machine-assisted reading of the rows and seats of the venue. It is not the actual seat plan.
    For the actual seat plan, refer to the version published by the operator:" followed by source.url.

@@ -62,6 +62,7 @@ finish({
                          address_name="Hong Kong Film Archive"),
     "layout": {
         "seat_1_side": "left",
+        "stage_label": "SCREEN 銀幕",
         "note": "Drawn with the screen at the top. Seat 1 is at the left-hand end of each row and blocks "
                 "are listed from that side; the rows are drawn in arcs, so positions are not preserved. "
                 "Rows A-H with no row I. The plan names no seating areas, only the space (電影院 CINEMA), "

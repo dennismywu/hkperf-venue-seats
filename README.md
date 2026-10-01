@@ -47,7 +47,7 @@ and front-of-house teams.
 | Tai Po Civic Centre Black Box Theatre: transverse stage (`tpcc-bb-tv`) | 123 | both sides of the stage | no pit |
 | Tai Po Civic Centre Black Box Theatre: thrust stage (`tpcc-bb-thrust`) | 123 | front + two side columns | no pit |
 | Hong Kong Film Archive Cinema (`hkfa-cinema`) | 125 (+4 wheelchair, +3 management) | single | no pit |
-| Hong Kong City Hall Concert Hall (`hkch-ch`) | 1,430 | Front Stalls 578 · Rear Stalls 465 · Balcony 387 | 1,371 (rows A–B, stated) |
+| Hong Kong City Hall Concert Hall (`hkch-ch`) | 1,430 (+ 12 promenade, not counted) | Front Stalls 578 · Rear Stalls 465 · Balcony 387 · Promenade 12 (not counted) | 1,371 (rows A–B, stated) |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
 Civic Centre Theatre, Tuen Mun and Tsuen Wan Town Hall Auditoriums, Hong Kong City Hall Concert Hall). Each
@@ -161,7 +161,7 @@ box: part of house, row, block, bank, seat, number and its basis, marks, pit row
 | `venue` | `id`, English and Chinese names |
 | `source` | the seating plan: publisher, URL, file name, SHA-256, plan code or version, credit |
 | `location` | address, district, latitude and longitude, each with its source |
-| `layout` | which end seat 1 is at (`seat_1_side`), notes on the numbering, and optionally `banks` (below) |
+| `layout` | which end seat 1 is at (`seat_1_side`), an optional `stage_label` for a house with no stage (a cinema's `SCREEN 銀幕`), notes on the numbering, and optionally `banks` (below) |
 | `marks` | the meaning of each mark letter: `W` wheelchair, `X` management, `R` restricted sightline, `L` limited legroom |
 | `printed_totals` | the totals printed on the plan, per part of house and overall |
 | `orchestra_pits` | each pit option: rows removed (row labels, or `{zone, row, block}` as in banks; with basis and reasoning), seats removed, total, quoted source |
