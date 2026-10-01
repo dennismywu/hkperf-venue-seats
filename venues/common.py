@@ -9,7 +9,7 @@ import csv
 import json
 from pathlib import Path
 
-SCHEMA = "hkperf-venue-seats/seatlist@0.4"
+SCHEMA = "hkperf-venue-seats/seatlist@0.5"
 DATA = Path(__file__).resolve().parent.parent / "data"
 
 LCSD = "Leisure and Cultural Services Department (LCSD)"

@@ -36,6 +36,7 @@
   {"id": "tpcc-bb-tv", "name_en": "Tai Po Civic Centre Black Box Theatre (transverse stage)", "name_zh": "大埔文娛中心 黑盒劇場（橫向舞台）", "region": "New Territories", "added": "2026-10-01", "file": "tpcc-bb-tv.json"},
   {"id": "tpcc-bb-thrust", "name_en": "Tai Po Civic Centre Black Box Theatre (thrust stage)", "name_zh": "大埔文娛中心 黑盒劇場（三向舞台）", "region": "New Territories", "added": "2026-10-01", "file": "tpcc-bb-thrust.json"},
   {"id": "hkfa-cinema", "name_en": "Hong Kong Film Archive Cinema", "name_zh": "香港電影資料館 電影院", "region": "Hong Kong Island", "added": "2026-10-01", "file": "hkfa-cinema.json"},
-  {"id": "hkch-ch", "name_en": "Hong Kong City Hall Concert Hall", "name_zh": "香港大會堂 音樂廳", "region": "Hong Kong Island", "added": "2026-10-01", "file": "hkch-ch.json"}
+  {"id": "hkch-ch", "name_en": "Hong Kong City Hall Concert Hall", "name_zh": "香港大會堂 音樂廳", "region": "Hong Kong Island", "added": "2026-10-01", "file": "hkch-ch.json"},
+  {"id": "ekcc-th", "name_en": "East Kowloon Cultural Centre, The Theatre", "name_zh": "東九文化中心 劇場", "region": "Kowloon", "added": "2026-10-01", "file": "ekcc-th.json"}
  ]
 }

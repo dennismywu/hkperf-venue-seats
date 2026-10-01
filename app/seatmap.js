@@ -183,6 +183,7 @@ function drawStanding(svg, doc, cx, y) {
 
 // Draws the whole map for doc and returns the <svg>; the caller places it and styles the seats.
 function drawSeatMap(doc) {
+  if (doc.layout?.arrangement === "arc") return drawArcMap(doc);
   if (doc.layout?.banks?.length) return drawBankedMap(doc);
   const rightFirst = (doc.layout?.seat_1_side || "right") === "right";
   // width of the widest row (centred rows); side blocks push to the edges of this width
@@ -596,6 +597,191 @@ function drawBankedMap(doc) {
   });
   const bottom = oy + Math.max(houseBottom, ...ext.map(e => e.y1)) + LBL + 10;
   return finishMap(svg, doc, W, bottom);
+}
+
+// ---------------------------------------------------------------- arc maps
+// For round halls. layout.arrangement: "arc" selects this. layout.arc holds the venue-wide centre and
+// the stage wedge; each zone's arc holds its angular span (360 = a closed ring), its bearing (where the
+// arc begins: 0 = up, clockwise) and its radius band (tier, ring). Rows are concentric rings about the
+// centre; the seats of a row are spread along its arc, rotated to the tangent.
+function drawArcMap(doc) {
+  const layout = doc.layout || {}, arc = layout.arc || {};
+  const RAD = Math.PI / 180;
+  const stageSpan = arc.stage_span ?? 150;
+  const rotateSeats = arc.rotate_seats !== false;
+  const pitch = S * (arc.ring_gap ?? 1.6);
+  const R0 = pitch * 3;
+  const tierGap = arc.tier_gap ?? pitch * 4;      // extra radius per tier (a higher ring set)
+  const pos = (r, deg) => [r * Math.sin(deg * RAD), -r * Math.cos(deg * RAD)];
+  const svg = el("svg", { role: "img", "aria-label": `Seat schematic for ${doc.venue.name_en}` });
+  const devg = el("g", { class: "dev" }, svg);     // developer overlay (shown by the Developer mode toggle)
+  const ext = [];                                 // seat/label extents, for the viewBox
+  const remember = (x, y, m = S) => ext.push({ x0: x - m, x1: x + m, y0: y - m, y1: y + m });
+  const inPits = () => "";
+
+  // the stage: a wedge in the opening at the top, bearing 0
+  const sr = R0 * 0.9;
+  const a0 = -stageSpan / 2, a1 = stageSpan / 2;
+  const [sx0, sy0] = pos(sr, a0), [sx1, sy1] = pos(sr, a1);
+  el("path", { class: "stage", d: `M 0 0 L ${sx0} ${sy0} A ${sr} ${sr} 0 0 1 ${sx1} ${sy1} Z` }, svg);
+  const st = el("text", { class: "stagetext", x: 0, y: -sr * 0.45 }, svg);
+  st.textContent = layout.stage_label || "STAGE 舞台";
+
+  const gapW = 1.2;                               // aisle between blocks, in seat-widths
+  let maxR = sr;
+  const headings = [];
+  for (const z of doc.zones) {
+    const za = z.arc; if (!za) continue;
+    const tier = za.tier ?? 0, ring0 = za.ring ?? 0;
+    // a block may reference a shared arc (aisle interval) and carry only overrides; resolve it here
+    const arcsById = Object.fromEntries((z.arcs || []).map(a => [a.id, a]));
+    const geom = (row, b) => {
+      const a = b.arc ? arcsById[b.arc] : null;
+      return {
+        view: b.view ?? a?.view,
+        offset: b.offset ?? a?.offset ?? 0,      // the radius is kept per block; the arc shares the rest
+        start: a ? a.from : b.start,
+        end: a ? a.to : b.end,
+        inner: b.inner ?? a?.inner,
+        outer: b.outer ?? a?.outer,
+      };
+    };
+    // start = bearing of seat 1; dir cw (increasing bearing, clockwise) or ccw; span in degrees
+    const span = za.span ?? 360;
+    const dir = za.dir === "cw" ? 1 : -1;
+    const start = za.start ?? ((za.bearing ?? 180) + (dir > 0 ? -span / 2 : span / 2));
+    z.rows.forEach((row, ri) => {
+      const radius = R0 + (tier * tierGap + (ring0 + ri) * pitch);
+      maxR = Math.max(maxR, radius);
+      // a row whose blocks each carry a view axis is drawn as straight runs (a non-radial row):
+      // each block faces `view` at distance `offset`, its seats evenly spaced from `start` to `end`
+      if (row.blocks.length && row.blocks.every(b => { const g = geom(row, b); return g.view != null && g.start != null && g.end != null; })) {
+        let firstP = null, lastP = null;
+        row.blocks.forEach(block => {
+          const g = geom(row, block);
+          const bo = (g.view + 180) % 360;          // outward normal bearing
+          const at = bearing => { const d = g.offset / Math.cos((bearing - bo) * RAD); return [d * Math.sin(bearing * RAD), -d * Math.cos(bearing * RAD)]; };
+          const P0 = at(g.start), P1 = at(g.end);
+          if (!firstP) firstP = P0;
+          lastP = P1;
+          // developer overlay: the block's axis, its shared-aisle ends and its inner/outer boundaries
+          const marked = block.arc ? { "data-arc": block.arc } : {};
+          el("line", { class: "dev-axis", ...marked, x1: P0[0], y1: P0[1], x2: P1[0], y2: P1[1] }, devg);
+          el("circle", { class: "dev-dot", ...marked, cx: P0[0], cy: P0[1], r: 1.7 }, devg);
+          el("circle", { class: "dev-dot", ...marked, cx: P1[0], cy: P1[1], r: 1.7 }, devg);
+          // inner/outer boundaries as radial arcs spanning the block's aisles
+          const delta = ((g.end - g.start + 540) % 360) - 180, cw = delta > 0;
+          const arcPath = (r) => {
+            const [x0, y0] = pos(r, g.start), [x1, y1] = pos(r, g.end);
+            return `M ${x0} ${y0} A ${r} ${r} 0 ${Math.abs(delta) > 180 ? 1 : 0} ${cw ? 1 : 0} ${x1} ${y1}`;
+          };
+          for (const [cls, r] of [["dev-inner", g.inner], ["dev-outer", g.outer]]) {
+            if (r == null) continue;
+            el("path", { class: cls, ...marked, d: arcPath(r) }, devg);
+          }
+          const lt = el("text", { class: "dev-label", ...marked, x: (P0[0] + P1[0]) / 2, y: (P0[1] + P1[1]) / 2 }, devg);
+          lt.textContent = `${g.view}° o${g.offset} [${g.inner}-${g.outer}]`;
+          const items = [...(block.seats || []).map(id => ({ id })),
+                         ...((block.blocked && block.blocked.skipped_numbers) || []).map(id => ({ id, blocked: true }))];
+          // inset each end by half an aisle, so neighbouring blocks keep the aisle gap between them
+          const n = items.length, rot = bo + 90;
+          const dx = P1[0] - P0[0], dy = P1[1] - P0[1], L = Math.hypot(dx, dy) || 1;
+          const gx = dx / L * S * 0.6, gy = dy / L * S * 0.6;
+          const Ax = P0[0] + gx, Ay = P0[1] + gy, Bx = P1[0] - gx, By = P1[1] - gy;
+          items.forEach((it, i) => {
+            const t = n > 1 ? i / (n - 1) : 0.5;
+            const x = Ax + (Bx - Ax) * t, y = Ay + (By - Ay) * t;
+            remember(x, y);
+            if (it.blocked) {
+              const g = el("g", { class: "seat blocked" }, svg);
+              const r = el("rect", { x: -S / 2, y: -S / 2, width: S, height: S, rx: 1 }, g);
+              el("title", {}, r).textContent = `${row.row}: solid area where ${it.id} would be (not seats)`;
+              g.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? rot : 0})`);
+            } else {
+              const g = seatAt(svg, z, row, it.id, block, inPits, -S / 2, -S / 2);
+              g.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? rot : 0})`);
+            }
+          });
+        });
+        for (const P of [firstP, lastP]) {
+          const t = el("text", { class: "rowlabel", x: P[0], y: P[1] - S, "text-anchor": "middle" }, svg);
+          t.textContent = row.row;
+          Object.assign(t.dataset, { row: row.row, zone: z.name });
+          remember(P[0], P[1]);
+        }
+        return;
+      }
+      const blocks = rowLayout(row, false);       // arc rows keep the file order (seat 1 first)
+      const items = [];
+      blocks.forEach((b, bi) => { if (bi) items.push({ gap: true }); b.items.forEach(it => items.push(it)); });
+      const total = items.reduce((a, it) => a + (it.gap ? gapW : 1), 0);
+      const step = span / total;
+      let cum = 0;
+      items.forEach(it => {
+        const w = it.gap ? gapW : 1;
+        if (!it.gap) {
+          const deg = start + dir * (cum + w / 2) * step;
+          const [x, y] = pos(radius, deg);
+          remember(x, y);
+          if (it.blocked) {
+            const g = el("g", { class: "seat blocked" }, svg);
+            const r = el("rect", { x: -S / 2, y: -S / 2, width: S, height: S, rx: 1 }, g);
+            el("title", {}, r).textContent = `${row.row}: solid area where ${it.id} would be (not seats)`;
+            g.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? deg + 90 : 0})`);
+          } else {
+            const g = seatAt(svg, z, row, it.id, {}, inPits, -S / 2, -S / 2);
+            g.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? deg + 90 : 0})`);
+          }
+        }
+        cum += w;
+      });
+      // the row label near each end of the arc, outside it
+      for (const deg of [start, start + dir * span]) {
+        const [x, y] = pos(radius + pitch * 0.9, deg);
+        const t = el("text", { class: "rowlabel", x, y, "text-anchor": "middle" }, svg);
+        t.textContent = row.row;
+        Object.assign(t.dataset, { row: row.row, zone: z.name });
+        remember(x, y);
+      }
+    });
+    headings.push({ name: z.name, zh: z.name_zh || "" });
+  }
+  // vomitoria: entrances that cut an angular gap through some rows only (drawn as a shaded wedge)
+  for (const z of doc.zones) (z.vomitoria || []).forEach((v, vi) => {
+    const r0 = v.inner ?? 0, r1 = v.outer ?? 0;
+    const a0 = Math.min(v.from, v.to), a1 = Math.max(v.from, v.to);
+    const large = (a1 - a0) > 180 ? 1 : 0;
+    const [x0, y0] = pos(r0, a0), [x1, y1] = pos(r0, a1), [x2, y2] = pos(r1, a1), [x3, y3] = pos(r1, a0);
+    el("path", { class: "vomitorium", "data-vom": vi, d: `M ${x0} ${y0} A ${r0} ${r0} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${r1} ${r1} 0 ${large} 0 ${x3} ${y3} Z` }, svg);
+    el("text", { class: "vomitorium-label", "data-vom": vi, x: (x0 + x3) / 2, y: (y0 + y3) / 2 }, svg).textContent = "V";
+    remember(x0, y0); remember(x1, y1); remember(x2, y2); remember(x3, y3);
+  });
+  // developer overlay: the shared aisles as radial lines from the centre
+  const far = 1.04 * Math.max(...ext.map(e => Math.max(Math.hypot(e.x0, e.y0), Math.hypot(e.x1, e.y1))));
+  (layout.aisles || []).forEach((a, i) => {
+    const [x, y] = pos(far, a);
+    el("line", { class: "dev-aisle", "data-aisle": i, x1: 0, y1: 0, x2: x, y2: y }, devg);
+    el("text", { class: "dev-label", "data-aisle": i, x, y, "text-anchor": "middle" }, devg).textContent = a;
+    remember(x, y);
+  });
+  // part-of-house headings, stacked below the seats (clear of the seating, radial or not)
+  const seatBottom = Math.max(...ext.map(e => e.y1));
+  headings.forEach((h, i) => {
+    const hy = seatBottom + pitch * (1.5 + i * 1.6);
+    const hl = el("text", { class: "zonelabel", x: 0, y: hy, "text-anchor": "middle" }, svg);
+    hl.textContent = `${h.name} ${h.zh}`.trim();
+    hl.dataset.zone = h.name;
+    remember(0, hy, 60);
+  });
+
+  const pad = pitch * 2;
+  const minX = Math.min(...ext.map(e => e.x0)) - pad, maxX = Math.max(...ext.map(e => e.x1)) + pad;
+  const minY = Math.min(...ext.map(e => e.y0)) - pad, maxY = Math.max(...ext.map(e => e.y1)) + pad;
+  const W = maxX - minX, ox = -minX, oy = -minY;
+  const g = el("g", { transform: `translate(${ox} ${oy})` });
+  for (const c of [...svg.children]) g.appendChild(c);
+  svg.appendChild(g);
+  return finishMap(svg, doc, W, maxY - minY);
 }
 
 // ---------------------------------------------------------------- zoom

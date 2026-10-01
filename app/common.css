@@ -114,6 +114,21 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .standing.on rect { stroke: var(--acc); stroke-dasharray: none; fill: var(--acc-bg); } .standing.on text { fill: var(--acc); }
 .standing .place:hover rect, .standing .place:focus rect { stroke: var(--hover); stroke-width: 2; }
 .rowlabel { fill: var(--muted); font-size: 10px; font-weight: 600; dominant-baseline: central; }
+/* developer overlay: aisles, block axes and boundaries (shown by the Developer mode toggle) */
+.dev { display: none; }
+.devmode .dev { display: block; }
+.dev-aisle { fill: none; stroke: var(--acc); stroke-width: 1; stroke-dasharray: 5 3; }
+.dev-inner, .dev-outer { fill: none; stroke: var(--muted); stroke-width: .8; stroke-dasharray: 3 3; }
+.dev-axis { fill: none; stroke: var(--bad); stroke-width: 1; }
+.dev-dot { fill: var(--bad); }
+.dev-label { fill: var(--bad); font-size: 6.5px; text-anchor: middle; display: none; }
+/* the overlay is dim; a highlighted element (and its label) comes forward */
+.dev > :not(.hl) { opacity: .2; }
+.hl { stroke: #f59e0b !important; stroke-width: 2.6 !important; opacity: 1 !important; }
+.dev > .dev-label.hl { display: block; opacity: 1; fill: #f59e0b; }
+/* vomitorium: an entrance cutting a gap through some rows only */
+.vomitorium { fill: var(--acc-bg); stroke: var(--acc); stroke-width: .8; stroke-dasharray: 4 3; opacity: .5; }
+.vomitorium-label { fill: var(--acc); font-size: 9px; font-weight: 700; text-anchor: middle; }
 .zonelabel { fill: var(--ink); font-size: 13px; font-weight: 650; text-anchor: middle; }
 .zonelabel.off { fill: var(--muted); text-decoration: line-through; }
 .stage { fill: var(--bg); stroke: var(--line); }

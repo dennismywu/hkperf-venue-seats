@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Row review · HK venue seats</title>
+<link rel="stylesheet" href="../app/common.css">
+<style>
+  :root { --bg:#fff; --panel:#f7f7f5; --ink:#1d1d1b; --muted:#6b6b66; --line:#d9d9d3;
+          --acc:#0f766e; --acc-bg:#e6f2f0; --w:#2563eb; --w-bg:#e8f0fe; --x:#b91c1c; --x-bg:#fdecec;
+          --bad:#b91c1c; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:var(--bg); }
+  header { position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:1px solid var(--line);
+           padding:10px 14px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  header h1 { font-size:15px; margin:0; font-weight:650; }
+  header .muted { color:var(--muted); font-size:12px; }
+  header select { font:inherit; padding:4px 8px; }
+  main { padding:14px; max-width:1200px; margin:0 auto; }
+  .tabs { display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px; align-items:center; }
+  .zone-h { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:650; width:100%; margin-top:8px; }
+  .tabs button { font:inherit; padding:4px 10px; border:1px solid var(--line); background:var(--panel); border-radius:6px; cursor:pointer; }
+  .tabs button.sel { background:var(--acc-bg); border-color:var(--acc); color:var(--acc); font-weight:650; }
+  .tabs button .n { color:var(--muted); font-size:11px; margin-left:4px; }
+  .tabs button.warn .n { color:var(--bad); font-weight:700; }
+  .bar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:6px 0; }
+  .bar button, .toolbar button { font:inherit; padding:4px 10px; border:1px solid var(--line); background:var(--panel); border-radius:6px; cursor:pointer; }
+  .bar button:hover, .toolbar button:hover { border-color:var(--acc); }
+  .bar .danger { color:var(--bad); border-color:color-mix(in srgb,var(--bad) 40%,var(--line)); }
+  .pill { display:inline-block; font-size:11px; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:1px 8px; }
+  .pill.bad { color:var(--bad); border-color:color-mix(in srgb,var(--bad) 40%,var(--line)); }
+  .total { font-size:13px; font-variant-numeric:tabular-nums; }
+  .total b { font-size:16px; }
+  .total .ok { color:var(--acc); } .total .neg { color:var(--bad); }
+  textarea { font:13px/1.6 ui-monospace,Menlo,Consolas,monospace; width:100%; border:1px solid var(--line);
+             border-radius:8px; padding:10px; background:var(--bg); color:var(--ink); resize:vertical; }
+  #rowtext { height:70px; }
+  #code { height:110px; background:var(--panel); }
+  .row-editor { display:flex; flex-wrap:wrap; align-items:center; gap:2px; padding:10px; border:1px solid var(--line);
+                border-radius:10px; background:var(--panel); min-height:56px; margin:8px 0; }
+  .seat { min-width:28px; padding:4px 7px; border:1px solid var(--line); border-radius:6px; background:var(--bg);
+          cursor:pointer; text-align:center; font-variant-numeric:tabular-nums; }
+  .seat:hover { border-color:var(--acc); }
+  .seat.sel { border-color:var(--acc); box-shadow:0 0 0 2px var(--acc-bg); }
+  .seat.W { background:var(--w-bg); border-color:var(--w); color:var(--w); font-weight:700; }
+  .seat.X { background:var(--x-bg); border-color:var(--x); color:var(--x); }
+  .seat .inf { display:block; font-size:9px; color:var(--muted); }
+  .gap { width:12px; border:0; background:none; color:var(--muted); cursor:pointer; font-size:13px; padding:0 0 16px; }
+  .gap.break { color:var(--acc); font-weight:800; }
+  .gap:hover { color:var(--acc); }
+  .insert { width:16px; border:0; background:none; color:var(--line); cursor:pointer; font-size:13px; padding:0 0 16px; }
+  .insert:hover { color:var(--acc); }
+  .hint { color:var(--muted); font-size:12px; margin:8px 0; }
+  .out { margin-top:8px; }
+  .sel-info { font-size:12px; color:var(--muted); }
+  .leftover { margin-top:16px; border:1px solid var(--line); border-radius:10px; padding:12px; background:var(--panel); }
+  .leftover h2 { font-size:13px; margin:0 0 8px; }
+  .leftover .grid { display:flex; gap:16px; flex-wrap:wrap; }
+  .leftover .map { flex:0 0 360px; max-width:360px; border:1px solid var(--line); border-radius:8px; background:var(--bg); }
+  .leftover .map circle { fill:#d0d0ca; }
+  .leftover .map circle.base { fill:#d8d8d2; }
+  .leftover .map circle.left { fill:#b91c1c; cursor:pointer; }
+  .leftover .map circle.hit { fill:#0f766e; }
+  .leftover .nums { flex:1; min-width:240px; }
+  .leftover .nums .n { display:inline-flex; gap:6px; align-items:center; border:1px solid var(--line); border-radius:6px;
+                        padding:3px 8px; margin:0 6px 6px 0; background:var(--bg); }
+  .leftover .nums .n b { color:var(--bad); }
+  .leftover .nums .n .rows { color:var(--muted); font-size:12px; }
+  .leftover .nums button { font-size:11px; padding:0 6px; }
+  .leftover .hint { margin:0; }
+  .tabbar { display:flex; gap:6px; margin:2px 0 12px; border-bottom:1px solid var(--line); }
+  .tabbar button { font:inherit; padding:6px 16px; border:1px solid var(--line); border-bottom:none;
+                   background:var(--panel); border-radius:8px 8px 0 0; cursor:pointer; }
+  .tabbar button.sel { background:var(--acc-bg); border-color:var(--acc); color:var(--acc); font-weight:650; }
+  .geomui h2 { font-size:15px; margin:0 0 4px; }
+  .geomui h3 { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:18px 0 6px; }
+  .geomui table { border-collapse:collapse; width:100%; }
+  .geomui th, .geomui td { border:1px solid var(--line); padding:3px 6px; text-align:left; font-size:12px; }
+  .geomui th { background:var(--panel); color:var(--muted); font-weight:600; }
+  .geomui input[type=number], .geomui input[type=text] { width:74px; font:inherit; font-size:12px; padding:2px 4px; border:1px solid var(--line); border-radius:4px; background:var(--bg); color:var(--ink); }
+  .geomui input.wide { width:150px; }
+  .geomui button { font:inherit; font-size:12px; padding:3px 10px; border:1px solid var(--line); background:var(--panel); border-radius:6px; cursor:pointer; }
+  .geomui .ais { display:inline-flex; gap:3px; align-items:center; margin:0 8px 8px 0; }
+  .geomap { margin:4px 0 16px; }
+  #gmap { border:1px solid var(--line); border-radius:8px; background:var(--bg); overflow:auto; max-height:560px; }
+  .geomap .bar { margin:6px 0 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Row review</h1>
+  <select id="venue"></select>
+  <span id="total" class="total"></span>
+  <span class="muted">Type a row as <code>1-5 | 6-8 | 19-21</code> (| = block/aisle). Chips update live; click a chip to edit, the “+” to insert, the gap to move a block edge.</span>
+</header>
+<main>
+  <div id="tabbar" class="tabbar">
+    <button data-tab="seats" class="sel">Seats</button>
+    <button data-tab="geometry">Geometry</button>
+  </div>
+  <div id="seatui">
+  <div id="tabs" class="tabs"></div>
+  <div id="panel"></div>
+  <div id="leftover" class="leftover"></div>
+  </div>
+  <div id="geomui" class="geomui" hidden></div>
+  <div class="out">
+    <div class="toolbar bar">
+      <button id="copyrow">Copy this row</button>
+      <button id="copyall">Copy all rows</button>
+      <button id="copyrows">Copy rows = [ … ]</button>
+      <button id="dl"><b>Download JSON</b></button>
+      <span id="status" class="muted"></span>
+    </div>
+    <textarea id="code" spellcheck="false" readonly></textarea>
+    <p class="hint">Numeric runs collapse to <code>rng(a, b)</code> in the code above; a seat marked W/X prints <code>marks={...}</code>. Paste the copied lines into <code>venues/&lt;id&gt;.py</code>. A number may carry a mark by suffix, e.g. <code>15w</code> / <code>22x</code>.</p>
+  </div>
+</main>
+<script src="../app/seatmap.js"></script>
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+let doc = null, model = null, sel = { z:0, r:0 }, selSeat = null, plan = null, tab = "seats", hl = null;
+
+// model row: { row, blocks: [[{id, mark}...]], inferred:{}, note }
+function fromJSON(j) {
+  return j.zones.map(z => ({ name:z.name, name_zh:z.name_zh||"", rows: z.rows.map(r => ({
+    row: r.row,
+    blocks: r.blocks.map(b => b.seats.map(s => ({ id:s, mark:(r.marks||{})[s]||"" }))),
+    inferred: { ...(r.inferred_numbers||{}) },
+    note: r.note||"",
+  }))}));
+}
+// "1-5 | 6-8 | 15w" -> blocks
+function parseRow(text) {
+  const out = [];
+  for (const blk of text.split("|")) {
+    const s = blk.trim(); if (!s) { out.push([]); continue; }
+    const ids = [];
+    for (const tok of s.split(/\s+/).filter(Boolean)) {
+      const m = tok.match(/^(\d+)-(\d+)$/);
+      if (m) { let a=+m[1], b=+m[2]; if (b<a) [a,b]=[b,a]; for (let n=a;n<=b;n++) ids.push({ id:String(n), mark:"" }); continue; }
+      const w = tok.match(/^(\d+)([wWxX])$/);
+      if (w) { ids.push({ id:w[1], mark:w[2].toUpperCase() }); continue; }
+      ids.push({ id:tok, mark:"" });
+    }
+    out.push(ids);
+  }
+  while (out.length > 1 && out[out.length-1].length === 0) out.pop();
+  return out.length ? out : [[]];
+}
+function rowToText(r) {
+  return r.blocks.map(blk => {
+    const parts = []; let i = 0;
+    while (i < blk.length) {
+      const s = blk[i];
+      if (s.mark) { parts.push(s.id + s.mark.toLowerCase()); i++; continue; }
+      if (/^\d+$/.test(s.id)) {
+        let j = i, n = +s.id;
+        while (j+1 < blk.length && !blk[j+1].mark && /^\d+$/.test(blk[j+1].id) && +blk[j+1].id === n+1) { j++; n++; }
+        parts.push(j-i >= 1 ? `${blk[i].id}-${blk[j].id}` : blk[i].id);
+        i = j+1;
+      } else { parts.push(s.id); i++; }
+    }
+    return parts.join(" ");
+  }).join(" | ");
+}
+function blockCode(blk) {
+  const parts = []; let i = 0;
+  while (i < blk.length) {
+    const s = blk[i];
+    if (/^\d+$/.test(s.id) && !s.mark) {
+      let j = i;
+      while (j+1 < blk.length && /^\d+$/.test(blk[j+1].id) && !blk[j+1].mark && +blk[j+1].id === +blk[j].id + 1) j++;
+      parts.push(j-i >= 2 ? `rng(${blk[i].id}, ${blk[j].id})` : blk.slice(i,j+1).map(x => `"${x.id}"`).join(" + "));
+      i = j+1;
+    } else { parts.push(`"${s.id}"`); i++; }
+  }
+  return parts.join(" + ") || '""';
+}
+function rowCode(r) {
+  const blocks = r.blocks.filter(b => b.length).map(blockCode);
+  const marks = {};
+  for (const b of r.blocks) for (const s of b) if (s.mark) marks[s.id] = s.mark;
+  const markPart = Object.keys(marks).length ? ", marks={" + Object.entries(marks).map(([k,v]) => `"${k}": "${v}"`).join(", ") + "}" : "";
+  const inf = Object.fromEntries(Object.entries(r.inferred).filter(([k]) => r.blocks.some(b => b.some(s => s.id === k))));
+  const infPart = Object.keys(inf).length ? ", inferred={" + Object.entries(inf).map(([k,v]) => `"${k}": "${v}"`).join(", ") + "}" : "";
+  return `row("${r.row}", ${blocks.join(", ")}${markPart}${infPart}),`;
+}
+const seatCount = r => r.blocks.reduce((a,b)=>a+b.length,0);
+function rowIssues(r) {
+  const ids = r.blocks.flat().map(s => s.id).filter(s => /^\d+$/.test(s));
+  const seen = new Set(), dup = new Set();
+  for (const id of ids) { if (seen.has(id)) dup.add(id); seen.add(id); }
+  return dup;
+}
+
+async function boot() {
+  const idx = await (await fetch("../data/index.json")).json();
+  $("venue").innerHTML = idx.venues.map(v => `<option value="${v.id}">${esc(v.name_en)}</option>`).join("");
+  const q = new URLSearchParams(location.search);
+  let id = q.get("venue");
+  if (!id || !idx.venues.some(v => v.id === id)) id = $("venue").value;
+  $("venue").value = id;
+  await load(id);
+}
+async function load(id) {
+  doc = await (await fetch(`../data/${id}.json`)).json();
+  model = fromJSON(doc);
+  const q = new URLSearchParams(location.search);
+  sel = { z:0, r: Math.min(model[0].rows.length-1, Math.max(0, +(q.get("r")||0))) };
+  tab = q.get("tab") === "geometry" ? "geometry" : "seats";
+  const h = q.get("hl"); if (h) hl = { kind: h.split(":")[0], id: h.split(":")[1] };
+  selSeat = null;
+  history.replaceState(null, "", `?venue=${id}&r=${sel.r}`);
+  await loadPlan(id);
+  renderAll();
+}
+function renderAll() {
+  $("tabbar").querySelectorAll("button").forEach(b => b.classList.toggle("sel", b.dataset.tab === tab));
+  updateTotal();
+  const geom = tab === "geometry";
+  $("seatui").hidden = geom; $("geomui").hidden = !geom;
+  if (geom) { renderGeometry(); return; }
+  renderTabs(); renderPanel(); renderLeftover();
+}
+
+// the geometry tab: aisles, arcs and vomitoria, edited straight into the document
+function renderGeometry() {
+  const z = doc.zones[sel.z];
+  const arcs = z.arcs || (z.arcs = []);
+  const vom = z.vomitoria || (z.vomitoria = []);
+  const aisles = doc.layout.aisles || (doc.layout.aisles = []);
+  const centre = doc.layout.arc?.centre;
+  const num = (v, di, dk) => `<td><input type="number" step="0.1" data-${di}="${dk[0]}" data-k="${dk[1]}" value="${v ?? ""}"></td>`;
+  $("geomui").innerHTML = `
+    <h2>Geometry <span class="pill">${esc(doc.venue.name_en)}</span></h2>
+    <p class="hint">Shared geometry for the arc layout. Edits redraw the map above; Download/Copy to hand back.</p>
+    <div class="geomap">
+      <div id="gmap" class="devmode"></div>
+      <div class="bar">
+        <label class="muted">Highlight <select id="ghl"><option value="">none</option></select></label>
+        <button id="g-save">Download JSON</button>
+        <button id="g-copy">Copy JSON</button>
+        <span id="g-status" class="muted"></span>
+      </div>
+    </div>
+    <h3>Aisles — shared radial bearings (${aisles.length})</h3>
+    <div>${aisles.map((a, i) => `<span class="ais">#${i + 1} <input type="number" step="0.1" data-aisle="${i}" value="${a}"><button data-delaisle="${i}" title="remove">×</button></span>`).join("")}</div>
+    <button id="g-addaisle">+ aisle</button>
+    <h3>Arcs — the block template (${arcs.length})</h3>
+    <table><thead><tr><th>id</th><th>from</th><th>to</th><th>view (POV axis)</th><th>offset</th><th>inner</th><th>outer</th><th></th></tr></thead><tbody>
+      ${arcs.map((a, i) => `<tr><td>${esc(a.id)}</td>
+        ${num(a.from, "arc", [i, "from"])}${num(a.to, "arc", [i, "to"])}${num(a.view, "arc", [i, "view"])}
+        ${num(a.offset, "arc", [i, "offset"])}${num(a.inner, "arc", [i, "inner"])}${num(a.outer, "arc", [i, "outer"])}
+        <td><button data-delarc="${i}" title="remove">×</button></td></tr>`).join("")}
+    </tbody></table>
+    <button id="g-addarc">+ arc</button>
+    <h3>Vomitoria — entrances through some rows only (${vom.length})</h3>
+    <table><thead><tr><th>rows (space-separated)</th><th>from</th><th>to</th><th>inner</th><th>outer</th><th>note</th><th></th></tr></thead><tbody>
+      ${vom.map((v, i) => `<tr>
+        <td><input class="wide" type="text" data-vom="${i}" data-k="rows" value="${esc((v.rows || []).join(" "))}"></td>
+        ${num(v.from, "vom", [i, "from"])}${num(v.to, "vom", [i, "to"])}${num(v.inner, "vom", [i, "inner"])}${num(v.outer, "vom", [i, "outer"])}
+        <td><input class="wide" type="text" data-vom="${i}" data-k="note" value="${esc(v.note || "")}"></td>
+        <td><button data-delvom="${i}" title="remove">×</button></td></tr>`).join("")}
+    </tbody></table>
+    <button id="g-addvom">+ vomitorium</button>
+    ${centre ? `<h3>Centre (focal point)</h3><div class="ais">x <input type="number" data-centre="0" value="${centre[0]}"> y <input type="number" data-centre="1" value="${centre[1]}"></div>` : ""}`;
+  const g = $("geomui");
+  g.querySelectorAll("input[data-aisle]").forEach(inp => inp.onchange = () => { aisles[+inp.dataset.aisle] = +inp.value; });
+  g.querySelectorAll("input[data-arc]").forEach(inp => inp.onchange = () => { arcs[+inp.dataset.arc][inp.dataset.k] = inp.value === "" ? null : +inp.value; });
+  g.querySelectorAll("input[data-vom]").forEach(inp => inp.onchange = () => {
+    const v = vom[+inp.dataset.vom], k = inp.dataset.k;
+    if (k === "rows") v.rows = inp.value.split(/\s+/).filter(Boolean);
+    else if (k === "note") v.note = inp.value;
+    else v[k] = inp.value === "" ? null : +inp.value;
+  });
+  g.querySelectorAll("input[data-centre]").forEach(inp => inp.onchange = () => { doc.layout.arc.centre[+inp.dataset.centre] = +inp.value; });
+  g.querySelectorAll("[data-delaisle]").forEach(b => b.onclick = () => { aisles.splice(+b.dataset.delaisle, 1); renderGeometry(); });
+  g.querySelectorAll("[data-delarc]").forEach(b => b.onclick = () => { arcs.splice(+b.dataset.delarc, 1); renderGeometry(); });
+  g.querySelectorAll("[data-delvom]").forEach(b => b.onclick = () => { vom.splice(+b.dataset.delvom, 1); renderGeometry(); });
+  $("g-addaisle").onclick = () => { aisles.push(0); renderGeometry(); };
+  $("g-addarc").onclick = () => { arcs.push({ id: `a${arcs.length + 1}`, from: 0, to: 0, view: 0, offset: 0, inner: 0, outer: 0 }); renderGeometry(); };
+  $("g-addvom").onclick = () => { vom.push({ rows: [], from: 0, to: 0, inner: 0, outer: 0, note: "" }); renderGeometry(); };
+
+  const ghl = $("ghl");
+  aisles.forEach((a, i) => ghl.append(new Option(`aisle #${i + 1} (${a}°)`, `aisle:${i}`)));
+  arcs.forEach(a => ghl.append(new Option(`arc ${a.id}`, `arc:${a.id}`)));
+  vom.forEach((v, i) => ghl.append(new Option(`vomitorium #${i + 1}`, `vom:${i}`)));
+  ghl.value = hl ? `${hl.kind}:${hl.id}` : "";
+  ghl.onchange = () => { hl = ghl.value ? { kind: ghl.value.split(":")[0], id: ghl.value.split(":")[1] } : null; applyHighlight(); };
+  g.addEventListener("change", e => { if (e.target.id !== "ghl") redrawMap(); });
+  $("g-save").onclick = () => {
+    const blob = new Blob([JSON.stringify(editedDoc(), null, 1)], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${$("venue").value}.json`; a.click(); URL.revokeObjectURL(a.href);
+    $("g-status").textContent = `saved ${$("venue").value}.json — move it to data/`;
+  };
+  $("g-copy").onclick = async () => {
+    const t = JSON.stringify(editedDoc(), null, 1);
+    try { await navigator.clipboard.writeText(t); $("g-status").textContent = `copied ${t.length} bytes — paste back into chat`; }
+    catch { $("g-status").textContent = "clipboard blocked"; }
+  };
+  redrawMap();
+}
+
+// draw the edited document in the Geometry tab (with the developer overlay) and highlight a chosen element
+function redrawMap() {
+  const host = $("gmap"); if (!host || !doc) return;
+  const svg = drawSeatMap(editedDoc());
+  host.replaceChildren(svg);
+  const vb = svg.viewBox.baseVal, s = Math.min(1, (host.clientWidth || 460) / vb.width);
+  svg.setAttribute("width", Math.round(vb.width * s)); svg.setAttribute("height", Math.round(vb.height * s));
+  applyHighlight();
+}
+function applyHighlight() {
+  const host = $("gmap"); if (!host) return;
+  host.querySelectorAll(".hl").forEach(e => e.classList.remove("hl"));
+  if (!hl) return;
+  const sel = hl.kind === "aisle" ? `[data-aisle="${hl.id}"]`
+    : hl.kind === "arc" ? `[data-arc="${hl.id}"]`
+    : `[data-vom="${hl.id}"]`;
+  host.querySelectorAll(sel).forEach(e => e.classList.add("hl"));
+}
+
+// live grand total of every row, beside the printed and the plan's numbered totals
+function updateTotal() {
+  if (!model) return;
+  let boxes = 0, x = 0, w = 0;
+  for (const z of model) for (const r of z.rows) for (const b of r.blocks) for (const s of b) {
+    boxes++; if (s.mark.includes("X")) x++; if (s.mark.includes("W")) w++;
+  }
+  const counted = boxes - x;                       // the project's rule: printed total = boxes − management
+  const printed = doc?.printed_totals?.Total;
+  const delta = (t, ref) => `<span class="${t === ref ? "ok" : "neg"}">(${t - ref > 0 ? "+" : ""}${t - ref})</span>`;
+  $("total").innerHTML =
+    `<b>${boxes}</b> boxes` +
+    (x ? ` − ${x} mgmt = <b>${counted}</b>` : "") +
+    (printed != null ? ` · printed ${printed} ${delta(counted, printed)}` : "") +
+    ` · ${w} wheelchair`;
+}
+
+// the plan's own seat rectangles (a side file the extractor writes), for the leftover panel
+async function loadPlan(id) {
+  plan = null;
+  try { const r = await fetch(`../work/${id}/seats.json`); if (r.ok) plan = await r.json(); } catch {}
+}
+function planClaimed() {
+  const claimed = new Set();
+  model[sel.z].rows.forEach((r, ri) =>
+    r.blocks.forEach(b => b.forEach(s => { if (/^\d+$/.test(s.id)) claimed.add(ri + "/" + s.id); })));
+  return claimed;
+}
+function renderLeftover() {
+  const box = $("leftover");
+  if (!plan) { box.innerHTML = `<p class="hint">Leftover panel is off: no <code>work/&lt;id&gt;/seats.json</code> for this venue.</p>`; return; }
+  // per-number coverage: how many rows in this zone contain the number vs how many plan seats carry it
+  const claimed = new Map();                       // number -> rows that have it
+  model[sel.z].rows.forEach(r => {
+    const set = new Set(r.blocks.flat().map(s => s.id).filter(id => /^\d+$/.test(id)).map(Number));
+    for (const n of set) claimed.set(n, (claimed.get(n) || 0) + 1);
+  });
+  const planCount = new Map();
+  for (const s of plan.seats) if (s.n !== null) planCount.set(s.n, (planCount.get(s.n) || 0) + 1);
+  const short = new Map(), over = new Map();
+  for (const [n, c] of planCount) if (c > (claimed.get(n) || 0)) short.set(n, c - (claimed.get(n) || 0));
+  for (const [n, c] of claimed) if (c > (planCount.get(n) || 0)) over.set(n, c - (planCount.get(n) || 0));
+  const planTotal = [...planCount.values()].reduce((a, b) => a + b, 0);
+  const rowsTotal = [...claimed.values()].reduce((a, b) => a + b, 0);
+  const missing = planTotal - rowsTotal;
+  const seats = plan.seats.map(s => ({ ...s, left: s.n !== null && short.has(s.n) }));
+  const marked = seats.filter(s => s.left);
+  const xs = seats.map(s => s.x), ys = seats.map(s => s.y);
+  const minx = Math.min(...xs), maxx = Math.max(...xs), miny = Math.min(...ys), maxy = Math.max(...ys);
+  const W = 352, H = Math.max(120, Math.round(W * (maxy - miny) / (maxx - minx)));
+  const X = x => ((x - minx) / (maxx - minx) * W).toFixed(1), Y = y => ((y - miny) / (maxy - miny) * H).toFixed(1);
+  const dots = seats.map((s, i) => `<circle class="${s.left ? "left" : "base"}" data-i="${i}" cx="${X(s.x)}" cy="${Y(s.y)}" r="${s.left ? 3.2 : 2}"><title>${s.n !== null ? s.n : "—"}</title></circle>`).join("");
+  const chips = [...short.entries()].sort((a, b) => a[0] - b[0]).map(([n, k]) =>
+    `<span class="n"><b>${n}</b><span class="rows">plan ×${planCount.get(n)}, rows ×${claimed.get(n) || 0} → ${k} missing</span></span>`).join("")
+    || `<span class="muted">none — every number on the plan is covered by a row. ✓</span>`;
+  const overChips = [...over.entries()].sort((a, b) => a[0] - b[0]).map(([n, k]) =>
+    `<span class="n"><b>${n}</b><span class="rows">rows ×${claimed.get(n)}, plan ×${planCount.get(n) || 0}</span></span>`).join("");
+  box.innerHTML = `
+    <h2>Leftover seats on the plan
+      <span class="pill">${rowsTotal} in rows · ${planTotal} numbered on the plan</span>
+      <span class="pill ${missing ? "bad" : ""}">${missing} unplaced</span>
+      ${over.size ? `<span class="pill bad">${[...over.values()].reduce((a,b)=>a+b,0)} over the plan count</span>` : ""}</h2>
+    <div class="grid">
+      <svg class="map" viewBox="0 0 ${W} ${H}">${dots}</svg>
+      <div class="nums">
+        <p class="hint" style="margin-top:0">Numbers with more seats on the plan than in the rows (red dots mark all their positions; use the plan to place them):</p>
+        ${chips}
+        ${over.size ? `<p class="hint">In a row but not found on the plan: ${overChips}</p>` : ""}
+      </div>
+    </div>`;
+}
+
+function renderTabs() {
+  $("tabs").innerHTML = model.map((z, zi) => `<span class="zone-h">${esc(z.name)} ${esc(z.name_zh)}</span>` +
+    z.rows.map((r, ri) => {
+      const dup = rowIssues(r).size;
+      return `<button data-z="${zi}" data-r="${ri}" class="${zi===sel.z&&ri===sel.r?"sel":""} ${dup?"warn":""}">${esc(r.row)}<span class="n">${seatCount(r)}${dup?` ⚠${dup}`:""}</span></button>`;
+    }).join("")).join("");
+  $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => {
+    sel = { z:+b.dataset.z, r:+b.dataset.r }; selSeat = null;
+    history.replaceState(null, "", `?venue=${$("venue").value}&r=${sel.r}`);
+    renderAll();
+  });
+}
+
+function renderPanel() {
+  const z = model[sel.z], r = z.rows[sel.r];
+  $("panel").innerHTML = `
+    <div class="bar"><b>Row ${esc(r.row)}</b> <span id="info"></span></div>
+    <textarea id="rowtext" spellcheck="false"></textarea>
+    <div class="row-editor" id="editor"></div>
+    ${r.note ? `<p class="hint">${esc(r.note)}</p>` : ""}`;
+  $("rowtext").value = rowToText(r);
+  $("rowtext").addEventListener("input", () => {
+    r.blocks = parseRow($("rowtext").value);
+    renderChips(); updateInfo(); renderTabs(); updateCode();
+  });
+  updateInfo(); renderChips(); updateCode();
+}
+
+// the seat/block/duplicate summary of the current row
+function updateInfo() {
+  const r = model[sel.z].rows[sel.r];
+  const dup = [...rowIssues(r)];
+  const blocks = r.blocks.filter(b => b.length).length;
+  $("info").innerHTML = `<span class="pill">${seatCount(r)} seats · ${blocks} block(s)</span>` +
+    (dup.length ? ` <span class="pill bad">duplicate: ${dup.join(", ")}</span>` : "");
+  renderLeftover();
+  updateTotal();
+}
+
+function renderChips() {
+  const r = model[sel.z].rows[sel.r];
+  let h = "";
+  r.blocks.forEach((blk, bi) => {
+    if (bi) h += `<button class="gap break" data-b="${bi}" title="block edge — click to merge with the previous block">¦</button>`;
+    blk.forEach((s, si) => {
+      if (si) h += `<button class="gap" data-b="${bi}" data-i="${si}" title="click to start a new block here">·</button>`;
+      h += `<button class="insert" data-b="${bi}" data-i="${si}" title="insert a seat before this one">+</button>`;
+      h += `<button class="seat ${s.mark}" data-b="${bi}" data-i="${si}" title="click to edit">${esc(s.id)}${r.inferred[s.id]?`<span class="inf">=${esc(r.inferred[s.id])}</span>`:""}</button>`;
+    });
+    h += `<button class="insert" data-b="${bi}" data-i="${blk.length}" title="insert a seat at the end of this block">+</button>`;
+  });
+  $("editor").innerHTML = h;
+  const r2 = r;
+  $("editor").querySelectorAll(".gap").forEach(el => el.onclick = () => {
+    const b = +el.dataset.b;
+    if (!el.classList.contains("break")) {           // split block b at position i
+      const i = +el.dataset.i, blk = r2.blocks[b];
+      r2.blocks.splice(b, 1, blk.slice(0, i), blk.slice(i));
+    } else {                                          // merge block b with the previous
+      r2.blocks[b-1] = r2.blocks[b-1].concat(r2.blocks[b]);
+      r2.blocks.splice(b, 1);
+    }
+    $("rowtext").value = rowToText(r2); renderChips(); updateInfo(); renderTabs(); updateCode();
+  });
+  $("editor").querySelectorAll(".insert").forEach(el => el.onclick = () => {
+    const b = +el.dataset.b, i = +el.dataset.i;
+    const blk = r2.blocks[b];
+    const prev = blk[i-1], guess = prev && /^\d+$/.test(prev.id) ? String(+prev.id + 1) : "";
+    const v = prompt("New seat id (suffix w/x to mark):", guess);
+    if (v === null || !v.trim()) return;
+    const t = v.trim(); const w = t.match(/^(\d+)([wWxX])$/);
+    blk.splice(i, 0, w ? { id:w[1], mark:w[2].toUpperCase() } : { id:t, mark:"" });
+    $("rowtext").value = rowToText(r2); renderChips(); updateInfo(); renderTabs(); updateCode();
+  });
+  $("editor").querySelectorAll(".seat").forEach(el => el.onclick = () => {
+    const b = +el.dataset.b, i = +el.dataset.i, s = r2.blocks[b][i];
+    selSeat = { b, i };
+    $("editor").querySelectorAll(".seat").forEach(x => x.classList.remove("sel"));
+    el.classList.add("sel");
+    const v = prompt(`Edit "${s.id}" (blank deletes; suffix w/x marks; ←/→ move).`, s.id + (s.mark ? s.mark.toLowerCase() : ""));
+    if (v === null) return;
+    const t = v.trim();
+    if (t === "<" || t === "←") { move(b, i, -1); return; }
+    if (t === ">" || t === "→") { move(b, i, +1); return; }
+    if (!t) { r2.blocks[b].splice(i, 1); if (!r2.blocks[b].length && r2.blocks.length > 1) r2.blocks.splice(b, 1); }
+    else { const w = t.match(/^(\d+)([wWxX])$/); if (w) { s.id = w[1]; s.mark = w[2].toUpperCase(); } else { s.id = t; s.mark = ""; } }
+    $("rowtext").value = rowToText(r2); renderChips(); updateInfo(); renderTabs(); updateCode();
+  });
+}
+function move(b, i, d) {
+  const r = model[sel.z].rows[sel.r], blk = r.blocks[b], j = i + d;
+  if (j < 0 || j >= blk.length) return;
+  [blk[i], blk[j]] = [blk[j], blk[i]];
+  $("rowtext").value = rowToText(r); renderChips(); updateInfo(); renderTabs(); updateCode();
+}
+function updateCode() { $("code").value = rowCode(model[sel.z].rows[sel.r]); }
+
+function toJSONRow(r) {
+  const marks = {};
+  const blocks = r.blocks.filter(b => b.length).map(b => ({
+    seats: b.map(s => { if (s.mark) marks[s.id] = s.mark; return s.id; }),
+  }));
+  const jr = { row: r.row, blocks };
+  if (Object.keys(marks).length) jr.marks = marks;
+  const inf = Object.fromEntries(Object.entries(r.inferred).filter(([k]) => r.blocks.some(b => b.some(s => s.id === k))));
+  if (Object.keys(inf).length) jr.inferred_numbers = inf;
+  return jr;
+}
+function editedDoc() {
+  const out = JSON.parse(JSON.stringify(doc));
+  const GEOM = ["arc", "view", "offset", "start", "end", "inner", "outer", "blocked"];
+  out.zones.forEach((z, i) => {
+    const src = doc.zones[i].rows;                 // the geometry, edited in the Geometry tab
+    z.rows = model[i].rows.map((r, ri) => {
+      const jr = toJSONRow(r), sb = src[ri];
+      if (sb && sb.blocks.length === jr.blocks.length) {
+        jr.blocks.forEach((b, bi) => {
+          for (const k of GEOM) if (sb.blocks[bi][k] != null) b[k] = sb.blocks[bi][k];
+        });
+        if (sb.offset != null) jr.offset = sb.offset;
+      }
+      return jr;
+    });
+  });
+  return out;
+}
+function rowsBlock() {
+  const z = model[sel.z], marksAll = [];
+  const lines = z.rows.map(r => rowCode(r).replace(/,$/, "") + ",");
+  return "rows = [\n" + lines.join("\n") + "\n]";
+}
+$("copyrow").onclick = () => { navigator.clipboard.writeText($("code").value); $("status").textContent = "row copied"; };
+$("copyall").onclick = () => {
+  const z = model[sel.z];
+  $("code").value = z.rows.map(rowCode).join("\n");
+  navigator.clipboard.writeText($("code").value);
+  $("status").textContent = `${z.rows.length} rows copied`;
+};
+$("copyrows").onclick = () => {
+  $("code").value = rowsBlock();
+  navigator.clipboard.writeText($("code").value);
+  $("status").textContent = "rows = [ … ] copied — paste into venues/<id>.py";
+};
+$("dl").onclick = () => {
+  const blob = new Blob([JSON.stringify(editedDoc(), null, 1)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${$("venue").value}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+  $("status").textContent = `downloaded ${$("venue").value}.json — save it over data/${$("venue").value}.json`;
+};
+$("venue").onchange = () => { history.replaceState(null,"",`?venue=${$("venue").value}`); load($("venue").value); };
+document.querySelectorAll("#tabbar button").forEach(b => b.onclick = () => { tab = b.dataset.tab; renderAll(); });
+boot();
+})();
+</script>
+</body>
+</html>

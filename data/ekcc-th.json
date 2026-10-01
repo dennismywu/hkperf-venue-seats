@@ -1,0 +1,1376 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.5",
+ "venue": {
+  "id": "ekcc-th",
+  "name_en": "East Kowloon Cultural Centre, The Theatre",
+  "name_zh": "東九文化中心 劇場"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.ekcc.hk/documents/venue_detail/hiring/the-theatre/index/SeatsPlan-T2.pdf",
+  "file": "SeatsPlan-T2.pdf",
+  "sha256": "a46d05c5614fe0a9e8d37c3fca0724d57ffcdbb2c528e6dc1f6c849e32f2e48f",
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [],
+ "location": {
+  "address_en": "60 Ngau Tau Kok Road, Kowloon, Hong Kong",
+  "address_zh": "九龍牛頭角牛頭角道60號",
+  "district": "Kwun Tong",
+  "latitude": 22.32427,
+  "longitude": 114.21494,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "826817392",
+   "name_in_source": "East Kowloon Cultural Centre (The Theatre)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "East Kowloon Cultural Centre"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "arrangement": "arc",
+  "arc": {
+   "stage_span": 100,
+   "rotate_seats": true,
+   "ring_gap": 1.6,
+   "centre": [
+    420,
+    440
+   ]
+  },
+  "note": "A round hall: the stage sits in an opening at the top and the seats wrap it in concentric rings. Rows A-L with no row I; each row runs anticlockwise from seat 1 near true bearing 310 around the front to the last seat near bearing 50.",
+  "aisles": [
+   88.0,
+   112.3,
+   134.2,
+   159.1,
+   169.1,
+   180.5,
+   202.3,
+   226.4,
+   248.0,
+   271.8
+  ],
+  "pitch": 24.6
+ },
+ "marks": {
+  "W": "Seat suitable for audience on wheelchairs (box prints W, no number)",
+  "X": "Management seat (crossed box, no number)"
+ },
+ "printed_totals": {
+  "Theatre": 536,
+  "Total": 536
+ },
+ "zones": [
+  {
+   "name": "Theatre",
+   "name_zh": "劇場",
+   "arc": {
+    "start": 310,
+    "span": 260,
+    "dir": "ccw"
+   },
+   "rows": [
+    {
+     "row": "A",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "view": 90.0,
+       "offset": 136.1,
+       "start": 301.8,
+       "end": 271.8,
+       "inner": 139.4,
+       "outer": 160.1
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8"
+       ],
+       "arc": "a1",
+       "offset": 136.1,
+       "view": 90.0,
+       "inner": 137.4,
+       "outer": 143.6
+      },
+      {
+       "seats": [
+        "19",
+        "20",
+        "21"
+       ],
+       "arc": "a2",
+       "offset": 129.9,
+       "view": 0.0,
+       "inner": 132.5,
+       "outer": 140.4
+      },
+      {
+       "seats": [
+        "28",
+        "29",
+        "30"
+       ],
+       "arc": "a3",
+       "offset": 129.9,
+       "view": 0.0,
+       "inner": 131.9,
+       "outer": 139.1
+      },
+      {
+       "seats": [
+        "43",
+        "44",
+        "45"
+       ],
+       "arc": "a4",
+       "offset": 132.3,
+       "view": 270.0,
+       "inner": 133.7,
+       "outer": 140.0
+      },
+      {
+       "seats": [
+        "50",
+        "51",
+        "52",
+        "53",
+        "54"
+       ],
+       "view": 270.0,
+       "offset": 132.3,
+       "start": 88.0,
+       "end": 57.5,
+       "inner": 135.7,
+       "outer": 156.9
+      }
+     ],
+     "offset": 0.0
+    },
+    {
+     "row": "B",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "view": 89.9,
+       "offset": 160.9,
+       "start": 294.3,
+       "end": 271.8,
+       "inner": 163.8,
+       "outer": 176.7
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11"
+       ],
+       "arc": "a1",
+       "offset": 161.7,
+       "inner": 159.8,
+       "outer": 167.5
+      },
+      {
+       "seats": [
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ],
+       "arc": "a2",
+       "offset": 157.9,
+       "inner": 155.6,
+       "outer": 165.3
+      },
+      {
+       "seats": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33"
+       ],
+       "arc": "a3",
+       "offset": 156.6,
+       "inner": 155.0,
+       "outer": 163.3
+      },
+      {
+       "seats": [
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45"
+       ],
+       "arc": "a4",
+       "offset": 158.9,
+       "inner": 158.1,
+       "outer": 165.2
+      },
+      {
+       "seats": [
+        "50",
+        "51",
+        "52",
+        "53"
+       ],
+       "view": 270.1,
+       "offset": 157.1,
+       "start": 88.0,
+       "end": 65.2,
+       "inner": 160.1,
+       "outer": 173.3
+      }
+     ],
+     "offset": 24.6
+    },
+    {
+     "row": "C",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3"
+       ],
+       "view": 90.0,
+       "offset": 185.1,
+       "start": 287.2,
+       "end": 271.8,
+       "inner": 187.5,
+       "outer": 193.7
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ],
+       "arc": "a1",
+       "offset": 186.2,
+       "inner": 184.8,
+       "outer": 195.4
+      },
+      {
+       "seats": [
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22"
+       ],
+       "arc": "a2",
+       "offset": 182.3,
+       "inner": 179.9,
+       "outer": 192.0
+      },
+      {
+       "seats": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+       ],
+       "arc": "a3",
+       "offset": 181.3,
+       "inner": 179.4,
+       "outer": 191.2
+      },
+      {
+       "seats": [
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46"
+       ],
+       "arc": "a4",
+       "offset": 183.7,
+       "inner": 182.5,
+       "outer": 192.6
+      },
+      {
+       "seats": [
+        "50",
+        "51",
+        "52"
+       ],
+       "view": 270.0,
+       "offset": 182.6,
+       "start": 88.0,
+       "end": 72.6,
+       "inner": 185.0,
+       "outer": 191.3
+      }
+     ],
+     "offset": 49.2
+    },
+    {
+     "row": "D",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3"
+       ],
+       "view": 90.0,
+       "offset": 209.7,
+       "start": 285.2,
+       "end": 271.8,
+       "inner": 211.8,
+       "outer": 217.3
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9"
+       ],
+       "view": 90.1,
+       "offset": 209.6,
+       "start": 271.8,
+       "end": 253.7,
+       "inner": 210.5,
+       "outer": 218.5
+      },
+      {
+       "seats": [
+        "10"
+       ],
+       "start": 253.7,
+       "end": 248.0,
+       "view": 90.1,
+       "offset": 209.6,
+       "inner": 210.5,
+       "outer": 218.5
+      },
+      {
+       "seats": [
+        "11",
+        "12",
+        "13"
+       ],
+       "arc": "a5",
+       "offset": 206.2
+      },
+      {
+       "seats": [
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23"
+       ],
+       "arc": "a2",
+       "offset": 205.9,
+       "inner": 203.2,
+       "outer": 216.6
+      },
+      {
+       "seats": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+       ],
+       "arc": "a3",
+       "offset": 204.8,
+       "inner": 202.7,
+       "outer": 216.8
+      },
+      {
+       "seats": [
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47"
+       ],
+       "arc": "a4",
+       "offset": 208.1,
+       "inner": 207.3,
+       "outer": 218.8
+      },
+      {
+       "seats": [
+        "50",
+        "51",
+        "52"
+       ],
+       "view": 270.0,
+       "offset": 206.9,
+       "start": 88.0,
+       "end": 74.6,
+       "inner": 209.0,
+       "outer": 214.6
+      }
+     ],
+     "offset": 73.8
+    },
+    {
+     "row": "E",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3"
+       ],
+       "view": 90.0,
+       "offset": 234.9,
+       "start": 283.7,
+       "end": 271.8,
+       "inner": 236.9,
+       "outer": 241.8
+      },
+      {
+       "seats": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15"
+       ],
+       "arc": "a1",
+       "offset": 236.4,
+       "inner": 234.1,
+       "outer": 248.9
+      },
+      {
+       "seats": [
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25"
+       ],
+       "arc": "a2",
+       "offset": 231.4,
+       "inner": 227.9,
+       "outer": 245.2
+      },
+      {
+       "seats": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37"
+       ],
+       "arc": "a3",
+       "offset": 230.2,
+       "inner": 227.5,
+       "outer": 243.4
+      },
+      {
+       "seats": [
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52"
+       ],
+       "view": 280.5,
+       "offset": 227.9,
+       "start": 134.2,
+       "end": 76.1,
+       "inner": 232.3,
+       "outer": 246.3
+      }
+     ],
+     "offset": 98.4
+    },
+    {
+     "row": "F",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ],
+       "view": 69.2,
+       "offset": 261.1,
+       "start": 266.6,
+       "end": 226.4,
+       "inner": 258.7,
+       "outer": 275.9
+      },
+      {
+       "seats": [
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27"
+       ],
+       "arc": "a2",
+       "offset": 256.5,
+       "inner": 251.9,
+       "outer": 271.4
+      },
+      {
+       "seats": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39"
+       ],
+       "arc": "a3",
+       "offset": 255.1,
+       "inner": 251.5,
+       "outer": 269.6
+      },
+      {
+       "seats": [
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51"
+       ],
+       "view": 290.3,
+       "offset": 258.0,
+       "start": 134.2,
+       "end": 93.5,
+       "inner": 256.5,
+       "outer": 273.0
+      }
+     ],
+     "offset": 123.0
+    },
+    {
+     "row": "G",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "view": 77.4,
+       "offset": 297.0,
+       "start": 274.8,
+       "end": 248.0,
+       "inner": 292.6,
+       "outer": 310.7
+      },
+      {
+       "seats": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ],
+       "arc": "a6",
+       "offset": 281.2,
+       "inner": 281.2,
+       "outer": 299.9
+      },
+      {
+       "seats": [
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29"
+       ],
+       "arc": "a7",
+       "offset": 277.1
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+       ],
+       "arc": "a8",
+       "offset": 278.9
+      },
+      {
+       "seats": [
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50"
+       ],
+       "view": 271.7,
+       "offset": 282.9,
+       "start": 112.3,
+       "end": 97.8,
+       "inner": 283.9,
+       "outer": 299.6
+      }
+     ],
+     "marks": {
+      "1": "X",
+      "2": "X"
+     },
+     "offset": 147.6
+    },
+    {
+     "row": "H",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ],
+       "arc": "a9",
+       "offset": 315.9
+      },
+      {
+       "seats": [
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26"
+       ],
+       "arc": "a6",
+       "offset": 306.6,
+       "inner": 306.6,
+       "outer": 324.2
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43"
+       ],
+       "arc": "a10",
+       "offset": 311.1,
+       "outer": 324.5
+      },
+      {
+       "seats": [
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64"
+       ],
+       "arc": "a11",
+       "offset": 304.3,
+       "inner": 304.3,
+       "outer": 323.2
+      },
+      {
+       "seats": [
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77"
+       ],
+       "view": 270.0,
+       "offset": 307.0,
+       "start": 112.3,
+       "end": 85.1,
+       "inner": 307.0,
+       "outer": 321.6
+      }
+     ],
+     "offset": 172.2
+    },
+    {
+     "row": "J",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ],
+       "arc": "a12",
+       "offset": 342.1
+      },
+      {
+       "seats": [
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28"
+       ],
+       "arc": "a6",
+       "offset": 333.4,
+       "inner": 328.0,
+       "outer": 357.7
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45"
+       ],
+       "arc": "a10",
+       "offset": 335.2
+      },
+      {
+       "seats": [
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66"
+       ],
+       "arc": "a11",
+       "offset": 329.4
+      },
+      {
+       "seats": [
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77"
+       ],
+       "arc": "a13",
+       "offset": 331.0
+      }
+     ],
+     "offset": 196.8
+    },
+    {
+     "row": "K",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ],
+       "arc": "a14",
+       "offset": 360.4
+      },
+      {
+       "seats": [
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29"
+       ],
+       "arc": "a6",
+       "offset": 355.3,
+       "inner": 355.6,
+       "outer": 377.4
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46"
+       ],
+       "arc": "a10",
+       "offset": 358.1,
+       "inner": 342.7,
+       "outer": 378.4
+      },
+      {
+       "seats": [
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67"
+       ],
+       "arc": "a11",
+       "offset": 353.1,
+       "inner": 353.2,
+       "outer": 375.9
+      },
+      {
+       "seats": [
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77"
+       ],
+       "arc": "a15",
+       "offset": 355.6
+      }
+     ],
+     "offset": 221.4
+    },
+    {
+     "row": "L",
+     "blocks": [
+      {
+       "seats": [
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29"
+       ],
+       "view": 45.0,
+       "offset": 381.4,
+       "start": 244.1,
+       "end": 197.9,
+       "inner": 381.5,
+       "outer": 403.6
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48"
+       ],
+       "view": 356.2,
+       "offset": 376.7,
+       "start": 197.9,
+       "end": 152.2,
+       "inner": 342.7,
+       "outer": 404.9
+      },
+      {
+       "seats": [
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67"
+       ],
+       "view": 315.0,
+       "offset": 380.0,
+       "start": 152.2,
+       "end": 116.3,
+       "inner": 380.1,
+       "outer": 401.3
+      }
+     ],
+     "marks": {
+      "26": "W",
+      "27": "W",
+      "28": "W",
+      "29": "W",
+      "47": "X",
+      "48": "X"
+     },
+     "offset": 246.0
+    }
+   ],
+   "vomitoria": [
+    {
+     "rows": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+     ],
+     "from": 236.5,
+     "to": 216.6,
+     "inner": 131.9,
+     "outer": 275.9,
+     "note": "Entrance (vomitorium) between seats 11 and 16; rows G-L continue across it."
+    },
+    {
+     "rows": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+     ],
+     "from": 144.4,
+     "to": 123.9,
+     "inner": 131.9,
+     "outer": 275.9,
+     "note": "Entrance (vomitorium) between seats 33 and 40; rows G-L continue across it."
+    }
+   ],
+   "arcs": [
+    {
+     "id": "a9",
+     "from": 273,
+     "to": 248,
+     "view": 79.6,
+     "offset": 143.7,
+     "inner": 309.6,
+     "outer": 335.0
+    },
+    {
+     "id": "a1",
+     "from": 272,
+     "to": 226,
+     "view": 69.3,
+     "offset": 137.1,
+     "inner": 172.3,
+     "outer": 181.4
+    },
+    {
+     "id": "a12",
+     "from": 272,
+     "to": 248,
+     "view": 79.5,
+     "offset": 145.3,
+     "inner": 334.6,
+     "outer": 360.6
+    },
+    {
+     "id": "a5",
+     "from": 248,
+     "to": 226,
+     "view": 44.7,
+     "offset": 132.4,
+     "inner": 209.2,
+     "outer": 215.5
+    },
+    {
+     "id": "a6",
+     "from": 248,
+     "to": 202,
+     "view": 45.0,
+     "offset": 134.2,
+     "inner": 317.3,
+     "outer": 340.9
+    },
+    {
+     "id": "a14",
+     "from": 248,
+     "to": 248,
+     "view": 90.0,
+     "offset": 139.0,
+     "inner": 360.8,
+     "outer": 378.3
+    },
+    {
+     "id": "a2",
+     "from": 226,
+     "to": 180,
+     "view": 20.1,
+     "offset": 133.1,
+     "inner": 191.6,
+     "outer": 204.3
+    },
+    {
+     "id": "a7",
+     "from": 202,
+     "to": 169,
+     "view": 1.2,
+     "offset": 129.5,
+     "inner": 277.0,
+     "outer": 298.5
+    },
+    {
+     "id": "a10",
+     "from": 202,
+     "to": 159,
+     "view": 1.2,
+     "offset": 138.4,
+     "inner": 315.2,
+     "outer": 352.4
+    },
+    {
+     "id": "a3",
+     "from": 180,
+     "to": 134,
+     "view": 339.6,
+     "offset": 131.9,
+     "inner": 191.1,
+     "outer": 204.0
+    },
+    {
+     "id": "a8",
+     "from": 169,
+     "to": 112,
+     "view": 315.0,
+     "offset": 131.3,
+     "inner": 278.9,
+     "outer": 296.5
+    },
+    {
+     "id": "a11",
+     "from": 159,
+     "to": 112,
+     "view": 315.0,
+     "offset": 132.1,
+     "inner": 329.4,
+     "outer": 350.4
+    },
+    {
+     "id": "a4",
+     "from": 134,
+     "to": 88,
+     "view": 290.2,
+     "offset": 134.3,
+     "inner": 170.3,
+     "outer": 178.9
+    },
+    {
+     "id": "a13",
+     "from": 112,
+     "to": 87,
+     "view": 270.0,
+     "offset": 134.2,
+     "inner": 331.0,
+     "outer": 347.6
+    },
+    {
+     "id": "a15",
+     "from": 112,
+     "to": 88,
+     "view": 270.0,
+     "offset": 134.2,
+     "inner": 355.6,
+     "outer": 373.8
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Theatre": {
+   "boxes": 540,
+   "management_X": 4,
+   "wheelchair_W": 4,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 536,
+   "printed": 536
+  }
+ }
+}
