@@ -1,0 +1,370 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.4",
+ "venue": {
+  "id": "tpcc-bb-tv",
+  "name_en": "Tai Po Civic Centre Black Box Theatre (transverse stage)",
+  "name_zh": "大埔文娛中心 黑盒劇場（橫向舞台）"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.lcsd.gov.hk/en/tpcc/common/doc/bbt2.pdf",
+  "file": "bbt2.pdf",
+  "sha256": "5ccfe726b243e68c9a54257768b1e1439c030e1ed0b31c14154bab5cd8a668e9",
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [
+  {
+   "what": "Seat totals for each layout",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/tpcc-bbt-lfe.pdf",
+   "title": "Tai Po Civic Centre – Black Box Theatre, FULL Technical Information",
+   "document_version": "V. 2026.09.01",
+   "sha256": "a175c54c5ab5e5641847c982314e302686704b53e9491faed8b0ba0403cc83c4",
+   "retrieved": "2026-10-01",
+   "quotes": [
+    "End Stage: 130 seats",
+    "Transverse Stage :123 seats",
+    "Thrust Stage: 123 seats"
+   ],
+   "note": "Confirms all three plans' printed totals. No orchestra pit is described."
+  }
+ ],
+ "location": {
+  "address_en": "12 On Pong Road, Tai Po, New Territories, Hong Kong",
+  "address_zh": "香港新界大埔安邦路12號",
+  "district": "Tai Po",
+  "latitude": 22.45175,
+  "longitude": 114.16815,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "35510044",
+   "name_in_source": "Tai Po Civic Centre (Black Box Theatre)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Tai Po Civic Centre"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "marks": {
+  "W": "Seat suitable for audience on wheel chairs (box prints W, no number)",
+  "X": "Management seat (crossed box, no number)"
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "note": "Seating on two opposite sides of the stage. Rows A-F face the stage from the near side (seat 1 at the left) and rows AA, AB, AC from the far side (seat 1 at the right, AA nearest the stage), each split by an aisle. This is one of the room's seating layouts; the end- and thrust-stage layouts are separate seat lists.",
+  "banks": [
+   {
+    "id": "front",
+    "side": "front",
+    "seat_1": "left",
+    "rows": [
+     {
+      "row": "A",
+      "block": 1
+     },
+     {
+      "row": "B",
+      "block": 1
+     },
+     {
+      "row": "C",
+      "block": 1
+     },
+     {
+      "row": "D",
+      "block": 1
+     },
+     {
+      "row": "E",
+      "block": 1
+     },
+     {
+      "row": "F",
+      "block": 1
+     }
+    ]
+   },
+   {
+    "id": "back",
+    "side": "back",
+    "seat_1": "right",
+    "rows": [
+     {
+      "row": "AA",
+      "block": 1
+     },
+     {
+      "row": "AB",
+      "block": 1
+     },
+     {
+      "row": "AC",
+      "block": 1
+     }
+    ]
+   }
+  ]
+ },
+ "printed_totals": {
+  "Black Box Theatre": 123,
+  "Total": 123
+ },
+ "zones": [
+  {
+   "name": "Black Box Theatre",
+   "name_zh": "黑盒劇場",
+   "rows": [
+    {
+     "row": "AA",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AB",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AC",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "A",
+     "blocks": [
+      {
+       "seats": [
+        "W1",
+        "W2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "W3",
+        "W4"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W"
+     },
+     "inferred_numbers": {
+      "W1": "1",
+      "W2": "2",
+      "W3": "11",
+      "W4": "12"
+     },
+     "note": "Two wheelchair boxes print W, no number, at each end of the row: 1-2 before the printed 3, and 11-12 after the printed 10."
+    },
+    {
+     "row": "B",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "C",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "D",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "E",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "F",
+     "blocks": [
+      {
+       "seats": [
+        "X1",
+        "X2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "inferred_numbers": {
+      "X1": "1",
+      "X2": "2"
+     },
+     "note": "Two crossed management boxes, no number, at seat 1's end, between nothing and 3, so they fill 1-2 exactly."
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Black Box Theatre": {
+   "boxes": 125,
+   "management_X": 2,
+   "wheelchair_W": 4,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 123,
+   "printed": 123
+  }
+ }
+}
