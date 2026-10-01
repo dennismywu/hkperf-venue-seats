@@ -46,9 +46,12 @@ and front-of-house teams.
 | Tai Po Civic Centre Black Box Theatre: end stage (`tpcc-bb-end`) | 130 | single | no pit |
 | Tai Po Civic Centre Black Box Theatre: transverse stage (`tpcc-bb-tv`) | 123 | both sides of the stage | no pit |
 | Tai Po Civic Centre Black Box Theatre: thrust stage (`tpcc-bb-thrust`) | 123 | front + two side columns | no pit |
+| Hong Kong Film Archive Cinema (`hkfa-cinema`) | 125 (+4 wheelchair, +3 management) | single | no pit |
+| Hong Kong City Hall Concert Hall (`hkch-ch`) | 1,430 | Front Stalls 578 · Rear Stalls 465 · Balcony 387 | 1,371 (rows A–B, stated) |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
-Civic Centre Theatre, Tuen Mun and Tsuen Wan Town Hall Auditoriums). Each file says which, and gives the arithmetic.
+Civic Centre Theatre, Tuen Mun and Tsuen Wan Town Hall Auditoriums, Hong Kong City Hall Concert Hall). Each
+file says which, and gives the arithmetic.
 The Grand Theatre's pit lifts are curved: the rows that fit take whole front rows and the centre block of the row
 behind, so a pit can name one block of a row, and its part of house where row letters repeat.
 The Turns, The Lab, the Kwai Tsing Black Box Theatre, the Tai Po Civic Centre Black Box Theatre and the

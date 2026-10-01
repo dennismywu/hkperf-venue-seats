@@ -34,6 +34,8 @@
   {"id": "ktt-bb-arena", "name_en": "Kwai Tsing Theatre Black Box Theatre (arena stage)", "name_zh": "葵青劇院 黑盒劇場（四向舞台）", "region": "New Territories", "added": "2026-10-01", "file": "ktt-bb-arena.json"},
   {"id": "tpcc-bb-end", "name_en": "Tai Po Civic Centre Black Box Theatre (end stage)", "name_zh": "大埔文娛中心 黑盒劇場（單向舞台）", "region": "New Territories", "added": "2026-10-01", "file": "tpcc-bb-end.json"},
   {"id": "tpcc-bb-tv", "name_en": "Tai Po Civic Centre Black Box Theatre (transverse stage)", "name_zh": "大埔文娛中心 黑盒劇場（橫向舞台）", "region": "New Territories", "added": "2026-10-01", "file": "tpcc-bb-tv.json"},
-  {"id": "tpcc-bb-thrust", "name_en": "Tai Po Civic Centre Black Box Theatre (thrust stage)", "name_zh": "大埔文娛中心 黑盒劇場（三向舞台）", "region": "New Territories", "added": "2026-10-01", "file": "tpcc-bb-thrust.json"}
+  {"id": "tpcc-bb-thrust", "name_en": "Tai Po Civic Centre Black Box Theatre (thrust stage)", "name_zh": "大埔文娛中心 黑盒劇場（三向舞台）", "region": "New Territories", "added": "2026-10-01", "file": "tpcc-bb-thrust.json"},
+  {"id": "hkfa-cinema", "name_en": "Hong Kong Film Archive Cinema", "name_zh": "香港電影資料館 電影院", "region": "Hong Kong Island", "added": "2026-10-01", "file": "hkfa-cinema.json"},
+  {"id": "hkch-ch", "name_en": "Hong Kong City Hall Concert Hall", "name_zh": "香港大會堂 音樂廳", "region": "Hong Kong Island", "added": "2026-10-01", "file": "hkch-ch.json"}
  ]
 }

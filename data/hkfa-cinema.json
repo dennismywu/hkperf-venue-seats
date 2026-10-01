@@ -1,0 +1,313 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.4",
+ "venue": {
+  "id": "hkfa-cinema",
+  "name_en": "Hong Kong Film Archive Cinema",
+  "name_zh": "香港電影資料館 電影院"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.filmarchive.gov.hk/documents/Facilities/HKFA-Seating-Plan.pdf",
+  "file": "HKFA-Seating-Plan.pdf",
+  "sha256": "6699fcedd0c912a2ebf43353f7311eea4677bd137a5cafd34b3e42ab802763e4",
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [
+  {
+   "what": "Seating capacity",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.filmarchive.gov.hk/en/web/hkfa/facilities.html",
+   "title": "Hong Kong Film Archive – Cinema and Exhibition Hall (facilities page)",
+   "retrieved": "2026-10-01",
+   "quotes": [
+    "Seating capacity: 125 seats and 4 wheelchair spaces"
+   ],
+   "note": "Confirms the plan's 125 seats and four wheelchair boxes; the plan adds 3 management seats (128 with them), which LCSD's page does not count."
+  }
+ ],
+ "location": {
+  "address_en": "50 Lei King Road, Sai Wan Ho, Hong Kong",
+  "address_zh": "香港西灣河鯉景道50號",
+  "district": "Eastern",
+  "latitude": 22.285056,
+  "longitude": 114.222075,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "75010017",
+   "name_in_source": "Hong Kong Film Archive (Cinema)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Hong Kong Film Archive"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "note": "Drawn with the screen at the top. Seat 1 is at the left-hand end of each row and blocks are listed from that side; the rows are drawn in arcs, so positions are not preserved. Rows A-H with no row I. The plan names no seating areas, only the space (電影院 CINEMA), so there is one zone."
+ },
+ "marks": {
+  "W": "Seat suitable for audience on wheelchairs (box prints W, no number)",
+  "X": "Management seat (crossed grey box, no number)"
+ },
+ "printed_totals": {
+  "Cinema": 125,
+  "Total": 125
+ },
+ "zones": [
+  {
+   "name": "Cinema",
+   "name_zh": "電影院",
+   "rows": [
+    {
+     "row": "A",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "X1"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X"
+     },
+     "note": "A crossed management box, no number, ends the row after 16; nothing follows it, so it keeps no number."
+    },
+    {
+     "row": "B",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "C",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "D",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "E",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "F",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "G",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "H",
+     "blocks": [
+      {
+       "seats": [
+        "W1",
+        "W2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "X1",
+        "X2",
+        "W3",
+        "W4"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W",
+      "X1": "X",
+      "X2": "X"
+     },
+     "inferred_numbers": {
+      "W1": "1",
+      "W2": "2"
+     },
+     "note": "Two wheelchair boxes print W, no number, at seat 1's end, between nothing and 3, so they fill 1-2 exactly. Two crossed management boxes follow 9, then two more wheelchair boxes end the row; none of these carries a number."
+    }
+   ],
+   "count_excludes": [
+    "W"
+   ],
+   "count_note": "The plan's \"Total No. of Seats (excluding Wheelchair Seats)\" is 125 and leaves the four wheelchair boxes out; with the 3 management seats its other figure is 128. Counted here as every box less the 3 management seats and the 4 wheelchair boxes = 125, as the plan's own total gives it."
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Cinema": {
+   "boxes": 132,
+   "management_X": 3,
+   "wheelchair_W": 4,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 129,
+   "counted_without_W": 125,
+   "exception": "The plan's \"Total No. of Seats (excluding Wheelchair Seats)\" is 125 and leaves the four wheelchair boxes out; with the 3 management seats its other figure is 128. Counted here as every box less the 3 management seats and the 4 wheelchair boxes = 125, as the plan's own total gives it.",
+   "printed": 125
+  }
+ }
+}
