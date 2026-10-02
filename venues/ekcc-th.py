@@ -48,9 +48,11 @@ finish({
     "layout": {
         "seat_1_side": "left",
         "arrangement": "arc",
-        "arc": {"stage_span": 100, "rotate_seats": True, "ring_gap": 1.6},
+        # scale: the plan's seat pitch is 13.5 units and the viewer's seats are 15 wide, so the plan is
+        # drawn 1.25x larger to leave a gap between seats (geometry from tools/derive_runs.py)
+        "arc": {"stage_span": 100, "rotate_seats": True, "ring_gap": 1.6, "scale": 1.25, "centre": [420, 440]},
         "note": "A round hall: the stage sits in an opening at the top and the seats wrap it in "
-                "concentric rings. Rows A-L with no row I; each row runs anticlockwise from seat 1 near "
+                "rings of straight runs. Rows A-L with no row I; each row runs anticlockwise from seat 1 near "
                 "true bearing 310 around the front to the last seat near bearing 50.",
     },
     "marks": {
@@ -62,5 +64,12 @@ finish({
         "name": "Theatre", "name_zh": "\u5287\u5834",
         "arc": {"start": 310, "span": 260, "dir": "ccw"},
         "rows": rows,
+        # bearings and radii are recut by tools/derive_runs.py to the clear gap between the seats
+        "vomitoria": [
+            {"rows": list("ABCDEF"), "from": 230, "to": 222, "inner": 0, "outer": 0,
+             "note": "Entrance (vomitorium) between seats 11 and 16; rows G-L continue across it."},
+            {"rows": list("ABCDEF"), "from": 138, "to": 130, "inner": 0, "outer": 0,
+             "note": "Entrance (vomitorium) between seats 33 and 40; rows G-L continue across it."},
+        ],
     }],
 })

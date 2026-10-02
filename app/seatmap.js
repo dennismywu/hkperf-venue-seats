@@ -635,15 +635,21 @@ function drawArcMap(doc) {
     const tier = za.tier ?? 0, ring0 = za.ring ?? 0;
     // a block may reference a shared arc (aisle interval) and carry only overrides; resolve it here
     const arcsById = Object.fromEntries((z.arcs || []).map(a => [a.id, a]));
+    // layout.arc.scale enlarges the plan's units (radii and offsets) so seats drawn S wide fit the plan's
+    // seat pitch; bearings are unchanged
+    const k = arc.scale ?? 1;
+    const sc = v => v == null ? v : v * k;
     const geom = (row, b) => {
       const a = b.arc ? arcsById[b.arc] : null;
       return {
+        shape: b.shape ?? a?.shape,
         view: b.view ?? a?.view,
-        offset: b.offset ?? a?.offset ?? 0,      // the radius is kept per block; the arc shares the rest
-        start: a ? a.from : b.start,
-        end: a ? a.to : b.end,
-        inner: b.inner ?? a?.inner,
-        outer: b.outer ?? a?.outer,
+        offset: sc(b.offset ?? a?.offset ?? 0),  // the radius is kept per block; the arc shares the rest
+        radius: sc(b.radius),
+        start: b.start ?? a?.from,                // a block may override its arc's aisle bounds
+        end: b.end ?? a?.to,
+        inner: sc(b.inner ?? a?.inner),
+        outer: sc(b.outer ?? a?.outer),
       };
     };
     // start = bearing of seat 1; dir cw (increasing bearing, clockwise) or ccw; span in degrees
@@ -655,10 +661,24 @@ function drawArcMap(doc) {
       maxR = Math.max(maxR, radius);
       // a row whose blocks each carry a view axis is drawn as straight runs (a non-radial row):
       // each block faces `view` at distance `offset`, its seats evenly spaced from `start` to `end`
-      if (row.blocks.length && row.blocks.every(b => { const g = geom(row, b); return g.view != null && g.start != null && g.end != null; })) {
+      if (row.blocks.length && row.blocks.every(b => { const g = geom(row, b); return b.runs?.length || (g.view != null && g.start != null && g.end != null); })) {
         let firstP = null, lastP = null;
-        row.blocks.forEach(block => {
-          const g = geom(row, block);
+        // a block whose seats bend (a straight run, a turned corner seat, another straight run) lists
+        // its pieces as runs: each takes the next `count` seats and carries its own shape and geometry
+        const pieces = block => {
+          const items = [...(block.seats || []).map(id => ({ id })),
+                         ...((block.blocked && block.blocked.skipped_numbers) || []).map(id => ({ id, blocked: true }))];
+          if (!block.runs?.length) return [{ g: geom(row, block), items }];
+          let at = 0;
+          return block.runs.map(r => {
+            const g = { shape: r.shape ?? "line", view: r.view, offset: sc(r.offset), radius: sc(r.radius),
+                        start: r.start, end: r.end, inner: sc(block.inner), outer: sc(block.outer) };
+            const part = items.slice(at, at + r.count); at += r.count;
+            return { g, items: part };
+          });
+        };
+        row.blocks.forEach(block => pieces(block).forEach(({ g, items }, pi, all) => {
+          const lastPiece = pi === all.length - 1;
           const bo = (g.view + 180) % 360;          // outward normal bearing
           // chord mode places seats on a straight line perpendicular to the view axis at
           // distance g.offset; good when the block's angular span is narrow. For wide
@@ -667,9 +687,12 @@ function drawArcMap(doc) {
           // closer to centre than they belong. Switch to arc mode when the span is wide:
           // each seat sits on the circle of radius R = g.offset / cos(half_span), rotated
           // to the tangent at its own bearing.
+          // A block with an explicit shape ("line" or "arc") says which, and its start/end are then the
+          // bearings of its first and last seat centres (no aisle inset); an arc block may give its radius.
           const spanDeg = Math.abs(((g.end - g.start + 540) % 360) - 180);
-          const useArc = spanDeg > 20;
-          const seatR = useArc ? g.offset / Math.cos(spanDeg / 2 * RAD) : g.offset;
+          const useArc = g.shape ? g.shape === "arc" : spanDeg > 20;
+          const exact = !!g.shape;
+          const seatR = useArc ? (g.radius ?? g.offset / Math.cos(spanDeg / 2 * RAD)) : g.offset;
           const at = bearing => {
             if (useArc) return [seatR * Math.sin(bearing * RAD), -seatR * Math.cos(bearing * RAD)];
             const d = g.offset / Math.cos((bearing - bo) * RAD);
@@ -677,7 +700,7 @@ function drawArcMap(doc) {
           };
           const P0 = at(g.start), P1 = at(g.end);
           if (!firstP) firstP = P0;
-          lastP = P1;
+          if (lastPiece) lastP = P1;
           // developer overlay: the block's axis, its shared-aisle ends and its inner/outer boundaries
           const marked = block.arc ? { "data-arc": block.arc } : {};
           el("line", { class: "dev-axis", ...marked, x1: P0[0], y1: P0[1], x2: P1[0], y2: P1[1] }, devg);
@@ -694,18 +717,17 @@ function drawArcMap(doc) {
             el("path", { class: cls, ...marked, d: arcPath(r) }, devg);
           }
           const lt = el("text", { class: "dev-label", ...marked, x: (P0[0] + P1[0]) / 2, y: (P0[1] + P1[1]) / 2 }, devg);
-          lt.textContent = `${g.view}° o${g.offset} [${g.inner}-${g.outer}]`;
-          const items = [...(block.seats || []).map(id => ({ id })),
-                         ...((block.blocked && block.blocked.skipped_numbers) || []).map(id => ({ id, blocked: true }))];
+          lt.textContent = `${g.shape ?? ""} ${g.view}° o${g.offset} [${g.inner}-${g.outer}]`;
           const n = items.length;
           // In chord mode seats interpolate linearly between the two chord endpoints, inset
           // by half an aisle. In arc mode they interpolate in BEARING along the arc, also
           // inset by half an aisle (converted to degrees along the circle); each seat
           // rotates to its own tangent so the whole run follows the ring.
           const dx = P1[0] - P0[0], dy = P1[1] - P0[1], L = Math.hypot(dx, dy) || 1;
-          const gx = dx / L * S * 0.6, gy = dy / L * S * 0.6;
+          const inset = exact ? 0 : S * 0.6;
+          const gx = dx / L * inset, gy = dy / L * inset;
           const Ax = P0[0] + gx, Ay = P0[1] + gy, Bx = P1[0] - gx, By = P1[1] - gy;
-          const bearingInset = useArc ? Math.atan2(S * 0.6, seatR) / RAD : 0;
+          const bearingInset = useArc ? Math.atan2(inset, seatR) / RAD : 0;
           const bStart = useArc ? g.start + (g.end > g.start ? bearingInset : -bearingInset) : null;
           const bEnd = useArc ? g.end + (g.end > g.start ? -bearingInset : bearingInset) : null;
           items.forEach((it, i) => {
@@ -715,12 +737,15 @@ function drawArcMap(doc) {
               const deg = bStart + (bEnd - bStart) * t;
               x = seatR * Math.sin(deg * RAD);
               y = -seatR * Math.cos(deg * RAD);
-              rot = deg + 90;
+              rot = deg + 180;                      // along the tangent: level at the front (bearing 180)
             } else {
               x = Ax + (Bx - Ax) * t;
               y = Ay + (By - Ay) * t;
-              rot = bo + 90;
+              rot = g.view;                         // along the run, as the plan prints its numbers
             }
+            // a seat is square, so turning it a half turn changes nothing but keeps its number upright
+            rot = ((rot % 360) + 360) % 360;
+            if (rot > 90 && rot <= 270) rot -= 180;
             remember(x, y);
             if (it.blocked) {
               const g2 = el("g", { class: "seat blocked" }, svg);
@@ -732,7 +757,7 @@ function drawArcMap(doc) {
               seatG.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? rot : 0})`);
             }
           });
-        });
+        }));
         for (const P of [firstP, lastP]) {
           const t = el("text", { class: "rowlabel", x: P[0], y: P[1] - S, "text-anchor": "middle" }, svg);
           t.textContent = row.row;
@@ -778,7 +803,7 @@ function drawArcMap(doc) {
   }
   // vomitoria: entrances that cut an angular gap through some rows only (drawn as a shaded wedge)
   for (const z of doc.zones) (z.vomitoria || []).forEach((v, vi) => {
-    const r0 = v.inner ?? 0, r1 = v.outer ?? 0;
+    const r0 = (v.inner ?? 0) * (arc.scale ?? 1), r1 = (v.outer ?? 0) * (arc.scale ?? 1);
     const a0 = Math.min(v.from, v.to), a1 = Math.max(v.from, v.to);
     const large = (a1 - a0) > 180 ? 1 : 0;
     const [x0, y0] = pos(r0, a0), [x1, y1] = pos(r0, a1), [x2, y2] = pos(r1, a1), [x3, y3] = pos(r1, a0);

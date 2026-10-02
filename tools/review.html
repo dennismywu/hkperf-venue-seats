@@ -505,7 +505,7 @@ function toJSONRow(r) {
 }
 function editedDoc() {
   const out = JSON.parse(JSON.stringify(doc));
-  const GEOM = ["arc", "view", "offset", "start", "end", "inner", "outer", "blocked"];
+  const GEOM = ["arc", "shape", "runs", "radius", "view", "offset", "start", "end", "inner", "outer", "blocked"];
   out.zones.forEach((z, i) => {
     const src = doc.zones[i].rows;                 // the geometry, edited in the Geometry tab
     z.rows = model[i].rows.map((r, ri) => {

@@ -46,25 +46,25 @@
    "stage_span": 100,
    "rotate_seats": true,
    "ring_gap": 1.6,
+   "scale": 1.25,
    "centre": [
     420,
     440
    ]
   },
-  "note": "A round hall: the stage sits in an opening at the top and the seats wrap it in concentric rings. Rows A-L with no row I; each row runs anticlockwise from seat 1 near true bearing 310 around the front to the last seat near bearing 50.",
+  "note": "A round hall: the stage sits in an opening at the top and the seats wrap it in rings of straight runs. Rows A-L with no row I; each row runs anticlockwise from seat 1 near true bearing 310 around the front to the last seat near bearing 50.",
   "aisles": [
-   88.0,
-   112.3,
+   88.1,
+   111.9,
    134.2,
-   159.1,
-   169.1,
-   180.5,
-   202.3,
+   158.7,
+   169.2,
+   180.6,
+   201.7,
    226.4,
-   248.0,
+   248.3,
    271.8
-  ],
-  "pitch": 24.6
+  ]
  },
  "marks": {
   "W": "Seat suitable for audience on wheelchairs (box prints W, no number)",
@@ -95,12 +95,13 @@
         "4",
         "5"
        ],
+       "shape": "line",
        "view": 90.0,
-       "offset": 136.1,
-       "start": 301.8,
-       "end": 271.8,
-       "inner": 139.4,
-       "outer": 160.1
+       "offset": 136.08,
+       "start": 301.77,
+       "end": 282.51,
+       "inner": 127.8,
+       "outer": 173.5
       },
       {
        "seats": [
@@ -108,11 +109,13 @@
         "7",
         "8"
        ],
-       "arc": "a1",
-       "offset": 136.1,
+       "shape": "line",
        "view": 90.0,
-       "inner": 137.4,
-       "outer": 143.6
+       "offset": 136.08,
+       "start": 262.19,
+       "end": 251.4,
+       "inner": 126.5,
+       "outer": 156.1
       },
       {
        "seats": [
@@ -120,11 +123,13 @@
         "20",
         "21"
        ],
-       "arc": "a2",
-       "offset": 129.9,
+       "shape": "line",
        "view": 0.0,
-       "inner": 132.5,
-       "outer": 140.4
+       "offset": 129.89,
+       "start": 202.36,
+       "end": 191.44,
+       "inner": 121.1,
+       "outer": 153.3
       },
       {
        "seats": [
@@ -132,11 +137,13 @@
         "29",
         "30"
        ],
-       "arc": "a3",
-       "offset": 129.9,
+       "shape": "line",
        "view": 0.0,
-       "inner": 131.9,
-       "outer": 139.1
+       "offset": 129.89,
+       "start": 170.09,
+       "end": 159.01,
+       "inner": 120.7,
+       "outer": 151.8
       },
       {
        "seats": [
@@ -144,11 +151,13 @@
         "44",
         "45"
        ],
-       "arc": "a4",
-       "offset": 132.3,
+       "shape": "line",
        "view": 270.0,
-       "inner": 133.7,
-       "outer": 140.0
+       "offset": 132.34,
+       "start": 109.09,
+       "end": 98.03,
+       "inner": 122.7,
+       "outer": 152.6
       },
       {
        "seats": [
@@ -158,15 +167,15 @@
         "53",
         "54"
        ],
+       "shape": "line",
        "view": 270.0,
-       "offset": 132.3,
-       "start": 88.0,
-       "end": 57.5,
-       "inner": 135.7,
-       "outer": 156.9
+       "offset": 132.34,
+       "start": 77.15,
+       "end": 57.51,
+       "inner": 124.2,
+       "outer": 170.3
       }
-     ],
-     "offset": 0.0
+     ]
     },
     {
      "row": "B",
@@ -178,12 +187,13 @@
         "3",
         "4"
        ],
-       "view": 89.9,
-       "offset": 160.9,
-       "start": 294.3,
-       "end": 271.8,
-       "inner": 163.8,
-       "outer": 176.7
+       "shape": "line",
+       "view": 89.92,
+       "offset": 160.88,
+       "start": 294.33,
+       "end": 280.73,
+       "inner": 152.4,
+       "outer": 189.6
       },
       {
        "seats": [
@@ -194,10 +204,26 @@
         "10",
         "11"
        ],
-       "arc": "a1",
-       "offset": 161.7,
-       "inner": 159.8,
-       "outer": 167.5
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 90.0,
+         "offset": 160.94,
+         "start": 263.38,
+         "end": 254.11
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 44.7,
+         "offset": 156.49,
+         "start": 245.58,
+         "end": 236.45
+        }
+       ],
+       "inner": 148.4,
+       "outer": 180.2
       },
       {
        "seats": [
@@ -208,10 +234,26 @@
         "20",
         "21"
        ],
-       "arc": "a2",
-       "offset": 157.9,
-       "inner": 155.6,
-       "outer": 165.3
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 45.2,
+         "offset": 157.25,
+         "start": 216.63,
+         "end": 207.29
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 153.34,
+         "start": 199.21,
+         "end": 189.73
+        }
+       ],
+       "inner": 144.4,
+       "outer": 177.7
       },
       {
        "seats": [
@@ -222,10 +264,26 @@
         "32",
         "33"
        ],
-       "arc": "a3",
-       "offset": 156.6,
-       "inner": 155.0,
-       "outer": 163.3
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 153.34,
+         "start": 171.58,
+         "end": 161.99
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 314.8,
+         "offset": 154.41,
+         "start": 153.81,
+         "end": 144.38
+        }
+       ],
+       "inner": 144.0,
+       "outer": 175.8
       },
       {
        "seats": [
@@ -236,10 +294,26 @@
         "44",
         "45"
        ],
-       "arc": "a4",
-       "offset": 158.9,
-       "inner": 158.1,
-       "outer": 165.2
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 314.52,
+         "offset": 155.33,
+         "start": 123.86,
+         "end": 114.57
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 270.0,
+         "offset": 157.21,
+         "start": 106.24,
+         "end": 96.77
+        }
+       ],
+       "inner": 146.7,
+       "outer": 177.8
       },
       {
        "seats": [
@@ -248,15 +322,15 @@
         "52",
         "53"
        ],
-       "view": 270.1,
-       "offset": 157.1,
-       "start": 88.0,
-       "end": 65.2,
-       "inner": 160.1,
-       "outer": 173.3
+       "shape": "line",
+       "view": 270.08,
+       "offset": 157.14,
+       "start": 79.03,
+       "end": 65.16,
+       "inner": 148.7,
+       "outer": 186.3
       }
-     ],
-     "offset": 24.6
+     ]
     },
     {
      "row": "C",
@@ -267,12 +341,13 @@
         "2",
         "3"
        ],
+       "shape": "line",
        "view": 90.0,
-       "offset": 185.1,
-       "start": 287.2,
-       "end": 271.8,
-       "inner": 187.5,
-       "outer": 193.7
+       "offset": 185.07,
+       "start": 287.18,
+       "end": 279.26,
+       "inner": 176.4,
+       "outer": 206.0
       },
       {
        "seats": [
@@ -284,10 +359,34 @@
         "11",
         "12"
        ],
-       "arc": "a1",
-       "offset": 186.2,
-       "inner": 184.8,
-       "outer": 195.4
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 90.0,
+         "offset": 185.07,
+         "start": 264.24,
+         "end": 256.1
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 67.5,
+         "offset": 195.33,
+         "start": 248.72,
+         "end": 248.72
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 44.7,
+         "offset": 181.85,
+         "start": 243.04,
+         "end": 235.02
+        }
+       ],
+       "inner": 173.5,
+       "outer": 205.7
       },
       {
        "seats": [
@@ -299,10 +398,34 @@
         "21",
         "22"
        ],
-       "arc": "a2",
-       "offset": 182.3,
-       "inner": 179.9,
-       "outer": 192.0
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 45.2,
+         "offset": 181.77,
+         "start": 217.62,
+         "end": 209.43
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 22.5,
+         "offset": 191.9,
+         "start": 204.08,
+         "end": 204.08
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 178.0,
+         "start": 196.71,
+         "end": 188.4
+        }
+       ],
+       "inner": 168.9,
+       "outer": 202.4
       },
       {
        "seats": [
@@ -314,10 +437,34 @@
         "33",
         "34"
        ],
-       "arc": "a3",
-       "offset": 181.3,
-       "inner": 179.4,
-       "outer": 191.2
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 178.0,
+         "start": 172.73,
+         "end": 164.36
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 337.5,
+         "offset": 191.23,
+         "start": 156.91,
+         "end": 156.91
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 314.8,
+         "offset": 180.05,
+         "start": 151.26,
+         "end": 143.04
+        }
+       ],
+       "inner": 168.6,
+       "outer": 201.5
       },
       {
        "seats": [
@@ -329,10 +476,34 @@
         "45",
         "46"
        ],
-       "arc": "a4",
-       "offset": 183.7,
-       "inner": 182.5,
-       "outer": 192.6
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 314.52,
+         "offset": 179.99,
+         "start": 125.04,
+         "end": 116.89
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 292.5,
+         "offset": 192.59,
+         "start": 111.38,
+         "end": 111.38
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 270.0,
+         "offset": 182.55,
+         "start": 104.09,
+         "end": 95.84
+        }
+       ],
+       "inner": 171.3,
+       "outer": 203.0
       },
       {
        "seats": [
@@ -340,15 +511,15 @@
         "51",
         "52"
        ],
+       "shape": "line",
        "view": 270.0,
-       "offset": 182.6,
-       "start": 88.0,
+       "offset": 182.55,
+       "start": 80.61,
        "end": 72.6,
-       "inner": 185.0,
-       "outer": 191.3
+       "inner": 173.9,
+       "outer": 203.7
       }
-     ],
-     "offset": 49.2
+     ]
     },
     {
      "row": "D",
@@ -359,12 +530,13 @@
         "2",
         "3"
        ],
+       "shape": "line",
        "view": 90.0,
-       "offset": 209.7,
-       "start": 285.2,
-       "end": 271.8,
-       "inner": 211.8,
-       "outer": 217.3
+       "offset": 209.71,
+       "start": 285.21,
+       "end": 278.13,
+       "inner": 200.8,
+       "outer": 229.4
       },
       {
        "seats": [
@@ -373,23 +545,25 @@
         "8",
         "9"
        ],
-       "view": 90.1,
-       "offset": 209.6,
-       "start": 271.8,
-       "end": 253.7,
-       "inner": 210.5,
-       "outer": 218.5
+       "shape": "line",
+       "view": 90.05,
+       "offset": 209.65,
+       "start": 264.83,
+       "end": 253.71,
+       "inner": 199.9,
+       "outer": 230.7
       },
       {
        "seats": [
         "10"
        ],
-       "start": 253.7,
-       "end": 248.0,
-       "view": 90.1,
-       "offset": 209.6,
-       "inner": 210.5,
-       "outer": 218.5
+       "shape": "line",
+       "view": 67.5,
+       "offset": 221.86,
+       "start": 248.64,
+       "end": 248.64,
+       "inner": 211.9,
+       "outer": 232.2
       },
       {
        "seats": [
@@ -397,8 +571,13 @@
         "12",
         "13"
        ],
-       "arc": "a5",
-       "offset": 206.2
+       "shape": "line",
+       "view": 44.7,
+       "offset": 206.24,
+       "start": 241.55,
+       "end": 234.42,
+       "inner": 198.0,
+       "outer": 227.8
       },
       {
        "seats": [
@@ -411,10 +590,34 @@
         "22",
         "23"
        ],
-       "arc": "a2",
-       "offset": 205.9,
-       "inner": 203.2,
-       "outer": 216.6
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 45.2,
+         "offset": 206.35,
+         "start": 218.53,
+         "end": 211.24
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 22.5,
+         "offset": 216.47,
+         "start": 204.05,
+         "end": 204.05
+        },
+        {
+         "count": 4,
+         "shape": "line",
+         "view": 0.05,
+         "offset": 201.43,
+         "start": 198.89,
+         "end": 187.52
+        }
+       ],
+       "inner": 192.2,
+       "outer": 226.9
       },
       {
        "seats": [
@@ -427,10 +630,34 @@
         "34",
         "35"
        ],
-       "arc": "a3",
-       "offset": 204.8,
-       "inner": 202.7,
-       "outer": 216.8
+       "runs": [
+        {
+         "count": 4,
+         "shape": "line",
+         "view": 359.95,
+         "offset": 201.43,
+         "start": 173.48,
+         "end": 162.03
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 337.5,
+         "offset": 216.79,
+         "start": 156.66,
+         "end": 156.66
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 314.8,
+         "offset": 203.51,
+         "start": 149.57,
+         "end": 142.22
+        }
+       ],
+       "inner": 191.9,
+       "outer": 227.1
       },
       {
        "seats": [
@@ -443,10 +670,34 @@
         "46",
         "47"
        ],
-       "arc": "a4",
-       "offset": 208.1,
-       "inner": 207.3,
-       "outer": 218.8
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 314.52,
+         "offset": 205.07,
+         "start": 126.16,
+         "end": 118.91
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 292.5,
+         "offset": 218.78,
+         "start": 111.57,
+         "end": 111.57
+        },
+        {
+         "count": 4,
+         "shape": "line",
+         "view": 269.95,
+         "offset": 206.79,
+         "start": 106.51,
+         "end": 95.24
+        }
+       ],
+       "inner": 196.2,
+       "outer": 229.1
       },
       {
        "seats": [
@@ -454,15 +705,15 @@
         "51",
         "52"
        ],
+       "shape": "line",
        "view": 270.0,
-       "offset": 206.9,
-       "start": 88.0,
-       "end": 74.6,
-       "inner": 209.0,
-       "outer": 214.6
+       "offset": 206.86,
+       "start": 81.76,
+       "end": 74.59,
+       "inner": 198.0,
+       "outer": 226.7
       }
-     ],
-     "offset": 73.8
+     ]
     },
     {
      "row": "E",
@@ -473,12 +724,13 @@
         "2",
         "3"
        ],
+       "shape": "line",
        "view": 90.0,
-       "offset": 234.9,
-       "start": 283.7,
-       "end": 271.8,
-       "inner": 236.9,
-       "outer": 241.8
+       "offset": 234.94,
+       "start": 283.69,
+       "end": 277.32,
+       "inner": 225.9,
+       "outer": 253.8
       },
       {
        "seats": [
@@ -493,10 +745,34 @@
         "14",
         "15"
        ],
-       "arc": "a1",
-       "offset": 236.4,
-       "inner": 234.1,
-       "outer": 248.9
+       "runs": [
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 90.0,
+         "offset": 234.94,
+         "start": 265.45,
+         "end": 252.79
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 67.5,
+         "offset": 248.87,
+         "start": 248.61,
+         "end": 248.61
+        },
+        {
+         "count": 4,
+         "shape": "line",
+         "view": 44.86,
+         "offset": 231.55,
+         "start": 243.2,
+         "end": 233.33
+        }
+       ],
+       "inner": 223.0,
+       "outer": 259.2
       },
       {
        "seats": [
@@ -511,10 +787,34 @@
         "24",
         "25"
        ],
-       "arc": "a2",
-       "offset": 231.4,
-       "inner": 227.9,
-       "outer": 245.2
+       "runs": [
+        {
+         "count": 4,
+         "shape": "line",
+         "view": 45.22,
+         "offset": 230.83,
+         "start": 219.17,
+         "end": 209.09
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 22.5,
+         "offset": 245.08,
+         "start": 204.05,
+         "end": 204.05
+        },
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 226.39,
+         "start": 199.55,
+         "end": 186.63
+        }
+       ],
+       "inner": 217.1,
+       "outer": 255.5
       },
       {
        "seats": [
@@ -529,10 +829,34 @@
         "36",
         "37"
        ],
-       "arc": "a3",
-       "offset": 230.2,
-       "inner": 227.5,
-       "outer": 243.4
+       "runs": [
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 360.0,
+         "offset": 226.39,
+         "start": 174.27,
+         "end": 161.26
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 337.5,
+         "offset": 243.36,
+         "start": 156.71,
+         "end": 156.71
+        },
+        {
+         "count": 4,
+         "shape": "line",
+         "view": 314.78,
+         "offset": 228.45,
+         "start": 151.72,
+         "end": 141.59
+        }
+       ],
+       "inner": 216.8,
+       "outer": 253.7
       },
       {
        "seats": [
@@ -550,15 +874,44 @@
         "51",
         "52"
        ],
-       "view": 280.5,
-       "offset": 227.9,
-       "start": 134.2,
-       "end": 76.1,
-       "inner": 232.3,
-       "outer": 246.3
+       "runs": [
+        {
+         "count": 4,
+         "shape": "line",
+         "view": 315.14,
+         "offset": 230.0,
+         "start": 127.01,
+         "end": 117.04
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 292.5,
+         "offset": 246.24,
+         "start": 111.64,
+         "end": 111.64
+        },
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 270.0,
+         "offset": 231.75,
+         "start": 107.43,
+         "end": 94.61
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 270.0,
+         "offset": 231.75,
+         "start": 82.58,
+         "end": 76.13
+        }
+       ],
+       "inner": 221.3,
+       "outer": 256.5
       }
-     ],
-     "offset": 98.4
+     ]
     },
     {
      "row": "F",
@@ -578,12 +931,34 @@
         "11",
         "12"
        ],
-       "view": 69.2,
-       "offset": 261.1,
-       "start": 266.6,
-       "end": 226.4,
-       "inner": 258.7,
-       "outer": 275.9
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 90.0,
+         "offset": 260.02,
+         "start": 266.55,
+         "end": 252.23
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 67.5,
+         "offset": 275.86,
+         "start": 248.31,
+         "end": 248.31
+        },
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 45.19,
+         "offset": 256.65,
+         "start": 243.88,
+         "end": 232.46
+        }
+       ],
+       "inner": 247.8,
+       "outer": 286.1
       },
       {
        "seats": [
@@ -600,10 +975,34 @@
         "26",
         "27"
        ],
-       "arc": "a2",
-       "offset": 256.5,
-       "inner": 251.9,
-       "outer": 271.4
+       "runs": [
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 45.31,
+         "offset": 256.58,
+         "start": 219.71,
+         "end": 208.15
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 22.5,
+         "offset": 271.28,
+         "start": 204.14,
+         "end": 204.14
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 250.52,
+         "start": 200.55,
+         "end": 185.98
+        }
+       ],
+       "inner": 241.2,
+       "outer": 281.8
       },
       {
        "seats": [
@@ -620,10 +1019,34 @@
         "38",
         "39"
        ],
-       "arc": "a3",
-       "offset": 255.1,
-       "inner": 251.5,
-       "outer": 269.6
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 360.0,
+         "offset": 250.52,
+         "start": 174.83,
+         "end": 160.17
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 337.5,
+         "offset": 269.56,
+         "start": 156.54,
+         "end": 156.54
+        },
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 314.69,
+         "offset": 253.73,
+         "start": 152.52,
+         "end": 140.88
+        }
+       ],
+       "inner": 240.9,
+       "outer": 279.9
       },
       {
        "seats": [
@@ -640,15 +1063,36 @@
         "50",
         "51"
        ],
-       "view": 290.3,
-       "offset": 258.0,
-       "start": 134.2,
-       "end": 93.5,
-       "inner": 256.5,
-       "outer": 273.0
+       "runs": [
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 314.81,
+         "offset": 254.62,
+         "start": 127.93,
+         "end": 116.39
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 292.5,
+         "offset": 272.95,
+         "start": 111.85,
+         "end": 111.85
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 270.0,
+         "offset": 256.18,
+         "start": 108.02,
+         "end": 93.5
+        }
+       ],
+       "inner": 245.6,
+       "outer": 283.2
       }
-     ],
-     "offset": 123.0
+     ]
     },
     {
      "row": "G",
@@ -660,17 +1104,7 @@
         "3",
         "4",
         "5",
-        "6"
-       ],
-       "view": 77.4,
-       "offset": 297.0,
-       "start": 274.8,
-       "end": 248.0,
-       "inner": 292.6,
-       "outer": 310.7
-      },
-      {
-       "seats": [
+        "6",
         "7",
         "8",
         "9",
@@ -685,15 +1119,7 @@
         "18",
         "19",
         "20",
-        "21"
-       ],
-       "arc": "a6",
-       "offset": 281.2,
-       "inner": 281.2,
-       "outer": 299.9
-      },
-      {
-       "seats": [
+        "21",
         "22",
         "23",
         "24",
@@ -703,8 +1129,50 @@
         "28",
         "29"
        ],
-       "arc": "a7",
-       "offset": 277.1
+       "runs": [
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 90.0,
+         "offset": 285.14,
+         "start": 262.31,
+         "end": 252.01
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 67.5,
+         "offset": 302.95,
+         "start": 248.69,
+         "end": 248.69
+        },
+        {
+         "count": 15,
+         "shape": "line",
+         "view": 45.0,
+         "offset": 281.19,
+         "start": 245.25,
+         "end": 207.04
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 22.5,
+         "offset": 298.4,
+         "start": 203.99,
+         "end": 203.99
+        },
+        {
+         "count": 7,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 276.06,
+         "start": 200.66,
+         "end": 184.7
+        }
+       ],
+       "inner": 266.4,
+       "outer": 313.3
       },
       {
        "seats": [
@@ -722,13 +1190,7 @@
         "41",
         "42",
         "43",
-        "44"
-       ],
-       "arc": "a8",
-       "offset": 278.9
-      },
-      {
-       "seats": [
+        "44",
         "45",
         "46",
         "47",
@@ -736,19 +1198,40 @@
         "49",
         "50"
        ],
-       "view": 271.7,
-       "offset": 282.9,
-       "start": 112.3,
-       "end": 97.8,
-       "inner": 283.9,
-       "outer": 299.6
+       "runs": [
+        {
+         "count": 15,
+         "shape": "line",
+         "view": 315.0,
+         "offset": 278.94,
+         "start": 153.77,
+         "end": 115.26
+        },
+        {
+         "count": 1,
+         "shape": "line",
+         "view": 292.5,
+         "offset": 299.53,
+         "start": 111.64,
+         "end": 111.64
+        },
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 270.0,
+         "offset": 281.3,
+         "start": 108.22,
+         "end": 97.79
+        }
+       ],
+       "inner": 269.0,
+       "outer": 309.8
       }
      ],
      "marks": {
       "1": "X",
       "2": "X"
-     },
-     "offset": 147.6
+     }
     },
     {
      "row": "H",
@@ -766,8 +1249,13 @@
         "9",
         "10"
        ],
-       "arc": "a9",
-       "offset": 315.9
+       "shape": "line",
+       "view": 90.0,
+       "offset": 309.56,
+       "start": 274.85,
+       "end": 252.85,
+       "inner": 299.6,
+       "outer": 336.3
       },
       {
        "seats": [
@@ -788,10 +1276,13 @@
         "25",
         "26"
        ],
-       "arc": "a6",
-       "offset": 306.6,
-       "inner": 306.6,
-       "outer": 324.2
+       "shape": "line",
+       "view": 44.99,
+       "offset": 306.59,
+       "start": 243.73,
+       "end": 206.01,
+       "inner": 296.6,
+       "outer": 336.7
       },
       {
        "seats": [
@@ -810,9 +1301,13 @@
         "42",
         "43"
        ],
-       "arc": "a10",
-       "offset": 311.1,
-       "outer": 324.5
+       "shape": "line",
+       "view": 0.0,
+       "offset": 311.12,
+       "start": 196.53,
+       "end": 163.95,
+       "inner": 301.1,
+       "outer": 336.8
       },
       {
        "seats": [
@@ -833,10 +1328,13 @@
         "63",
         "64"
        ],
-       "arc": "a11",
-       "offset": 304.3,
-       "inner": 304.3,
-       "outer": 323.2
+       "shape": "line",
+       "view": 315.01,
+       "offset": 304.34,
+       "start": 154.65,
+       "end": 116.68,
+       "inner": 294.4,
+       "outer": 335.7
       },
       {
        "seats": [
@@ -851,15 +1349,15 @@
         "76",
         "77"
        ],
+       "shape": "line",
        "view": 270.0,
-       "offset": 307.0,
-       "start": 112.3,
-       "end": 85.1,
-       "inner": 307.0,
-       "outer": 321.6
+       "offset": 307.04,
+       "start": 107.28,
+       "end": 85.11,
+       "inner": 297.1,
+       "outer": 333.9
       }
-     ],
-     "offset": 172.2
+     ]
     },
     {
      "row": "J",
@@ -877,8 +1375,13 @@
         "9",
         "10"
        ],
-       "arc": "a12",
-       "offset": 342.1
+       "shape": "line",
+       "view": 90.02,
+       "offset": 334.5,
+       "start": 273.29,
+       "end": 252.48,
+       "inner": 324.5,
+       "outer": 363.2
       },
       {
        "seats": [
@@ -901,10 +1404,13 @@
         "27",
         "28"
        ],
-       "arc": "a6",
-       "offset": 333.4,
-       "inner": 328.0,
-       "outer": 357.7
+       "shape": "line",
+       "view": 44.98,
+       "offset": 327.3,
+       "start": 244.32,
+       "end": 205.31,
+       "inner": 317.3,
+       "outer": 360.1
       },
       {
        "seats": [
@@ -925,8 +1431,13 @@
         "44",
         "45"
        ],
-       "arc": "a10",
-       "offset": 335.2
+       "shape": "line",
+       "view": 0.0,
+       "offset": 336.88,
+       "start": 197.09,
+       "end": 163.45,
+       "inner": 326.9,
+       "outer": 364.7
       },
       {
        "seats": [
@@ -949,8 +1460,13 @@
         "65",
         "66"
        ],
-       "arc": "a11",
-       "offset": 329.4
+       "shape": "line",
+       "view": 314.95,
+       "offset": 329.36,
+       "start": 154.86,
+       "end": 116.15,
+       "inner": 319.4,
+       "outer": 362.9
       },
       {
        "seats": [
@@ -965,11 +1481,15 @@
         "76",
         "77"
        ],
-       "arc": "a13",
-       "offset": 331.0
+       "shape": "line",
+       "view": 269.98,
+       "offset": 330.98,
+       "start": 107.7,
+       "end": 86.68,
+       "inner": 321.0,
+       "outer": 359.8
       }
-     ],
-     "offset": 196.8
+     ]
     },
     {
      "row": "K",
@@ -987,8 +1507,13 @@
         "9",
         "10"
        ],
-       "arc": "a14",
-       "offset": 360.4
+       "shape": "line",
+       "view": 90.0,
+       "offset": 360.43,
+       "start": 271.96,
+       "end": 252.37,
+       "inner": 350.5,
+       "outer": 390.5
       },
       {
        "seats": [
@@ -1012,10 +1537,13 @@
         "28",
         "29"
        ],
-       "arc": "a6",
-       "offset": 355.3,
-       "inner": 355.6,
-       "outer": 377.4
+       "shape": "line",
+       "view": 44.94,
+       "offset": 355.35,
+       "start": 244.27,
+       "end": 205.3,
+       "inner": 345.4,
+       "outer": 389.8
       },
       {
        "seats": [
@@ -1037,10 +1565,13 @@
         "45",
         "46"
        ],
-       "arc": "a10",
-       "offset": 358.1,
-       "inner": 342.7,
-       "outer": 378.4
+       "shape": "line",
+       "view": 0.01,
+       "offset": 360.91,
+       "start": 197.51,
+       "end": 162.92,
+       "inner": 350.9,
+       "outer": 390.7
       },
       {
        "seats": [
@@ -1064,10 +1595,13 @@
         "66",
         "67"
        ],
-       "arc": "a11",
-       "offset": 353.1,
-       "inner": 353.2,
-       "outer": 375.9
+       "shape": "line",
+       "view": 315.06,
+       "offset": 353.14,
+       "start": 155.08,
+       "end": 115.89,
+       "inner": 343.2,
+       "outer": 388.4
       },
       {
        "seats": [
@@ -1082,11 +1616,15 @@
         "76",
         "77"
        ],
-       "arc": "a15",
-       "offset": 355.6
+       "shape": "line",
+       "view": 270.0,
+       "offset": 355.59,
+       "start": 107.91,
+       "end": 88.07,
+       "inner": 345.6,
+       "outer": 386.1
       }
-     ],
-     "offset": 221.4
+     ]
     },
     {
      "row": "L",
@@ -1113,12 +1651,13 @@
         "28",
         "29"
        ],
-       "view": 45.0,
-       "offset": 381.4,
-       "start": 244.1,
-       "end": 197.9,
-       "inner": 381.5,
-       "outer": 403.6
+       "shape": "line",
+       "view": 44.98,
+       "offset": 381.43,
+       "start": 244.03,
+       "end": 208.33,
+       "inner": 371.4,
+       "outer": 416.0
       },
       {
        "seats": [
@@ -1142,12 +1681,13 @@
         "47",
         "48"
        ],
-       "view": 356.2,
-       "offset": 376.7,
-       "start": 197.9,
-       "end": 152.2,
-       "inner": 342.7,
-       "outer": 404.9
+       "shape": "line",
+       "view": 0.0,
+       "offset": 385.43,
+       "start": 197.86,
+       "end": 162.54,
+       "inner": 375.5,
+       "outer": 417.3
       },
       {
        "seats": [
@@ -1171,12 +1711,13 @@
         "66",
         "67"
        ],
-       "view": 315.0,
-       "offset": 380.0,
-       "start": 152.2,
-       "end": 116.3,
-       "inner": 380.1,
-       "outer": 401.3
+       "shape": "line",
+       "view": 315.02,
+       "offset": 380.01,
+       "start": 152.12,
+       "end": 116.28,
+       "inner": 370.0,
+       "outer": 413.7
       }
      ],
      "marks": {
@@ -1186,8 +1727,7 @@
       "29": "W",
       "47": "X",
       "48": "X"
-     },
-     "offset": 246.0
+     }
     }
    ],
    "vomitoria": [
@@ -1200,10 +1740,10 @@
       "E",
       "F"
      ],
-     "from": 227.34,
-     "to": 225.47,
-     "inner": 131.9,
-     "outer": 275.9,
+     "from": 230.0,
+     "to": 222.12,
+     "inner": 148.0,
+     "outer": 268.2,
      "note": "Entrance (vomitorium) between seats 11 and 16; rows G-L continue across it."
     },
     {
@@ -1215,148 +1755,11 @@
       "E",
       "F"
      ],
-     "from": 135.14,
-     "to": 133.25,
-     "inner": 131.9,
-     "outer": 275.9,
+     "from": 138.42,
+     "to": 130.4,
+     "inner": 145.4,
+     "outer": 266.0,
      "note": "Entrance (vomitorium) between seats 33 and 40; rows G-L continue across it."
-    }
-   ],
-   "arcs": [
-    {
-     "id": "a9",
-     "from": 273,
-     "to": 248.0,
-     "view": 79.6,
-     "offset": 143.7,
-     "inner": 309.6,
-     "outer": 335.0
-    },
-    {
-     "id": "a1",
-     "from": 271.8,
-     "to": 226.4,
-     "view": 69.3,
-     "offset": 137.1,
-     "inner": 172.3,
-     "outer": 181.4
-    },
-    {
-     "id": "a12",
-     "from": 271.8,
-     "to": 248.0,
-     "view": 79.5,
-     "offset": 145.3,
-     "inner": 334.6,
-     "outer": 360.6
-    },
-    {
-     "id": "a5",
-     "from": 248.0,
-     "to": 226.4,
-     "view": 44.7,
-     "offset": 132.4,
-     "inner": 209.2,
-     "outer": 215.5
-    },
-    {
-     "id": "a6",
-     "from": 248.0,
-     "to": 202.3,
-     "view": 45.0,
-     "offset": 134.2,
-     "inner": 317.3,
-     "outer": 340.9
-    },
-    {
-     "id": "a14",
-     "from": 272.0,
-     "to": 248.0,
-     "view": 90.0,
-     "offset": 139.0,
-     "inner": 360.8,
-     "outer": 378.3
-    },
-    {
-     "id": "a2",
-     "from": 226.4,
-     "to": 180.5,
-     "view": 20.1,
-     "offset": 133.1,
-     "inner": 191.6,
-     "outer": 204.3
-    },
-    {
-     "id": "a7",
-     "from": 202.3,
-     "to": 169.1,
-     "view": 1.2,
-     "offset": 129.5,
-     "inner": 277.0,
-     "outer": 298.5
-    },
-    {
-     "id": "a10",
-     "from": 202.3,
-     "to": 159.1,
-     "view": 1.2,
-     "offset": 138.4,
-     "inner": 315.2,
-     "outer": 352.4
-    },
-    {
-     "id": "a3",
-     "from": 180.5,
-     "to": 134.2,
-     "view": 339.6,
-     "offset": 131.9,
-     "inner": 191.1,
-     "outer": 204.0
-    },
-    {
-     "id": "a8",
-     "from": 169.1,
-     "to": 112.3,
-     "view": 315.0,
-     "offset": 131.3,
-     "inner": 278.9,
-     "outer": 296.5
-    },
-    {
-     "id": "a11",
-     "from": 159.1,
-     "to": 112.3,
-     "view": 315.0,
-     "offset": 132.1,
-     "inner": 329.4,
-     "outer": 350.4
-    },
-    {
-     "id": "a4",
-     "from": 134.2,
-     "to": 88.0,
-     "view": 290.2,
-     "offset": 134.3,
-     "inner": 170.3,
-     "outer": 178.9
-    },
-    {
-     "id": "a13",
-     "from": 112.3,
-     "to": 88.0,
-     "view": 270.0,
-     "offset": 134.2,
-     "inner": 331.0,
-     "outer": 347.6
-    },
-    {
-     "id": "a15",
-     "from": 112.3,
-     "to": 88.0,
-     "view": 270.0,
-     "offset": 134.2,
-     "inner": 355.6,
-     "outer": 373.8
     }
    ]
   }
