@@ -630,8 +630,8 @@ function drawArcMap(doc) {
   const gapW = 1.2;                               // aisle between blocks, in seat-widths
   let maxR = sr;
   const headings = [];
-  for (const z of doc.zones) {
-    const za = z.arc; if (!za) continue;
+  doc.zones.forEach((z, zi) => {
+    const za = z.arc; if (!za) return;
     const tier = za.tier ?? 0, ring0 = za.ring ?? 0;
     // a block may reference a shared arc (aisle interval) and carry only overrides; resolve it here
     const arcsById = Object.fromEntries((z.arcs || []).map(a => [a.id, a]));
@@ -677,7 +677,7 @@ function drawArcMap(doc) {
             return { g, items: part };
           });
         };
-        row.blocks.forEach(block => pieces(block).forEach(({ g, items }, pi, all) => {
+        row.blocks.forEach((block, bi) => pieces(block).forEach(({ g, items }, pi, all) => {
           const lastPiece = pi === all.length - 1;
           const bo = (g.view + 180) % 360;          // outward normal bearing
           // chord mode places seats on a straight line perpendicular to the view axis at
@@ -702,7 +702,8 @@ function drawArcMap(doc) {
           if (!firstP) firstP = P0;
           if (lastPiece) lastP = P1;
           // developer overlay: the block's axis, its shared-aisle ends and its inner/outer boundaries
-          const marked = block.arc ? { "data-arc": block.arc } : {};
+          // data-geo names the block and run (zone/row/block/run), for the reviewer's Geometry tab
+          const marked = { "data-geo": `${zi}/${ri}/${bi}/${block.runs?.length ? pi : -1}`, ...(block.arc ? { "data-arc": block.arc } : {}) };
           el("line", { class: "dev-axis", ...marked, x1: P0[0], y1: P0[1], x2: P1[0], y2: P1[1] }, devg);
           el("circle", { class: "dev-dot", ...marked, cx: P0[0], cy: P0[1], r: 1.7 }, devg);
           el("circle", { class: "dev-dot", ...marked, cx: P1[0], cy: P1[1], r: 1.7 }, devg);
@@ -754,6 +755,7 @@ function drawArcMap(doc) {
               g2.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? rot : 0})`);
             } else {
               const seatG = seatAt(svg, z, row, it.id, block, inPits, -S / 2, -S / 2);
+              seatG.dataset.geo = marked["data-geo"];
               seatG.setAttribute("transform", `translate(${x} ${y}) rotate(${rotateSeats ? rot : 0})`);
             }
           });
@@ -800,9 +802,9 @@ function drawArcMap(doc) {
       }
     });
     headings.push({ name: z.name, zh: z.name_zh || "" });
-  }
+  });
   // vomitoria: entrances that cut an angular gap through some rows only (drawn as a shaded wedge)
-  for (const z of doc.zones) (z.vomitoria || []).forEach((v, vi) => {
+  doc.zones.forEach((z, zi) => (z.vomitoria || []).forEach((v, vi) => {
     const r0 = (v.inner ?? 0) * (arc.scale ?? 1), r1 = (v.outer ?? 0) * (arc.scale ?? 1);
     const a0 = Math.min(v.from, v.to), a1 = Math.max(v.from, v.to);
     const large = (a1 - a0) > 180 ? 1 : 0;
@@ -810,7 +812,7 @@ function drawArcMap(doc) {
     el("path", { class: "vomitorium", "data-vom": vi, d: `M ${x0} ${y0} A ${r0} ${r0} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${r1} ${r1} 0 ${large} 0 ${x3} ${y3} Z` }, svg);
     el("text", { class: "vomitorium-label", "data-vom": vi, x: (x0 + x3) / 2, y: (y0 + y3) / 2 }, svg).textContent = "V";
     remember(x0, y0); remember(x1, y1); remember(x2, y2); remember(x3, y3);
-  });
+  }));
   // developer overlay: the shared aisles as radial lines from the centre
   const far = 1.04 * Math.max(...ext.map(e => Math.max(Math.hypot(e.x0, e.y0), Math.hypot(e.x1, e.y1))));
   (layout.aisles || []).forEach((a, i) => {
@@ -819,6 +821,19 @@ function drawArcMap(doc) {
     el("text", { class: "dev-label", "data-aisle": i, x, y, "text-anchor": "middle" }, devg).textContent = a;
     remember(x, y);
   });
+  // developer overlay: a polar grid behind everything, in the file's units (radius before scale)
+  const grid = el("g", { class: "dev-grid" });
+  devg.prepend(grid);
+  const k0 = arc.scale ?? 1, step = 50;
+  for (let r = step; r * k0 < far; r += step) {
+    el("circle", { class: r % 100 ? "" : "major", cx: 0, cy: 0, r: r * k0 }, grid);
+    el("text", { x: 2, y: -r * k0 - 1 }, grid).textContent = r;
+  }
+  for (let b = 0; b < 360; b += 10) {
+    const [x, y] = pos(far, b);
+    el("line", { class: b % 30 ? "" : "major", x1: 0, y1: 0, x2: x, y2: y }, grid);
+    if (!(b % 30)) { const [tx, ty] = pos(far - 8, b); el("text", { x: tx, y: ty, "text-anchor": "middle" }, grid).textContent = `${b}°`; }
+  }
   // part-of-house headings, stacked below the seats (clear of the seating, radial or not)
   const seatBottom = Math.max(...ext.map(e => e.y1));
   headings.forEach((h, i) => {
@@ -836,6 +851,8 @@ function drawArcMap(doc) {
   const g = el("g", { transform: `translate(${ox} ${oy})` });
   for (const c of [...svg.children]) g.appendChild(c);
   svg.appendChild(g);
+  // where the centre is in the drawing, and the scale, so a tool can turn a pointer into bearing and radius
+  Object.assign(svg.dataset, { ox, oy, scale: arc.scale ?? 1 });
   return finishMap(svg, doc, W, maxY - minY);
 }
 

@@ -1,14 +1,22 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<!--
+  HK Venue Seats row reviewer (internal).
+  Licence: PolyForm Noncommercial License 1.0.0 (see LICENSE-PLANNER.md in the repository,
+  https://github.com/dennismywu/hkperf-venue-seats). Commercial use of this code needs the licensor's
+  written permission.
+  Required Notice: Copyright (c) 2026 Dennis Wu (https://code.denniswu.org/hkperf-venue-seats/)
+-->
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Row review · HK venue seats</title>
 <link rel="stylesheet" href="../app/common.css">
 <style>
-  :root { --bg:#fff; --panel:#f7f7f5; --ink:#1d1d1b; --muted:#6b6b66; --line:#d9d9d3;
-          --acc:#0f766e; --acc-bg:#e6f2f0; --w:#2563eb; --w-bg:#e8f0fe; --x:#b91c1c; --x-bg:#fdecec;
-          --bad:#b91c1c; }
+  /* colours come from ../app/common.css (light and dark); the reviewer adds a warning tone and its own X red */
+  :root { --warn:#92400e; --warn-bg:#fef3c7; --xr:#b91c1c; --xr-bg:#fdecec; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --warn:#f5c26b; --warn-bg:#3a2e14; --xr:#f28b82; --xr-bg:#3a1f1d; } }
+  :root[data-theme="dark"] { --warn:#f5c26b; --warn-bg:#3a2e14; --xr:#f28b82; --xr-bg:#3a1f1d; }
   * { box-sizing:border-box; }
   body { margin:0; font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:var(--bg); }
   header { position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:1px solid var(--line);
@@ -41,15 +49,18 @@
   .seat { min-width:28px; padding:4px 7px; border:1px solid var(--line); border-radius:6px; background:var(--bg);
           cursor:pointer; text-align:center; font-variant-numeric:tabular-nums; }
   .seat:hover { border-color:var(--acc); }
-  .seat.sel { border-color:var(--acc); box-shadow:0 0 0 2px var(--acc-bg); }
+  .seat.sel { border-color:var(--acc); background:var(--acc-bg); color:var(--acc); font-weight:650; box-shadow:0 0 0 1px var(--acc); }
   .seat.W { background:var(--w-bg); border-color:var(--w); color:var(--w); font-weight:700; }
-  .seat.X { background:var(--x-bg); border-color:var(--x); color:var(--x); }
+  .seat.X { background:var(--xr-bg); border-color:var(--xr); color:var(--xr); }
   .seat .inf { display:block; font-size:9px; color:var(--muted); }
-  .gap { width:12px; border:0; background:none; color:var(--muted); cursor:pointer; font-size:13px; padding:0 0 16px; }
-  .gap.break { color:var(--acc); font-weight:800; }
-  .gap:hover { color:var(--acc); }
-  .insert { width:16px; border:0; background:none; color:var(--line); cursor:pointer; font-size:13px; padding:0 0 16px; }
-  .insert:hover { color:var(--acc); }
+  .gap { width:10px; border:0; background:none; color:transparent; cursor:pointer; font-size:13px; padding:0; }
+  .row-editor:hover .gap, .row-editor:focus-within .gap { color:var(--line); }
+  .row-editor .gap.break { color:var(--acc); font-weight:800; }
+  .row-editor .gap:hover { color:var(--acc); }
+  .insert { width:12px; border:0; background:none; color:transparent; cursor:pointer; font-size:13px; padding:0; }
+  .seat.sel + .insert, .insert:has(+ .seat.sel), .insert:has(+ .gap + .seat.sel), .seat.sel + .gap + .insert { color:var(--muted); }
+  .row-editor:hover .insert { color:var(--line); }
+  .row-editor .insert:hover { color:var(--acc); }
   .hint { color:var(--muted); font-size:12px; margin:8px 0; }
   .out { margin-top:8px; }
   .sel-info { font-size:12px; color:var(--muted); }
@@ -57,10 +68,10 @@
   .leftover h2 { font-size:13px; margin:0 0 8px; }
   .leftover .grid { display:flex; gap:16px; flex-wrap:wrap; }
   .leftover .map { flex:0 0 360px; max-width:360px; border:1px solid var(--line); border-radius:8px; background:var(--bg); }
-  .leftover .map circle { fill:#d0d0ca; }
-  .leftover .map circle.base { fill:#d8d8d2; }
-  .leftover .map circle.left { fill:#b91c1c; cursor:pointer; }
-  .leftover .map circle.hit { fill:#0f766e; }
+  .leftover .map circle { fill:var(--line); }
+  .leftover .map circle.base { fill:var(--line); }
+  .leftover .map circle.left { fill:var(--bad); cursor:pointer; }
+  .leftover .map circle.hit { fill:var(--acc); }
   .leftover .nums { flex:1; min-width:240px; }
   .leftover .nums .n { display:inline-flex; gap:6px; align-items:center; border:1px solid var(--line); border-radius:6px;
                         padding:3px 8px; margin:0 6px 6px 0; background:var(--bg); }
@@ -79,11 +90,83 @@
   .geomui th { background:var(--panel); color:var(--muted); font-weight:600; }
   .geomui input[type=number], .geomui input[type=text] { width:74px; font:inherit; font-size:12px; padding:2px 4px; border:1px solid var(--line); border-radius:4px; background:var(--bg); color:var(--ink); }
   .geomui input.wide { width:150px; }
+  .geomui input.invalid { border-color:var(--bad); background:var(--xr-bg); }
   .geomui button { font:inherit; font-size:12px; padding:3px 10px; border:1px solid var(--line); background:var(--panel); border-radius:6px; cursor:pointer; }
   .geomui .ais { display:inline-flex; gap:3px; align-items:center; margin:0 8px 8px 0; }
   .geomap { margin:4px 0 16px; }
   #gmap { border:1px solid var(--line); border-radius:8px; background:var(--bg); overflow:auto; max-height:560px; }
   .geomap .bar { margin:6px 0 0; }
+  .problems { margin:6px 0; padding:0; list-style:none; font-size:12px; }
+  .problems li { padding:3px 8px; border-radius:6px; margin-bottom:3px; }
+  .problems .bad { color:var(--bad); background:var(--xr-bg); }
+  .problems .warn { color:var(--warn); background:var(--warn-bg); }
+  .problems .info { color:var(--muted); background:var(--panel); }
+  #rowtext.invalid { border-color:var(--bad); }
+  .seat.dup { border-color:var(--bad); color:var(--bad); }
+  .seat.R { background:var(--r-bg); border-color:var(--r); color:var(--r); }
+  .seat.L { background:var(--l-bg); }
+  .tabs button.bad .n { color:var(--bad); font-weight:700; }
+  .tabs button.changed { border-style:dashed; }
+  .changed-pill { color:var(--acc); border-color:var(--acc); }
+  #gerr { color:var(--bad); font-size:12px; }
+  .seat.focus { outline:2px solid var(--acc); outline-offset:1px; }
+  .row-editor:focus { outline:none; border-color:var(--acc); }
+  .addseat { width:110px; font:12px ui-monospace,Menlo,monospace; padding:3px 5px; border:1px solid var(--acc); border-radius:6px; margin:0 2px; background:var(--bg); color:var(--ink); }
+  .inspector { min-height:34px; }
+  .insp { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:6px 10px; border:1px solid var(--line); border-radius:8px; }
+  .insp label { font-size:12px; color:var(--muted); }
+  .insp input { font:12px ui-monospace,Menlo,monospace; padding:2px 4px; border:1px solid var(--line); border-radius:4px; background:var(--bg); color:var(--ink); }
+  .insp button { font:inherit; font-size:12px; padding:3px 8px; border:1px solid var(--line); background:var(--panel); border-radius:6px; cursor:pointer; }
+  .insp button:hover:not(:disabled) { border-color:var(--acc); }
+  .insp button:disabled { opacity:.4; cursor:default; }
+  .insp .danger { color:var(--bad); }
+  .insp .mk { min-width:26px; font-weight:700; }
+  .insp .mk.on { background:var(--acc-bg); border-color:var(--acc); color:var(--acc); }
+  .insp .mk.some { border-style:dashed; border-color:var(--acc); }
+  .insp .mks, .insp .acts { display:inline-flex; gap:4px; }
+  .chip-err { color:var(--bad); font-size:12px; margin:4px 0; }
+  kbd { font:11px ui-monospace,Menlo,monospace; border:1px solid var(--line); border-radius:3px; padding:0 3px; }
+  .changes { margin-top:10px; font-size:12px; }
+  .changes summary { cursor:pointer; color:var(--muted); }
+  .changes table { border-collapse:collapse; margin-top:6px; width:100%; }
+  .changes td { padding:2px 8px; border-bottom:1px solid var(--line); vertical-align:top; font-family:ui-monospace,Menlo,monospace; }
+  .changes td:first-child { font-family:inherit; white-space:nowrap; }
+  .changes .was { color:var(--bad); } .changes .now { color:var(--acc); }
+  .toolbar button:disabled { opacity:.45; cursor:default; }
+  .geowrap { display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:12px; align-items:start; }
+  @media (max-width:980px) { .geowrap { grid-template-columns:1fr; } }
+  .gtools { display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center; margin:0 0 6px; font-size:12px; }
+  .gtools input[type=file] { font-size:11px; max-width:190px; }
+  .gtools input[type=range] { width:90px; vertical-align:middle; }
+  .zoomctl { display:inline-flex; gap:4px; align-items:center; }
+  #g-zl { min-width:38px; text-align:center; }
+  #gmap:focus-visible { outline:2px solid var(--acc); outline-offset:1px; }
+  #gmap .seat { cursor:pointer; }
+  #gmap .dev-axis { stroke-width:2.2; cursor:pointer; }
+  #gmap image.underlay { pointer-events:none; }
+  #gmap .seat.geo-flag rect { stroke:var(--bad); stroke-width:2.2; }
+  #gmap .ghandles > * { fill:#f59e0b; stroke:var(--bg); stroke-width:1.4; cursor:grab; }
+  #gmap .ghandles > :active { cursor:grabbing; }
+  #gmap .ghandles .offset, #gmap .ghandles .radius { fill:var(--acc); }
+  #gmap .ghandles .inner, #gmap .ghandles .outer { fill:var(--muted); }
+  .gpick { position:sticky; top:64px; border:1px solid var(--line); border-radius:8px; padding:4px 10px 10px; background:var(--panel); }
+  .gpick h3 { margin:8px 0 6px; }
+  .gpick p { margin:6px 0; font-size:12px; }
+  .gpick .gnav { display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:12px; }
+  .gpick .blks { display:flex; flex-wrap:wrap; gap:3px; align-items:center; margin:6px 0; }
+  .gpick .blks button { padding:1px 7px; }
+  .gpick .blks button.sel { border-color:var(--acc); color:var(--acc); background:var(--acc-bg); font-weight:650; }
+  .gpick .gf { display:inline-flex; align-items:center; gap:2px; margin:0 8px 6px 0; font-size:12px; }
+  .gpick .gf > span { min-width:40px; color:var(--muted); }
+  .gpick .gf button { padding:1px 7px; }
+  .gpick .gf input { width:66px; }
+  .gpick select { font:inherit; font-size:12px; background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:4px; }
+  .gflags { margin-top:8px; font-size:12px; }
+  .gflags details { margin:2px 0; }
+  .gflags summary { cursor:pointer; color:var(--muted); }
+  .gflags details.has summary { color:var(--bad); }
+  .gflags button { display:block; margin:2px 0 2px 14px; text-align:left; border:none !important; background:none !important; color:var(--ink); padding:1px 0 !important; }
+  .gflags button:hover { text-decoration:underline; }
 </style>
 </head>
 <body>
@@ -91,7 +174,12 @@
   <h1>Row review</h1>
   <select id="venue"></select>
   <span id="total" class="total"></span>
-  <span class="muted">Type a row as <code>1-5 | 6-8 | 19-21</code> (| = block/aisle). Chips update live; click a chip to edit, the “+” to insert, the gap to move a block edge.</span>
+  <button type="button" id="theme" class="themeswitch" role="switch" aria-checked="false" aria-label="Switch to dark mode" title="Switch to dark mode">
+    <span class="knob"></span>
+    <svg class="ico sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="ico moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+  <span class="muted">Type a row as <code>1-5 | 6-8 | 19-21</code> (| = block/aisle). Marks are suffixes from the venue's legend (<code>12r</code>, <code>12rl</code>); <code>W1</code>/<code>X1</code> are unnumbered boxes; <code>=7</code> gives an inferred number (<code>W1=7</code>).</span>
 </header>
 <main>
   <div id="tabbar" class="tabbar">
@@ -106,6 +194,8 @@
   <div id="geomui" class="geomui" hidden></div>
   <div class="out">
     <div class="toolbar bar">
+      <button id="undo" title="undo (⌘Z / Ctrl+Z)" disabled>↶ Undo</button>
+      <button id="redo" title="redo (⇧⌘Z / Ctrl+Y)" disabled>↷ Redo</button>
       <button id="copyrow">Copy this row</button>
       <button id="copyall">Copy all rows</button>
       <button id="copyrows">Copy rows = [ … ]</button>
@@ -113,88 +203,54 @@
       <span id="status" class="muted"></span>
     </div>
     <textarea id="code" spellcheck="false" readonly></textarea>
-    <p class="hint">Numeric runs collapse to <code>rng(a, b)</code> in the code above; a seat marked W/X prints <code>marks={...}</code>. Paste the copied lines into <code>venues/&lt;id&gt;.py</code>. A number may carry a mark by suffix, e.g. <code>15w</code> / <code>22x</code>.</p>
+    <details id="changes" class="changes"><summary>Changes since load <span id="nchanges" class="pill">0</span></summary><div id="changelist"></div></details>
+    <p class="hint">The code above is the row as <code>row(...)</code> for <code>venues/&lt;id&gt;.py</code>: numeric runs collapse to <code>rng(a, b)</code>, with <code>marks=</code>, <code>inferred=</code> and <code>note=</code>. Geometry is not in it (<code>tools/derive_runs.py</code> writes that); Download JSON keeps everything.</p>
   </div>
 </main>
+<script src="../app/theme.js"></script>
 <script src="../app/seatmap.js"></script>
+<script src="../app/seatedit.js"></script>
 <script>
 (() => {
+const E = window.SeatEdit;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
-let doc = null, model = null, sel = { z:0, r:0 }, selSeat = null, plan = null, tab = "seats", hl = null;
+// doc: the document being edited (seatlist JSON, the single source of truth); orig: as loaded; order: the
+// file's key order (for writing it back as venues/common.py would); base: the selected row before the
+// current run of typing, so each keystroke rebuilds from it and no geometry is lost on the way.
+let doc = null, orig = null, order = null, venueId = null;
+let sel = { z:0, r:0 }, base = null, rowWarnings = [], plan = null, tab = "seats", hl = null;
 
-// model row: { row, blocks: [[{id, mark}...]], inferred:{}, note }
-function fromJSON(j) {
-  return j.zones.map(z => ({ name:z.name, name_zh:z.name_zh||"", rows: z.rows.map(r => ({
-    row: r.row,
-    blocks: r.blocks.map(b => b.seats.map(s => ({ id:s, mark:(r.marks||{})[s]||"" }))),
-    inferred: { ...(r.inferred_numbers||{}) },
-    note: r.note||"",
-  }))}));
+// Undo history: snapshots of the document (with the row and tab they were made on). record() is called
+// before every change; a run of typing in the row box, or of arrow steps on one field, is one step.
+const past = [], future = [], HISTORY = 200;
+let lastKey = null;
+function record(key = null) {
+  if (key && key === lastKey) return;
+  lastKey = key;
+  past.push({ doc: structuredClone(doc), sel: { ...sel }, tab });
+  if (past.length > HISTORY) past.shift();
+  future.length = 0;
+  historyButtons();
 }
-// "1-5 | 6-8 | 15w" -> blocks
-function parseRow(text) {
-  const out = [];
-  for (const blk of text.split("|")) {
-    const s = blk.trim(); if (!s) { out.push([]); continue; }
-    const ids = [];
-    for (const tok of s.split(/\s+/).filter(Boolean)) {
-      const m = tok.match(/^(\d+)-(\d+)$/);
-      if (m) { let a=+m[1], b=+m[2]; if (b<a) [a,b]=[b,a]; for (let n=a;n<=b;n++) ids.push({ id:String(n), mark:"" }); continue; }
-      const w = tok.match(/^(\d+)([wWxX])$/);
-      if (w) { ids.push({ id:w[1], mark:w[2].toUpperCase() }); continue; }
-      ids.push({ id:tok, mark:"" });
-    }
-    out.push(ids);
-  }
-  while (out.length > 1 && out[out.length-1].length === 0) out.pop();
-  return out.length ? out : [[]];
+function travel(from, to) {
+  const snap = from.pop(); if (!snap) return;
+  // the step goes back where it was made, in either direction
+  to.push({ doc: structuredClone(doc), sel: { ...snap.sel }, tab: snap.tab });
+  doc = snap.doc; sel = snap.sel; tab = snap.tab;
+  base = null; rowWarnings = []; lastKey = null; clearPick();
+  setURL(); renderAll(); historyButtons();
 }
-function rowToText(r) {
-  return r.blocks.map(blk => {
-    const parts = []; let i = 0;
-    while (i < blk.length) {
-      const s = blk[i];
-      if (s.mark) { parts.push(s.id + s.mark.toLowerCase()); i++; continue; }
-      if (/^\d+$/.test(s.id)) {
-        let j = i, n = +s.id;
-        while (j+1 < blk.length && !blk[j+1].mark && /^\d+$/.test(blk[j+1].id) && +blk[j+1].id === n+1) { j++; n++; }
-        parts.push(j-i >= 1 ? `${blk[i].id}-${blk[j].id}` : blk[i].id);
-        i = j+1;
-      } else { parts.push(s.id); i++; }
-    }
-    return parts.join(" ");
-  }).join(" | ");
+const undo = () => travel(past, future), redo = () => travel(future, past);
+function historyButtons() {
+  $("undo").disabled = !past.length; $("redo").disabled = !future.length;
+  $("undo").title = `undo (⌘Z / Ctrl+Z) · ${past.length} step${past.length === 1 ? "" : "s"}`;
 }
-function blockCode(blk) {
-  const parts = []; let i = 0;
-  while (i < blk.length) {
-    const s = blk[i];
-    if (/^\d+$/.test(s.id) && !s.mark) {
-      let j = i;
-      while (j+1 < blk.length && /^\d+$/.test(blk[j+1].id) && !blk[j+1].mark && +blk[j+1].id === +blk[j].id + 1) j++;
-      parts.push(j-i >= 2 ? `rng(${blk[i].id}, ${blk[j].id})` : blk.slice(i,j+1).map(x => `"${x.id}"`).join(" + "));
-      i = j+1;
-    } else { parts.push(`"${s.id}"`); i++; }
-  }
-  return parts.join(" + ") || '""';
-}
-function rowCode(r) {
-  const blocks = r.blocks.filter(b => b.length).map(blockCode);
-  const marks = {};
-  for (const b of r.blocks) for (const s of b) if (s.mark) marks[s.id] = s.mark;
-  const markPart = Object.keys(marks).length ? ", marks={" + Object.entries(marks).map(([k,v]) => `"${k}": "${v}"`).join(", ") + "}" : "";
-  const inf = Object.fromEntries(Object.entries(r.inferred).filter(([k]) => r.blocks.some(b => b.some(s => s.id === k))));
-  const infPart = Object.keys(inf).length ? ", inferred={" + Object.entries(inf).map(([k,v]) => `"${k}": "${v}"`).join(", ") + "}" : "";
-  return `row("${r.row}", ${blocks.join(", ")}${markPart}${infPart}),`;
-}
-const seatCount = r => r.blocks.reduce((a,b)=>a+b.length,0);
-function rowIssues(r) {
-  const ids = r.blocks.flat().map(s => s.id).filter(s => /^\d+$/.test(s));
-  const seen = new Set(), dup = new Set();
-  for (const id of ids) { if (seen.has(id)) dup.add(id); seen.add(id); }
-  return dup;
-}
+
+const letters = () => Object.keys(doc.marks || {}).join("");
+const curRow = () => doc.zones[sel.z].rows[sel.r];
+const origRow = (zi, ri) => orig.zones[zi]?.rows[ri];
+const rowChanged = (zi, ri) => !E.sameRow(doc.zones[zi].rows[ri], origRow(zi, ri));
 
 async function boot() {
   const idx = await (await fetch("../data/index.json")).json();
@@ -206,56 +262,100 @@ async function boot() {
   await load(id);
 }
 async function load(id) {
-  doc = await (await fetch(`../data/${id}.json`)).json();
-  model = fromJSON(doc);
+  const text = await (await fetch(`../data/${id}.json`)).text();
+  ({ doc, order } = E.parseFile(text));
+  orig = structuredClone(doc);
+  venueId = id;
   const q = new URLSearchParams(location.search);
-  sel = { z:0, r: Math.min(model[0].rows.length-1, Math.max(0, +(q.get("r")||0))) };
+  const zi = Math.min(doc.zones.length - 1, Math.max(0, +(q.get("z") || 0)));
+  sel = { z: zi, r: Math.min(doc.zones[zi].rows.length - 1, Math.max(0, +(q.get("r") || 0))) };
   tab = q.get("tab") === "geometry" ? "geometry" : "seats";
-  const h = q.get("hl"); if (h) hl = { kind: h.split(":")[0], id: h.split(":")[1] };
-  selSeat = null;
-  history.replaceState(null, "", `?venue=${id}&r=${sel.r}`);
+  const h = q.get("hl"); hl = h ? { kind: h.split(":")[0], id: h.split(":")[1] } : null;
+  base = null; rowWarnings = []; clearPick(); gpick = null; gzoom = 1;
+  past.length = future.length = 0; lastKey = null; historyButtons();
+  setURL();
   await loadPlan(id);
+  loadUnderlay(id);
   renderAll();
+}
+function setURL() {
+  history.replaceState(null, "", `?venue=${venueId}&z=${sel.z}&r=${sel.r}${tab === "geometry" ? "&tab=geometry" : ""}`);
 }
 function renderAll() {
   $("tabbar").querySelectorAll("button").forEach(b => b.classList.toggle("sel", b.dataset.tab === tab));
-  updateTotal();
+  changed();
   const geom = tab === "geometry";
   $("seatui").hidden = geom; $("geomui").hidden = !geom;
-  if (geom) { renderGeometry(); return; }
   renderTabs(); renderPanel(); renderLeftover();
+  if (geom) renderGeometry();
 }
 
-// the geometry tab: aisles, arcs and vomitoria, edited straight into the document
+// ---------------------------------------------------------------- geometry tab
+// Aisles, arcs and vomitoria, and each block's (or run's) own geometry, edited straight into the document.
+// The map is the developer drawing: click a seat or an axis to pick its block (or its run, in a block that
+// bends), then nudge its numbers with ± or the arrow keys (Shift finer, Alt coarser) or drag its handles.
+let gpick = null;                 // { z, r, b, p }: the picked block and its run (p = -1 for a block with no runs)
+let glabels = false, gzoom = 1, gdrag = null;
+// a plan image drawn under the map, from the reviewer's own disk only (never part of the document)
+const under = { url: null, w: 0, h: 0, opacity: 0.5, upp: 1, dx: 0, dy: 0, name: "" };
+const GEO_KEYS = ["view", "offset", "start", "end", "radius"], BOUND_KEYS = ["inner", "outer"];
+const BEARINGS = ["view", "start", "end"];
+const STEP = { view: 0.5, offset: 0.5, start: 0.25, end: 0.25, radius: 0.5, inner: 0.5, outer: 0.5 };
+const round2 = v => Math.round(v * 100) / 100;
+const wrap360 = v => ((v % 360) + 360) % 360;
+const geoKey = p => `${p.z}/${p.r}/${p.b}/${p.p}`;
+const stepOf = (k, e) => STEP[k] * (e.shiftKey ? 0.1 : e.altKey ? 10 : 1);
+const fmtN = v => v == null ? "" : String(round2(v));
+
 function renderGeometry() {
   const z = doc.zones[sel.z];
-  const arcs = z.arcs || (z.arcs = []);
-  const vom = z.vomitoria || (z.vomitoria = []);
-  const aisles = doc.layout.aisles || (doc.layout.aisles = []);
+  const isArc = doc.layout?.arrangement === "arc";
+  if (!isArc) {
+    $("geomui").innerHTML = `<h2>Geometry <span class="pill">${esc(doc.venue.name_en)}</span></h2>
+      <p class="hint">This venue is not drawn as an arc (no <code>layout.arrangement: "arc"</code>): its map follows its rows${doc.layout?.banks?.length ? " and banks" : ""}, so there is no geometry to tune here.</p>
+      <div class="geomap"><div id="gmap" class="devmode"></div></div>`;
+    redrawMap();
+    return;
+  }
+  const arcs = z.arcs || [];
+  const vom = z.vomitoria || [];
+  const aisles = doc.layout.aisles || [];
   const centre = doc.layout.arc?.centre;
   const num = (v, di, dk) => `<td><input type="number" step="0.1" data-${di}="${dk[0]}" data-k="${dk[1]}" value="${v ?? ""}"></td>`;
   $("geomui").innerHTML = `
     <h2>Geometry <span class="pill">${esc(doc.venue.name_en)}</span></h2>
-    <p class="hint">Shared geometry for the arc layout. Edits redraw the map above; Download/Copy to hand back.</p>
-    <div class="geomap">
-      <div id="gmap" class="devmode"></div>
-      <div class="bar">
-        <label class="muted">Highlight <select id="ghl"><option value="">none</option></select></label>
-        <button id="g-save">Download JSON</button>
-        <button id="g-copy">Copy JSON</button>
-        <span id="g-status" class="muted"></span>
+    <p class="hint">Click a seat or a block's axis to pick it; drag its handles (● ends, ◆ line, ▲▼ inner/outer) or nudge its numbers. With the map focused, ←/→ turn the pick along its bearings and ↑/↓ move it out/in; Shift is finer, Alt coarser, Esc lets go. The grid is in file units: rings every 50, lines every 10°.</p>
+    <div class="geowrap">
+      <div class="geomap">
+        <div class="gtools">
+          <span class="zoomctl"><button id="g-zout" title="zoom out">−</button><span id="g-zl" class="muted"></span><button id="g-zin" title="zoom in">+</button><button id="g-zfit" title="fit the width">Fit</button></span>
+          <label><input type="checkbox" id="g-labels" ${glabels ? "checked" : ""}> labels</label>
+          <label class="muted">Highlight <select id="ghl"><option value="">none</option></select></label>
+          <label class="muted" title="a plan image from your own disk, drawn under the map; it is never saved">Underlay <input type="file" id="u-file" accept="image/*"></label>
+          <button id="g-copy">Copy JSON</button>
+          <span id="g-status" class="muted"></span>
+        </div>
+        ${under.url ? `<div class="gtools" id="u-ctl"><span class="muted">${esc(under.name)} ${under.w}×${under.h}</span>
+          <label>opacity <input type="range" min="0" max="1" step="0.05" data-u="opacity" value="${under.opacity}"></label>
+          <label title="file units per image pixel">units/px <input type="number" step="0.01" data-u="upp" value="${under.upp}"></label>
+          <label title="moves the image, in file units">dx <input type="number" step="0.5" data-u="dx" value="${under.dx}"></label>
+          <label>dy <input type="number" step="0.5" data-u="dy" value="${under.dy}"></label>
+          <button id="u-off">remove</button></div>` : ""}
+        <div id="gmap" class="devmode" tabindex="0"></div>
+        <div id="gflags" class="gflags"></div>
       </div>
+      <div id="gpick" class="gpick"></div>
     </div>
     <h3>Aisles — shared radial bearings (${aisles.length})</h3>
     <div>${aisles.map((a, i) => `<span class="ais">#${i + 1} <input type="number" step="0.1" data-aisle="${i}" value="${a}"><button data-delaisle="${i}" title="remove">×</button></span>`).join("")}</div>
     <button id="g-addaisle">+ aisle</button>
-    <h3>Arcs — the block template (${arcs.length})</h3>
+    ${arcs.length ? `<h3>Arcs — the block template (${arcs.length})</h3>
     <table><thead><tr><th>id</th><th>from</th><th>to</th><th>view (POV axis)</th><th>offset</th><th>inner</th><th>outer</th><th></th></tr></thead><tbody>
       ${arcs.map((a, i) => `<tr><td>${esc(a.id)}</td>
         ${num(a.from, "arc", [i, "from"])}${num(a.to, "arc", [i, "to"])}${num(a.view, "arc", [i, "view"])}
         ${num(a.offset, "arc", [i, "offset"])}${num(a.inner, "arc", [i, "inner"])}${num(a.outer, "arc", [i, "outer"])}
         <td><button data-delarc="${i}" title="remove">×</button></td></tr>`).join("")}
-    </tbody></table>
+    </tbody></table>` : ""}
     <button id="g-addarc">+ arc</button>
     <h3>Vomitoria — entrances through some rows only (${vom.length})</h3>
     <table><thead><tr><th>rows (space-separated)</th><th>from</th><th>to</th><th>inner</th><th>outer</th><th>note</th><th></th></tr></thead><tbody>
@@ -268,96 +368,443 @@ function renderGeometry() {
     <button id="g-addvom">+ vomitorium</button>
     ${centre ? `<h3>Centre (focal point)</h3><div class="ais">x <input type="number" data-centre="0" value="${centre[0]}"> y <input type="number" data-centre="1" value="${centre[1]}"></div>` : ""}`;
   const g = $("geomui");
-  g.querySelectorAll("input[data-aisle]").forEach(inp => inp.onchange = () => { aisles[+inp.dataset.aisle] = +inp.value; });
-  g.querySelectorAll("input[data-arc]").forEach(inp => inp.onchange = () => { arcs[+inp.dataset.arc][inp.dataset.k] = inp.value === "" ? null : +inp.value; });
+  // The document gets only what is typed: a list is created when something is added to it and removed when
+  // it empties (unless the file had it empty); an optional field left blank loses its key; a required number
+  // (aisle, centre) that is blank or not a number is refused and the field shows it.
+  const own = (holder, key) => holder[key] || (holder[key] = []);
+  const origZone = orig.zones[sel.z] || {};
+  const tidy = (holder, key, was) => { if (Array.isArray(holder[key]) && !holder[key].length && !(was && Array.isArray(was[key]))) delete holder[key]; };
+  const numOf = inp => { const t = inp.value.trim(); return t === "" ? undefined : Number.isFinite(+t) ? +t : NaN; };
+  const refuse = inp => { inp.classList.add("invalid"); inp.title = "a number is needed here"; return false; };
+  const accept = inp => { inp.classList.remove("invalid"); inp.title = ""; return true; };
+  const setOpt = (o, k, v) => { if (v === undefined || v === "") delete o[k]; else o[k] = v; };
+  const shared = "input[data-aisle], input[data-arc], input[data-vom], input[data-centre]";
+  // every field records an undo step before it changes the document (one per field until another is touched)
+  g.querySelectorAll(shared).forEach(inp => inp.addEventListener("change", () => record("geo:" + JSON.stringify(inp.dataset)), { capture: true }));
+  g.querySelectorAll("button[data-delaisle], button[data-delarc], button[data-delvom], #g-addaisle, #g-addarc, #g-addvom")
+    .forEach(b => b.addEventListener("click", () => record(), { capture: true }));
+  g.querySelectorAll("input[data-aisle]").forEach(inp => inp.onchange = () => {
+    const v = numOf(inp); if (v === undefined || Number.isNaN(v)) return refuse(inp);
+    accept(inp); aisles[+inp.dataset.aisle] = v; changed();
+  });
+  g.querySelectorAll("input[data-arc]").forEach(inp => inp.onchange = () => {
+    const v = numOf(inp); if (Number.isNaN(v)) return refuse(inp);
+    accept(inp); setOpt(arcs[+inp.dataset.arc], inp.dataset.k, v); changed();
+  });
   g.querySelectorAll("input[data-vom]").forEach(inp => inp.onchange = () => {
     const v = vom[+inp.dataset.vom], k = inp.dataset.k;
     if (k === "rows") v.rows = inp.value.split(/\s+/).filter(Boolean);
-    else if (k === "note") v.note = inp.value;
-    else v[k] = inp.value === "" ? null : +inp.value;
+    else if (k === "note") setOpt(v, "note", inp.value.trim());
+    else { const n = numOf(inp); if (Number.isNaN(n)) return refuse(inp); accept(inp); setOpt(v, k, n); }
+    changed();
   });
-  g.querySelectorAll("input[data-centre]").forEach(inp => inp.onchange = () => { doc.layout.arc.centre[+inp.dataset.centre] = +inp.value; });
-  g.querySelectorAll("[data-delaisle]").forEach(b => b.onclick = () => { aisles.splice(+b.dataset.delaisle, 1); renderGeometry(); });
-  g.querySelectorAll("[data-delarc]").forEach(b => b.onclick = () => { arcs.splice(+b.dataset.delarc, 1); renderGeometry(); });
-  g.querySelectorAll("[data-delvom]").forEach(b => b.onclick = () => { vom.splice(+b.dataset.delvom, 1); renderGeometry(); });
-  $("g-addaisle").onclick = () => { aisles.push(0); renderGeometry(); };
-  $("g-addarc").onclick = () => { arcs.push({ id: `a${arcs.length + 1}`, from: 0, to: 0, view: 0, offset: 0, inner: 0, outer: 0 }); renderGeometry(); };
-  $("g-addvom").onclick = () => { vom.push({ rows: [], from: 0, to: 0, inner: 0, outer: 0, note: "" }); renderGeometry(); };
+  g.querySelectorAll("input[data-centre]").forEach(inp => inp.onchange = () => {
+    const v = numOf(inp); if (v === undefined || Number.isNaN(v)) return refuse(inp);
+    accept(inp); doc.layout.arc.centre[+inp.dataset.centre] = v; changed();
+  });
+  g.querySelectorAll("[data-delaisle]").forEach(b => b.onclick = () => { aisles.splice(+b.dataset.delaisle, 1); tidy(doc.layout, "aisles", orig.layout); changed(); renderGeometry(); });
+  g.querySelectorAll("[data-delarc]").forEach(b => b.onclick = () => { arcs.splice(+b.dataset.delarc, 1); tidy(z, "arcs", origZone); changed(); renderGeometry(); });
+  g.querySelectorAll("[data-delvom]").forEach(b => b.onclick = () => { vom.splice(+b.dataset.delvom, 1); tidy(z, "vomitoria", origZone); changed(); renderGeometry(); });
+  $("g-addaisle").onclick = () => { own(doc.layout, "aisles").push(0); changed(); renderGeometry(); };
+  $("g-addarc").onclick = () => { const a = own(z, "arcs"); a.push({ id: `a${a.length + 1}`, from: 0, to: 0, view: 0, offset: 0, inner: 0, outer: 0 }); changed(); renderGeometry(); };
+  $("g-addvom").onclick = () => { own(z, "vomitoria").push({ rows: [], from: 0, to: 0, inner: 0, outer: 0 }); changed(); renderGeometry(); };
 
   const ghl = $("ghl");
   aisles.forEach((a, i) => ghl.append(new Option(`aisle #${i + 1} (${a}°)`, `aisle:${i}`)));
   arcs.forEach(a => ghl.append(new Option(`arc ${a.id}`, `arc:${a.id}`)));
   vom.forEach((v, i) => ghl.append(new Option(`vomitorium #${i + 1}`, `vom:${i}`)));
+  const setHl = v => { hl = v ? { kind: v.split(":")[0], id: v.split(":")[1] } : null; ghl.value = v || ""; applyHighlight(); };
   ghl.value = hl ? `${hl.kind}:${hl.id}` : "";
-  ghl.onchange = () => { hl = ghl.value ? { kind: ghl.value.split(":")[0], id: ghl.value.split(":")[1] } : null; applyHighlight(); };
-  g.addEventListener("change", e => { if (e.target.id !== "ghl") redrawMap(); });
-  $("g-save").onclick = () => {
-    const blob = new Blob([JSON.stringify(editedDoc(), null, 1)], { type: "application/json" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${$("venue").value}.json`; a.click(); URL.revokeObjectURL(a.href);
-    $("g-status").textContent = `saved ${$("venue").value}.json — move it to data/`;
-  };
+  ghl.onchange = () => setHl(ghl.value);
+  // a shared field highlights what it draws while it has the focus
+  g.querySelectorAll("input[data-aisle]").forEach(inp => inp.addEventListener("focus", () => setHl(`aisle:${inp.dataset.aisle}`)));
+  g.querySelectorAll("input[data-vom]").forEach(inp => inp.addEventListener("focus", () => setHl(`vom:${inp.dataset.vom}`)));
+  g.querySelectorAll("input[data-arc]").forEach(inp => inp.addEventListener("focus", () => setHl(`arc:${arcs[+inp.dataset.arc].id}`)));
+  g.addEventListener("change", e => { if (e.target.matches(shared)) redrawMap(); });
   $("g-copy").onclick = async () => {
-    const t = JSON.stringify(editedDoc(), null, 1);
-    try { await navigator.clipboard.writeText(t); $("g-status").textContent = `copied ${t.length} bytes — paste back into chat`; }
+    const t = E.fileJSON(doc, order);
+    try { await navigator.clipboard.writeText(t); $("g-status").textContent = `copied ${t.length} bytes`; }
     catch { $("g-status").textContent = "clipboard blocked"; }
   };
+  $("g-labels").onchange = e => { glabels = e.target.checked; $("gmap").classList.toggle("devlabels", glabels); };
+  const zoomBy = f => {
+    const host = $("gmap"), was = gzoom;
+    gzoom = f ? Math.min(8, Math.max(1, gzoom * f)) : 1;
+    const [l, t] = [host.scrollLeft, host.scrollTop], r = gzoom / was;
+    redrawMap();
+    host.scrollLeft = (l + host.clientWidth / 2) * r - host.clientWidth / 2;
+    host.scrollTop = (t + host.clientHeight / 2) * r - host.clientHeight / 2;
+  };
+  $("g-zin").onclick = () => zoomBy(1.25); $("g-zout").onclick = () => zoomBy(1 / 1.25); $("g-zfit").onclick = () => zoomBy(0);
+  $("u-file").onchange = e => { const f = e.target.files[0]; if (f) setUnderlay(URL.createObjectURL(f), f.name); };
+  g.querySelectorAll("[data-u]").forEach(inp => inp.oninput = () => { const v = +inp.value; if (Number.isFinite(v)) { under[inp.dataset.u] = v; redrawMap(); } });
+  if ($("u-off")) $("u-off").onclick = () => { if (under.url?.startsWith("blob:")) URL.revokeObjectURL(under.url); under.url = null; renderGeometry(); };
+  mapEvents($("gmap"));
+  renderPick();
   redrawMap();
 }
 
-// draw the edited document in the Geometry tab (with the developer overlay) and highlight a chosen element
+function setUnderlay(url, name, place = {}) {
+  const img = new Image();
+  img.onload = () => {
+    if (under.url?.startsWith("blob:")) URL.revokeObjectURL(under.url);
+    Object.assign(under, { url, name, w: img.naturalWidth, h: img.naturalHeight }, place);
+    if (tab === "geometry") renderGeometry();
+  };
+  img.src = url;
+}
+// work/<id>/underlay.png (and underlay.json with { upp, dx, dy, opacity }), if the reviewer has made them
+async function loadUnderlay(id) {
+  under.url = null;
+  try {
+    const r = await fetch(`../work/${id}/underlay.png`); if (!r.ok) return;
+    let place = {};
+    try { const j = await fetch(`../work/${id}/underlay.json`); if (j.ok) place = await j.json(); } catch {}
+    setUnderlay(URL.createObjectURL(await r.blob()), `work/${id}/underlay.png`, place);
+  } catch {}
+}
+
+// ---- the picked block or run
+function pickParts(p = gpick) {
+  if (!p) return null;
+  const zone = doc.zones[p.z], row = zone?.rows[p.r], block = row?.blocks[p.b];
+  if (!block) return null;
+  const run = p.p >= 0 ? block.runs?.[p.p] : null;
+  if (p.p >= 0 && !run) return null;
+  const arc = block.arc ? (zone.arcs || []).find(a => a.id === block.arc) : null;
+  return { zone, row, block, run, geo: run || block, arc };
+}
+// a field's own value, and what it falls back to (the block's shared arc) when it has none
+function geoValue(t, k) {
+  const o = BOUND_KEYS.includes(k) ? t.block : t.geo;
+  const inherit = t.run ? null : t.arc && (k === "start" ? t.arc.from : k === "end" ? t.arc.to : t.arc[k]);
+  return { own: o[k], inherit: BOUND_KEYS.includes(k) ? t.arc?.[k] : inherit };
+}
+function setGeo(t, k, v) {
+  const o = BOUND_KEYS.includes(k) ? t.block : t.geo;
+  if (v === undefined) delete o[k];
+  else o[k] = k === "shape" ? v : round2(BEARINGS.includes(k) ? wrap360(v) : v);
+}
+function nudge(changes, key) {
+  const t = pickParts(); if (!t) return;
+  record("geo:" + geoKey(gpick) + ":" + key);
+  for (const [k, d] of changes) { const v = geoValue(t, k); setGeo(t, k, (v.own ?? v.inherit ?? 0) + d); }
+  changed(); syncPick(); redrawMap();
+}
+function pickTo(p) {
+  const zoneMoved = p && p.z !== sel.z;
+  gpick = p;
+  if (p) { sel = { z: p.z, r: p.r }; setURL(); }
+  if (zoneMoved) return renderGeometry();
+  renderPick(); applyHighlight(); redrawHandles();
+}
+function renderPick() {
+  const box = $("gpick"); if (!box) return;
+  const t = pickParts();
+  if (!t) {
+    gpick = null;
+    box.innerHTML = `<h3>Block</h3><p class="hint">Click a seat or a block's axis on the map to tune that block (or run) here.</p>`;
+    return;
+  }
+  const { row, block, run } = t;
+  const runs = block.runs || [];
+  let at = 0; const runSeats = runs.map(r => { const s = block.seats.slice(at, at + r.count); at += r.count; return s; });
+  const seats = run ? runSeats[gpick.p] : block.seats;
+  const field = k => {
+    const v = geoValue(t, k);
+    return `<label class="gf"><span>${k}</span><button data-nudge="${k}" data-d="-1" title="− (Shift finer, Alt coarser)">−</button><input type="number" data-g="${k}" step="${STEP[k]}" value="${fmtN(v.own)}" placeholder="${fmtN(v.inherit)}"><button data-nudge="${k}" data-d="1" title="+ (Shift finer, Alt coarser)">+</button></label>`;
+  };
+  const z = doc.zones[gpick.z];
+  box.innerHTML = `<h3>Block</h3>
+    <div class="gnav"><button data-rowstep="-1" ${gpick.r ? "" : "disabled"} title="the same block in the row in front">▲ row</button>
+      <b>${esc(z.name)} · row ${esc(row.row)}</b>
+      <button data-rowstep="1" ${gpick.r < z.rows.length - 1 ? "" : "disabled"} title="the same block in the row behind">row ▼</button>
+      <a href="#" id="g-seats">open in Seats</a></div>
+    <div class="blks">${row.blocks.map((b, bi) => (b.runs?.length ? b.runs.map((r, pi) => ({ bi, pi, l: `${bi + 1}.${pi + 1}` })) : [{ bi, pi: -1, l: `${bi + 1}` }])
+      .map(x => `<button data-pick="${bi}/${x.pi}" class="${bi === gpick.b && x.pi === gpick.p ? "sel" : ""}">${x.l}</button>`).join("")).join("<span class=\"muted\">|</span>")}</div>
+    <p class="muted">Block ${gpick.b + 1}${run ? `, run ${gpick.p + 1} of ${runs.length}` : ""} · seats ${esc(seats[0])}–${esc(seats.at(-1))} (${seats.length})${block.arc ? ` · arc ${esc(block.arc)}` : ""}</p>
+    <label class="gf"><span>shape</span><select data-g="shape"><option value="">auto</option><option value="line">line</option><option value="arc">arc</option></select></label>
+    <div>${GEO_KEYS.map(field).join("")}</div>
+    <label class="gf"><span>turn</span><button data-turn="-1" title="start and end together (Shift finer, Alt coarser)">⟲</button><button data-turn="1" title="start and end together">⟳</button></label>
+    <h3>Bounds ${run ? "(the whole block)" : ""}</h3>
+    <div>${BOUND_KEYS.map(field).join("")}</div>`;
+  box.querySelector('[data-g="shape"]').value = t.geo.shape || "";
+  box.querySelector('[data-g="shape"]').onchange = e => { record(); setGeo(t, "shape", e.target.value || undefined); changed(); redrawMap(); };
+  box.querySelectorAll("[data-nudge]").forEach(b => b.onclick = e => nudge([[b.dataset.nudge, +b.dataset.d * stepOf(b.dataset.nudge, e)]], b.dataset.nudge));
+  box.querySelectorAll("[data-turn]").forEach(b => b.onclick = e => { const d = +b.dataset.turn * stepOf("start", e); nudge([["start", d], ["end", d]], "turn"); });
+  box.querySelectorAll("input[data-g]").forEach(inp => {
+    const k = inp.dataset.g;
+    inp.onchange = () => {
+      const s = inp.value.trim(), v = s === "" ? undefined : +s;
+      if (Number.isNaN(v)) { inp.classList.add("invalid"); return; }
+      inp.classList.remove("invalid");
+      record("geo:" + geoKey(gpick) + ":" + k); setGeo(pickParts(), k, v); changed(); syncPick(); redrawMap();
+    };
+    inp.onkeydown = e => {
+      if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+      e.preventDefault(); nudge([[k, (e.key === "ArrowUp" ? 1 : -1) * stepOf(k, e)]], k);
+    };
+  });
+  box.querySelectorAll("[data-pick]").forEach(b => b.onclick = () => { const [bi, pi] = b.dataset.pick.split("/").map(Number); pickTo({ ...gpick, b: bi, p: pi }); });
+  box.querySelectorAll("[data-rowstep]").forEach(b => b.onclick = () => {
+    const r = gpick.r + +b.dataset.rowstep, nr = z.rows[r]; if (!nr) return;
+    const bi = Math.min(gpick.b, nr.blocks.length - 1), nb = nr.blocks[bi];
+    pickTo({ z: gpick.z, r, b: bi, p: nb.runs?.length ? Math.min(Math.max(gpick.p, 0), nb.runs.length - 1) : -1 });
+  });
+  $("g-seats").onclick = e => { e.preventDefault(); tab = "seats"; base = null; setURL(); renderAll(); };
+}
+// field values after a nudge or drag, without rebuilding the panel (the focus stays where it is)
+function syncPick() {
+  const t = pickParts(), box = $("gpick"); if (!t || !box) return;
+  box.querySelectorAll("input[data-g]").forEach(inp => { if (document.activeElement !== inp || gdrag) inp.value = fmtN(geoValue(t, inp.dataset.g).own); });
+}
+
+// ---- the map: pick, drag, keys
+function mapEvents(host) {
+  host.addEventListener("click", e => {
+    if (e.target.closest("[data-h]")) return;
+    const geo = e.target.closest("[data-geo]");
+    if (geo) { const [z, r, b, p] = geo.dataset.geo.split("/").map(Number); host.focus({ preventScroll: true }); return pickTo({ z, r, b, p }); }
+    const a = e.target.closest("[data-aisle], [data-vom]");
+    if (a) { const v = a.dataset.aisle != null ? `aisle:${a.dataset.aisle}` : `vom:${a.dataset.vom}`; hl = { kind: v.split(":")[0], id: v.split(":")[1] }; $("ghl").value = v; applyHighlight(); }
+  });
+  host.addEventListener("pointerdown", e => {
+    const h = e.target.closest("[data-h]"); if (!h || !pickParts()) return;
+    e.preventDefault();
+    record();
+    gdrag = { h: h.dataset.h, ev: null, raf: 0 };
+    try { host.setPointerCapture(e.pointerId); } catch {}
+  });
+  host.addEventListener("pointermove", e => {
+    if (!gdrag) return;
+    gdrag.ev = { clientX: e.clientX, clientY: e.clientY };
+    if (!gdrag.raf) gdrag.raf = requestAnimationFrame(() => { gdrag.raf = 0; dragTo(gdrag.ev); });
+  });
+  const end = () => { if (!gdrag) return; cancelAnimationFrame(gdrag.raf); if (gdrag.ev) dragTo(gdrag.ev); gdrag = null; syncPick(); lastKey = null; };
+  host.addEventListener("pointerup", end); host.addEventListener("pointercancel", end);
+  host.addEventListener("keydown", e => {
+    if (e.key === "Escape") { if (gpick) { pickTo(null); e.preventDefault(); } return; }
+    if (!gpick || !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) return;
+    e.preventDefault();
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") { const d = (e.key === "ArrowRight" ? 1 : -1) * stepOf("start", e); nudge([["start", d], ["end", d]], "turn"); }
+    else {
+      const t = pickParts(), k = t.geo.shape === "arc" && t.geo.radius != null ? "radius" : "offset";
+      nudge([[k, (e.key === "ArrowUp" ? 1 : -1) * stepOf(k, e)]], k);
+    }
+  });
+}
+// pointer -> drawing units about the centre (the map's inner group), bearing and radius in file units
+function polarAt(ev) {
+  const svg = $("gmap")?.querySelector("svg"), g = svg?.querySelector(":scope > g[transform]"); if (!g) return null;
+  const p = new DOMPoint(ev.clientX, ev.clientY).matrixTransform(g.getScreenCTM().inverse());
+  const k = +svg.dataset.scale || 1;
+  return { x: p.x, y: p.y, k, bearing: wrap360(Math.atan2(p.x, -p.y) / RAD_), r: Math.hypot(p.x, p.y) / k };
+}
+const RAD_ = Math.PI / 180;
+function dragTo(ev) {
+  const t = pickParts(), q = polarAt(ev); if (!t || !q) return;
+  const h = gdrag.h;
+  if (h === "start" || h === "end" || h === "inner" || h === "outer") setGeo(t, h, h === "start" || h === "end" ? q.bearing : q.r);
+  else if (h === "radius") setGeo(t, "radius", q.r);
+  else if (h === "offset") {
+    const view = geoValue(t, "view"), bo = ((view.own ?? view.inherit ?? 0) + 180) * RAD_;
+    setGeo(t, "offset", (q.x * Math.sin(bo) - q.y * Math.cos(bo)) / q.k);
+  }
+  changed(); syncPick(); redrawMap();
+}
+
+// draw the edited document (with the developer overlay), the underlay, the pick's handles and the flags
 function redrawMap() {
   const host = $("gmap"); if (!host || !doc) return;
-  const svg = drawSeatMap(editedDoc());
+  const keep = [host.scrollLeft, host.scrollTop];
+  let svg;
+  try { svg = drawSeatMap(doc); }
+  catch (e) { host.innerHTML = `<p id="gerr">The map cannot be drawn: ${esc(e.message)}</p>`; return; }
   host.replaceChildren(svg);
-  const vb = svg.viewBox.baseVal, s = Math.min(1, (host.clientWidth || 460) / vb.width);
+  host.classList.toggle("devlabels", glabels);
+  const vb = svg.viewBox.baseVal, s = Math.min(1, (host.clientWidth || 460) / vb.width) * gzoom;
   svg.setAttribute("width", Math.round(vb.width * s)); svg.setAttribute("height", Math.round(vb.height * s));
+  if ($("g-zl")) $("g-zl").textContent = `${Math.round(gzoom * 100)}%`;
+  [host.scrollLeft, host.scrollTop] = keep;
+  if (doc.layout?.arrangement !== "arc") return;
+  drawUnderlay(svg);
+  redrawHandles();
   applyHighlight();
+  renderFlags(svg);
+}
+function drawUnderlay(svg) {
+  if (!under.url || !doc.layout.arc?.centre) return;
+  const k = +svg.dataset.scale || 1, [cx, cy] = doc.layout.arc.centre, g = svg.querySelector(":scope > g[transform]");
+  g.prepend(el("image", { class: "underlay", href: under.url, preserveAspectRatio: "none", opacity: under.opacity,
+    x: (under.dx - cx) * k, y: (under.dy - cy) * k, width: under.w * under.upp * k, height: under.h * under.upp * k }));
+}
+// handles for the pick: its two ends, its line (offset, or radius for an arc with one) and its bounds
+function redrawHandles() {
+  const svg = $("gmap")?.querySelector("svg"), g = svg?.querySelector(":scope > g[transform]"); if (!g) return;
+  g.querySelector(".ghandles")?.remove();
+  const t = pickParts(); if (!t) return;
+  const key = geoKey(gpick), dots = [...g.querySelectorAll(`.dev-dot[data-geo="${key}"]`)], axis = g.querySelector(`.dev-axis[data-geo="${key}"]`);
+  if (dots.length < 2 || !axis) return;
+  const k = +svg.dataset.scale || 1, hg = el("g", { class: "ghandles" }, g);
+  const pos = (r, deg) => [r * Math.sin(deg * RAD_), -r * Math.cos(deg * RAD_)];
+  const s = geoValue(t, "start"), e = geoValue(t, "end");
+  const b0 = s.own ?? s.inherit, b1 = e.own ?? e.inherit;
+  const mid = wrap360(b0 + (((b1 - b0 + 540) % 360) - 180) / 2);
+  const put = (h, x, y, shape, title) => {
+    const n = shape === "dot" ? el("circle", { cx: x, cy: y, r: 4.2 }, hg)
+      : el("path", { d: shape === "diamond" ? `M ${x} ${y - 5} L ${x + 5} ${y} L ${x} ${y + 5} L ${x - 5} ${y} Z` : `M ${x - 4.5} ${y - 4.5} H ${x + 4.5} V ${y + 4.5} H ${x - 4.5} Z` }, hg);
+    n.dataset.h = h; n.classList.add(h); el("title", {}, n).textContent = title;
+  };
+  put("start", +dots[0].getAttribute("cx"), +dots[0].getAttribute("cy"), "dot", "start: drag along the bearings");
+  put("end", +dots[1].getAttribute("cx"), +dots[1].getAttribute("cy"), "dot", "end: drag along the bearings");
+  const lineKey = t.geo.shape === "arc" && t.geo.radius != null ? "radius" : "offset";
+  put(lineKey, (+axis.getAttribute("x1") + +axis.getAttribute("x2")) / 2, (+axis.getAttribute("y1") + +axis.getAttribute("y2")) / 2, "diamond", `${lineKey}: drag in or out`);
+  for (const b of BOUND_KEYS) {
+    const v = geoValue(t, b), r = v.own ?? v.inherit; if (r == null) continue;
+    const [x, y] = pos(r * k, mid); put(b, x, y, "square", `${b}: drag in or out`);
+  }
 }
 function applyHighlight() {
   const host = $("gmap"); if (!host) return;
-  host.querySelectorAll(".hl").forEach(e => e.classList.remove("hl"));
-  if (!hl) return;
-  const sel = hl.kind === "aisle" ? `[data-aisle="${hl.id}"]`
-    : hl.kind === "arc" ? `[data-arc="${hl.id}"]`
-    : `[data-vom="${hl.id}"]`;
-  host.querySelectorAll(sel).forEach(e => e.classList.add("hl"));
-}
-
-// live grand total of every row, beside the printed and the plan's numbered totals
-function updateTotal() {
-  if (!model) return;
-  let boxes = 0, x = 0, w = 0;
-  for (const z of model) for (const r of z.rows) for (const b of r.blocks) for (const s of b) {
-    boxes++; if (s.mark.includes("X")) x++; if (s.mark.includes("W")) w++;
+  host.querySelectorAll(".hl, .geo-hl").forEach(e => e.classList.remove("hl", "geo-hl"));
+  if (hl) {
+    const q = hl.kind === "aisle" ? `[data-aisle="${hl.id}"]` : hl.kind === "arc" ? `[data-arc="${hl.id}"]` : `[data-vom="${hl.id}"]`;
+    host.querySelectorAll(q).forEach(e => e.classList.add("hl"));
   }
-  const counted = boxes - x;                       // the project's rule: printed total = boxes − management
-  const printed = doc?.printed_totals?.Total;
-  const delta = (t, ref) => `<span class="${t === ref ? "ok" : "neg"}">(${t - ref > 0 ? "+" : ""}${t - ref})</span>`;
-  $("total").innerHTML =
-    `<b>${boxes}</b> boxes` +
-    (x ? ` − ${x} mgmt = <b>${counted}</b>` : "") +
-    (printed != null ? ` · printed ${printed} ${delta(counted, printed)}` : "") +
-    ` · ${w} wheelchair`;
+  if (gpick) host.querySelectorAll(`[data-geo="${geoKey(gpick)}"]`).forEach(e => e.classList.add(e.classList.contains("seat") ? "geo-hl" : "hl"));
 }
 
-// the plan's own seat rectangles (a side file the extractor writes), for the leftover panel
+// ---- flags: what the drawing gets wrong, from the seats as drawn
+function geoFlags(svg) {
+  const k = +svg.dataset.scale || 1, half = S / 2;
+  const seats = [...svg.querySelectorAll("g.seat[data-geo]")].map((g, i) => {
+    const m = g.getAttribute("transform").match(/translate\(([-\d.e]+) ([-\d.e]+)\)/);
+    const x = +m[1], y = +m[2];
+    return { i, g, geo: g.dataset.geo, zone: g.dataset.zone, row: g.dataset.row, seat: g.dataset.seat, x, y, r: Math.hypot(x, y), b: wrap360(Math.atan2(x, -y) / RAD_) };
+  });
+  const flags = { overlap: [], bounds: [], vom: [], aisle: [] };
+  // seats closer than a seat width (centres in a grid of cells, so only neighbours are compared)
+  const C = 16, cells = new Map(), cell = (cx, cy) => cells.get(cx + "," + cy) || [];
+  for (const s of seats) { const key = Math.floor(s.x / C) + "," + Math.floor(s.y / C); if (!cells.has(key)) cells.set(key, []); cells.get(key).push(s); }
+  for (const s of seats) {
+    const cx = Math.floor(s.x / C), cy = Math.floor(s.y / C);
+    for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (const o of cell(cx + dx, cy + dy)) {
+      if (o.i <= s.i) continue;
+      const d = Math.hypot(s.x - o.x, s.y - o.y);
+      if (d < S - 0.5) flags.overlap.push({ at: s, also: o, text: `${s.row}${s.seat} and ${o.row}${o.seat} overlap (${round2(d / k)} apart)` });
+    }
+  }
+  for (const s of seats) {
+    const [zi, ri, bi] = s.geo.split("/").map(Number), z = doc.zones[zi], blk = z.rows[ri].blocks[bi];
+    const arcT = blk.arc ? (z.arcs || []).find(a => a.id === blk.arc) : null;
+    const inner = blk.inner ?? arcT?.inner, outer = blk.outer ?? arcT?.outer;
+    if (inner != null && s.r - half < inner * k - 0.01) flags.bounds.push({ at: s, text: `${s.row}${s.seat} is ${round2(inner - (s.r - half) / k)} inside its block's inner bound` });
+    if (outer != null && s.r + half > outer * k + 0.01) flags.bounds.push({ at: s, text: `${s.row}${s.seat} is ${round2((s.r + half) / k - outer)} beyond its block's outer bound` });
+    for (const v of z.vomitoria || []) {
+      if (!(v.rows || []).includes(s.row)) continue;
+      const lo = Math.min(v.from, v.to), hi = Math.max(v.from, v.to);
+      if (s.b > lo && s.b < hi && s.r > (v.inner ?? 0) * k && s.r < (v.outer ?? 0) * k) flags.vom.push({ at: s, text: `${s.row}${s.seat} sits in a vomitorium (${lo}°–${hi}°)` });
+    }
+    for (const a of doc.layout.aisles || []) {
+      const d = Math.abs(((s.b - a + 540) % 360) - 180), w = Math.atan2(half, s.r) / RAD_;
+      if (d < w) flags.aisle.push({ at: s, text: `aisle ${a}° passes through ${s.row}${s.seat} (${round2(d)}° from its centre)` });
+    }
+  }
+  return flags;
+}
+function renderFlags(svg) {
+  const box = $("gflags"); if (!box) return;
+  const f = geoFlags(svg);
+  for (const x of [...f.overlap.flatMap(o => [o.at, o.also]), ...f.bounds.map(o => o.at), ...f.vom.map(o => o.at)]) x.g.classList.add("geo-flag");
+  const group = (key, title, info) => {
+    const list = f[key];
+    return `<details ${list.length && !info && gflagsOpen.has(key) ? "open" : ""} data-flags="${key}" class="${list.length && !info ? "has" : ""}"><summary>${title} <span class="pill ${list.length && !info ? "bad" : ""}">${list.length}</span>${info ? ' <span class="muted">(information)</span>' : ""}</summary>
+      ${list.slice(0, 60).map((x, i) => `<button data-flag="${key}:${i}">${esc(x.text)}</button>`).join("")}${list.length > 60 ? `<span class="muted">…and ${list.length - 60} more</span>` : ""}</details>`;
+  };
+  box.innerHTML = group("overlap", "Overlapping seats") + group("bounds", "Seats outside their block's bounds") + group("vom", "Seats in a vomitorium") + group("aisle", "Aisle lines through a seat", true);
+  box.querySelectorAll("details").forEach(d => d.ontoggle = () => { if (d.open) gflagsOpen.add(d.dataset.flags); else gflagsOpen.delete(d.dataset.flags); });
+  box.querySelectorAll("[data-flag]").forEach(b => b.onclick = () => {
+    const [key, i] = b.dataset.flag.split(":"), s = f[key][+i].at, [z, r, bi, p] = s.geo.split("/").map(Number);
+    pickTo({ z, r, b: bi, p });
+    const seatEl = [...$("gmap").querySelectorAll("g.seat")].find(g => g.dataset.row === s.row && g.dataset.seat === s.seat && g.dataset.geo === s.geo);
+    seatEl?.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" });
+  });
+}
+const gflagsOpen = new Set();
+
+// ---------------------------------------------------------------- totals and changes
+
+// live grand total, beside the printed total and the zone checks the build makes
+function updateTotal() {
+  if (!doc) return;
+  const t = E.totals(doc);
+  const cc = E.countCheck(doc);                        // the figures the build checks (boxes − management, with the venue's exceptions)
+  const counted = cc.counted, printed = cc.printed;
+  const off = cc.figures.filter(f => f.printed != null && f.counted !== f.printed);
+  const delta = (v, ref) => `<span class="${v === ref ? "ok" : "neg"}">(${v - ref > 0 ? "+" : ""}${v - ref})</span>`;
+  const nChanged = doc.zones.reduce((a, z, zi) => a + z.rows.filter((_, ri) => rowChanged(zi, ri)).length, 0);
+  const other = JSON.stringify({ ...doc, zones: null }) !== JSON.stringify({ ...orig, zones: null }) ||
+    doc.zones.some((z, zi) => JSON.stringify({ ...z, rows: null }) !== JSON.stringify({ ...orig.zones[zi], rows: null }));
+  $("total").innerHTML =
+    `<b>${t.boxes}</b> boxes` +
+    (counted !== t.boxes ? ` → <b>${counted}</b> counted` : "") +
+    (printed != null ? ` · printed ${printed} ${delta(counted, printed)}` : "") +
+    off.map(f => ` · <span class="neg">${esc(f.name)} ${f.counted} ≠ ${f.printed}</span>`).join("") +
+    ` · ${t.W} wheelchair` +
+    (nChanged || other ? ` · <span class="pill changed-pill">${nChanged} row${nChanged === 1 ? "" : "s"} changed${other ? " + geometry" : ""}</span>` : "");
+}
+function changed() { updateTotal(); renderChanges(); }
+
+// what differs from the file as loaded: one line per changed row (its text then and now, and whether its
+// geometry moved), then everything else field by field. A row line opens that row.
+function renderChanges() {
+  const list = [];
+  const rows = new Map();
+  for (const c of E.diffDocs(orig, doc)) {
+    const isRow = c.path[0] === "zones" && c.path[2] === "rows" && typeof c.path[3] === "number";
+    if (!isRow) { list.push(c); continue; }
+    const key = c.path[1] + "/" + c.path[3];
+    if (!rows.has(key)) {
+      const z = doc.zones[c.path[1]], r = z.rows[c.path[3]], o = origRow(c.path[1], c.path[3]);
+      const e = { where: `${z.name} · row ${r.row}`, was: o ? E.rowText(o) : "—", now: E.rowText(r), z: c.path[1], r: c.path[3], geo: false, other: new Set() };
+      rows.set(key, e); list.push(e);
+    }
+    const e = rows.get(key), k = c.path.slice(4).filter(x => typeof x === "string").at(-1);
+    if (["view", "offset", "start", "end", "inner", "outer", "shape", "radius", "runs", "count"].includes(k)) e.geo = true;
+    else if (!["seats", "blocks", "marks", "inferred_numbers"].includes(k) && !/^\d+$/.test(k ?? "")) e.other.add(k);
+  }
+  $("nchanges").textContent = list.length;
+  $("nchanges").classList.toggle("changed-pill", list.length > 0);
+  const short = v => v.length > 90 ? v.slice(0, 87) + "…" : v;
+  $("changelist").innerHTML = list.length ? `<table><tbody>${list.slice(0, 300).map((c, i) => {
+      const extra = c.z == null ? "" : [c.was === c.now ? "seats unchanged" : "", c.geo ? "geometry" : "", ...c.other].filter(Boolean);
+      return `<tr><td>${c.z != null ? `<a href="#" data-i="${i}">${esc(c.where)}</a>` : esc(c.where)}</td>
+        <td class="was" title="${esc(c.was)}">${esc(short(c.was))}</td><td>→</td><td class="now" title="${esc(c.now)}">${esc(short(c.now))}</td>
+        <td class="muted">${extra ? esc(extra.join(", ")) : ""}</td></tr>`;
+    }).join("")}</tbody></table>${list.length > 300 ? `<p class="hint">…and ${list.length - 300} more</p>` : ""}`
+    : `<p class="hint">No changes: the document is as loaded.</p>`;
+  $("changelist").querySelectorAll("a[data-i]").forEach(a => a.onclick = e => {
+    e.preventDefault();
+    const c = list[+a.dataset.i];
+    sel = { z: c.z, r: c.r }; tab = "seats"; base = null; rowWarnings = []; clearPick();
+    setURL(); renderAll();
+    $("panel").scrollIntoView({ block: "start", behavior: "smooth" });
+  });
+}
+
+// ---------------------------------------------------------------- leftover panel
+// the plan's own seat rectangles (a side file the extractor writes; git-ignored, never published)
 async function loadPlan(id) {
   plan = null;
   try { const r = await fetch(`../work/${id}/seats.json`); if (r.ok) plan = await r.json(); } catch {}
-}
-function planClaimed() {
-  const claimed = new Set();
-  model[sel.z].rows.forEach((r, ri) =>
-    r.blocks.forEach(b => b.forEach(s => { if (/^\d+$/.test(s.id)) claimed.add(ri + "/" + s.id); })));
-  return claimed;
 }
 function renderLeftover() {
   const box = $("leftover");
   if (!plan) { box.innerHTML = `<p class="hint">Leftover panel is off: no <code>work/&lt;id&gt;/seats.json</code> for this venue.</p>`; return; }
   // per-number coverage: how many rows in this zone contain the number vs how many plan seats carry it
   const claimed = new Map();                       // number -> rows that have it
-  model[sel.z].rows.forEach(r => {
-    const set = new Set(r.blocks.flat().map(s => s.id).filter(id => /^\d+$/.test(id)).map(Number));
+  doc.zones[sel.z].rows.forEach(r => {
+    const set = new Set(r.blocks.flatMap(b => b.seats).filter(id => /^\d+$/.test(id)).map(Number));
     for (const n of set) claimed.set(n, (claimed.get(n) || 0) + 1);
   });
   const planCount = new Map();
@@ -369,7 +816,6 @@ function renderLeftover() {
   const rowsTotal = [...claimed.values()].reduce((a, b) => a + b, 0);
   const missing = planTotal - rowsTotal;
   const seats = plan.seats.map(s => ({ ...s, left: s.n !== null && short.has(s.n) }));
-  const marked = seats.filter(s => s.left);
   const xs = seats.map(s => s.x), ys = seats.map(s => s.y);
   const minx = Math.min(...xs), maxx = Math.max(...xs), miny = Math.min(...ys), maxy = Math.max(...ys);
   const W = 352, H = Math.max(120, Math.round(W * (maxy - miny) / (maxx - minx)));
@@ -378,7 +824,7 @@ function renderLeftover() {
   const chips = [...short.entries()].sort((a, b) => a[0] - b[0]).map(([n, k]) =>
     `<span class="n"><b>${n}</b><span class="rows">plan ×${planCount.get(n)}, rows ×${claimed.get(n) || 0} → ${k} missing</span></span>`).join("")
     || `<span class="muted">none — every number on the plan is covered by a row. ✓</span>`;
-  const overChips = [...over.entries()].sort((a, b) => a[0] - b[0]).map(([n, k]) =>
+  const overChips = [...over.entries()].sort((a, b) => a[0] - b[0]).map(([n]) =>
     `<span class="n"><b>${n}</b><span class="rows">rows ×${claimed.get(n)}, plan ×${planCount.get(n) || 0}</span></span>`).join("");
   box.innerHTML = `
     <h2>Leftover seats on the plan
@@ -395,159 +841,369 @@ function renderLeftover() {
     </div>`;
 }
 
+// ---------------------------------------------------------------- seats tab
+
 function renderTabs() {
-  $("tabs").innerHTML = model.map((z, zi) => `<span class="zone-h">${esc(z.name)} ${esc(z.name_zh)}</span>` +
+  $("tabs").innerHTML = doc.zones.map((z, zi) => `<span class="zone-h">${esc(z.name)} ${esc(z.name_zh)}</span>` +
     z.rows.map((r, ri) => {
-      const dup = rowIssues(r).size;
-      return `<button data-z="${zi}" data-r="${ri}" class="${zi===sel.z&&ri===sel.r?"sel":""} ${dup?"warn":""}">${esc(r.row)}<span class="n">${seatCount(r)}${dup?` ⚠${dup}`:""}</span></button>`;
+      const issues = E.rowIssues(r, doc).filter(i => i.level === "bad").length;
+      const n = r.blocks.reduce((a, b) => a + b.seats.length, 0);
+      const cls = [zi === sel.z && ri === sel.r ? "sel" : "", issues ? "bad" : "", rowChanged(zi, ri) ? "changed" : ""].join(" ");
+      return `<button data-z="${zi}" data-r="${ri}" class="${cls}" title="${rowChanged(zi, ri) ? "changed since load" : ""}">${esc(r.row)}<span class="n">${n}${issues ? ` ⚠${issues}` : ""}</span></button>`;
     }).join("")).join("");
   $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => {
-    sel = { z:+b.dataset.z, r:+b.dataset.r }; selSeat = null;
-    history.replaceState(null, "", `?venue=${$("venue").value}&r=${sel.r}`);
+    sel = { z: +b.dataset.z, r: +b.dataset.r }; base = null; rowWarnings = []; clearPick();
+    setURL();
     renderAll();
   });
 }
 
 function renderPanel() {
-  const z = model[sel.z], r = z.rows[sel.r];
+  const r = curRow();
   $("panel").innerHTML = `
-    <div class="bar"><b>Row ${esc(r.row)}</b> <span id="info"></span></div>
+    <div class="bar"><b>Row ${esc(r.row)}</b> <span id="info"></span>
+      <button id="revert" ${rowChanged(sel.z, sel.r) ? "" : "disabled"} title="put this row back as it was loaded">Revert row</button></div>
     <textarea id="rowtext" spellcheck="false"></textarea>
+    <ul class="problems" id="problems"></ul>
     <div class="row-editor" id="editor"></div>
-    ${r.note ? `<p class="hint">${esc(r.note)}</p>` : ""}`;
-  $("rowtext").value = rowToText(r);
-  $("rowtext").addEventListener("input", () => {
-    r.blocks = parseRow($("rowtext").value);
-    renderChips(); updateInfo(); renderTabs(); updateCode();
+    <div id="inspector" class="inspector"></div>
+    ${r.note ? `<p class="hint">Note: ${esc(r.note)}</p>` : ""}`;
+  $("rowtext").value = E.rowText(r);
+  $("rowtext").addEventListener("input", () => typed($("rowtext").value));
+  $("rowtext").addEventListener("blur", () => { base = null; lastKey = null; });
+  $("rowtext").addEventListener("focus", () => { if (pick || adding !== null) { clearPick(); renderChips(E.rowIssues(curRow(), doc)); } });
+  $("editor").addEventListener("keydown", chipKeys);
+  $("revert").onclick = () => {
+    record();
+    doc.zones[sel.z].rows[sel.r] = structuredClone(origRow(sel.z, sel.r));
+    revertRefs();
+    base = null; rowWarnings = []; clearPick();
+    afterEdit(true);
+  };
+  afterEdit(false);
+}
+
+// Bank and pit references back as they were loaded for this row (a reverted row has its old blocks); the
+// references to other rows keep any edits made to them.
+function revertRefs() {
+  const holders = d => [...(d.layout?.banks || []).map(b => b.rows), ...(d.orchestra_pits || []).map(p => p.rows_removed)];
+  const here = (d, ref) => { const at = E.refRow(d, ref); return at && at[0] === sel.z && at[1] === sel.r; };
+  const now = holders(doc), was = holders(orig);
+  now.forEach((refs, h) => {
+    const others = refs.filter(ref => !here(doc, ref));
+    const out = was[h].map(ref => here(orig, ref) ? structuredClone(ref) : others.shift()).filter(Boolean);
+    refs.splice(0, refs.length, ...out, ...others);
   });
-  updateInfo(); renderChips(); updateCode();
 }
 
-// the seat/block/duplicate summary of the current row
-function updateInfo() {
-  const r = model[sel.z].rows[sel.r];
-  const dup = [...rowIssues(r)];
-  const blocks = r.blocks.filter(b => b.length).length;
-  $("info").innerHTML = `<span class="pill">${seatCount(r)} seats · ${blocks} block(s)</span>` +
-    (dup.length ? ` <span class="pill bad">duplicate: ${dup.join(", ")}</span>` : "");
-  renderLeftover();
-  updateTotal();
+// The row text changed: rebuild the row from its state before this run of typing. An unreadable row
+// leaves the document as it is and says why.
+function typed(text) {
+  if (!base) base = { row: structuredClone(curRow()), doc: structuredClone(doc), recorded: false };
+  const { blocks, errors } = E.parseRowText(text, base.row, letters());
+  $("rowtext").classList.toggle("invalid", errors.length > 0);
+  if (errors.length) { showProblems(errors.map(t => ({ level: "bad", text: t })), true); return; }
+  // rebuild on the document as it was before typing began, so references are renumbered once, from there
+  // the run of typing is one undo step, recorded at its first readable change
+  if (!base.recorded) {
+    base.recorded = true;
+    past.push({ doc: structuredClone(base.doc), sel: { ...sel }, tab }); if (past.length > HISTORY) past.shift();
+    future.length = 0; lastKey = null; historyButtons();
+  }
+  const work = structuredClone(base.doc);
+  rowWarnings = E.applyRow(work, sel.z, sel.r, blocks);
+  doc.zones[sel.z].rows[sel.r] = work.zones[sel.z].rows[sel.r];
+  if (doc.layout?.banks) doc.layout.banks = work.layout.banks;
+  if (doc.orchestra_pits) doc.orchestra_pits = work.orchestra_pits;
+  afterEdit(false);
 }
 
-function renderChips() {
-  const r = model[sel.z].rows[sel.r];
-  let h = "";
-  r.blocks.forEach((blk, bi) => {
-    if (bi) h += `<button class="gap break" data-b="${bi}" title="block edge — click to merge with the previous block">¦</button>`;
+// redraw what depends on the current row; rewrite the text box only when the edit did not come from it
+function afterEdit(rewriteText) {
+  const r = curRow();
+  if (rewriteText) { $("rowtext").value = E.rowText(r); $("rowtext").classList.remove("invalid"); }
+  const issues = E.rowIssues(r, doc);
+  const blocks = r.blocks.length, n = r.blocks.reduce((a, b) => a + b.seats.length, 0);
+  $("info").innerHTML = `<span class="pill">${n} seats · ${blocks} block(s)</span>` +
+    (rowChanged(sel.z, sel.r) ? ` <span class="pill changed-pill">changed</span>` : "");
+  $("revert").disabled = !rowChanged(sel.z, sel.r);
+  showProblems([...issues, ...rowWarnings.map(t => ({ level: /no longer|in no bank| is in /.test(t) ? "bad" : "warn", text: t }))], false);
+  renderChips(issues);
+  renderTabs(); updateCode(); renderLeftover(); changed();
+}
+function showProblems(list, typing) {
+  $("problems").innerHTML = list.map(p => `<li class="${p.level}">${esc(p.text)}</li>`).join("") +
+    (typing ? `<li class="info">The row is unchanged until the text reads cleanly.</li>` : "");
+}
+
+// The row as chips. Click a chip to select it (Shift-click for a range); the inspector below edits the
+// selection. Keys on the chips: ←/→ select (Shift extends), Alt+←/→ move, Delete removes, a mark letter
+// toggles that mark, Enter edits the id, + inserts after, | starts a new block, Esc clears.
+// pick: {a, f} anchor and focus as indices into the row's seats in order; adding: the index a new seat goes at.
+let pick = null, adding = null, chipError = "";
+const flatOf = blocks => blocks.flatMap((blk, b) => blk.map((s, i) => ({ s, b, i })));
+const picked = () => pick ? [Math.min(pick.a, pick.f), Math.max(pick.a, pick.f)] : null;
+function clearPick() { pick = null; adding = null; chipError = ""; }
+
+// a chip edit is one step, from the row as it is now; `at` is the selection afterwards
+function commit(next, at) {
+  base = null;
+  const before = structuredClone(doc);
+  const blocks = next.filter(b => b.length);
+  if (!blocks.length) { chipError = "a row needs at least one seat"; renderChips(E.rowIssues(curRow(), doc)); return; }
+  rowWarnings = E.applyRow(doc, sel.z, sel.r, blocks);
+  if (!curRow().blocks.length) { doc = before; chipError = "a row needs at least one seat"; }
+  else {
+    chipError = "";
+    if (!E.sameRow(before.zones[sel.z].rows[sel.r], curRow())) {
+      past.push({ doc: before, sel: { ...sel }, tab }); if (past.length > HISTORY) past.shift();
+      future.length = 0; lastKey = null; historyButtons();
+    }
+  }
+  const n = curRow().blocks.reduce((t, b) => t + b.seats.length, 0);
+  pick = at && n ? { a: Math.min(at.a, n - 1), f: Math.min(at.f, n - 1) } : null;
+  adding = null;
+  afterEdit(true);
+  $("editor").focus({ preventScroll: true });
+}
+// "12", "12r", "W3=15", "12-14": seats typed in one block, or an error
+function parseSeats(t) {
+  if (t.includes("|")) return { error: "type seats for one block (no |)" };
+  const { blocks, errors } = E.parseRowText(t, null, letters());
+  return errors.length ? { error: errors[0] } : { seats: blocks[0] };
+}
+
+function renderChips(issues) {
+  const r = curRow();
+  const dup = new Set(issues.filter(i => /duplicate/.test(i.text)).flatMap(i => i.seats));
+  const blocks = E.rowSeats(r), flat = flatOf(blocks), pk = picked();
+  if (pk && pk[1] >= flat.length) clearPick();
+  let h = "", k = 0;
+  const insertAt = (at, title) => adding === at
+    ? `<input id="addseat" class="addseat" spellcheck="false" placeholder="12, 12r, W3=15, 12-14" title="Enter adds, Esc cancels">`
+    : `<button class="insert" data-at="${at}" tabindex="-1" title="${title}">+</button>`;
+  blocks.forEach((blk, bi) => {
+    if (bi) h += `<button class="gap break" data-b="${bi}" tabindex="-1" title="block edge: click to merge with the previous block">¦</button>`;
     blk.forEach((s, si) => {
-      if (si) h += `<button class="gap" data-b="${bi}" data-i="${si}" title="click to start a new block here">·</button>`;
-      h += `<button class="insert" data-b="${bi}" data-i="${si}" title="insert a seat before this one">+</button>`;
-      h += `<button class="seat ${s.mark}" data-b="${bi}" data-i="${si}" title="click to edit">${esc(s.id)}${r.inferred[s.id]?`<span class="inf">=${esc(r.inferred[s.id])}</span>`:""}</button>`;
+      if (si) h += `<button class="gap" data-b="${bi}" data-i="${si}" tabindex="-1" title="click to start a new block here">·</button>`;
+      h += insertAt(k, "insert a seat here");
+      const on = pk && k >= pk[0] && k <= pk[1];
+      const extra = [...s.mark].filter(c => c !== E.impliedMark(s.id)).join("");
+      h += `<button class="seat ${[...s.mark].join(" ")} ${dup.has(s.id) ? "dup" : ""} ${on ? "sel" : ""} ${pick && k === pick.f ? "focus" : ""}" data-k="${k}" tabindex="-1">` +
+        `${esc(s.id)}${extra ? `<span class="inf">${esc(extra)}</span>` : ""}${s.inf ? `<span class="inf">=${esc(s.inf)}</span>` : ""}</button>`;
+      k++;
     });
-    h += `<button class="insert" data-b="${bi}" data-i="${blk.length}" title="insert a seat at the end of this block">+</button>`;
+    h += insertAt(k, "insert a seat at the end of this block");
   });
   $("editor").innerHTML = h;
-  const r2 = r;
-  $("editor").querySelectorAll(".gap").forEach(el => el.onclick = () => {
-    const b = +el.dataset.b;
-    if (!el.classList.contains("break")) {           // split block b at position i
-      const i = +el.dataset.i, blk = r2.blocks[b];
-      r2.blocks.splice(b, 1, blk.slice(0, i), blk.slice(i));
-    } else {                                          // merge block b with the previous
-      r2.blocks[b-1] = r2.blocks[b-1].concat(r2.blocks[b]);
-      r2.blocks.splice(b, 1);
-    }
-    $("rowtext").value = rowToText(r2); renderChips(); updateInfo(); renderTabs(); updateCode();
-  });
-  $("editor").querySelectorAll(".insert").forEach(el => el.onclick = () => {
-    const b = +el.dataset.b, i = +el.dataset.i;
-    const blk = r2.blocks[b];
-    const prev = blk[i-1], guess = prev && /^\d+$/.test(prev.id) ? String(+prev.id + 1) : "";
-    const v = prompt("New seat id (suffix w/x to mark):", guess);
-    if (v === null || !v.trim()) return;
-    const t = v.trim(); const w = t.match(/^(\d+)([wWxX])$/);
-    blk.splice(i, 0, w ? { id:w[1], mark:w[2].toUpperCase() } : { id:t, mark:"" });
-    $("rowtext").value = rowToText(r2); renderChips(); updateInfo(); renderTabs(); updateCode();
-  });
-  $("editor").querySelectorAll(".seat").forEach(el => el.onclick = () => {
-    const b = +el.dataset.b, i = +el.dataset.i, s = r2.blocks[b][i];
-    selSeat = { b, i };
-    $("editor").querySelectorAll(".seat").forEach(x => x.classList.remove("sel"));
-    el.classList.add("sel");
-    const v = prompt(`Edit "${s.id}" (blank deletes; suffix w/x marks; ←/→ move).`, s.id + (s.mark ? s.mark.toLowerCase() : ""));
-    if (v === null) return;
-    const t = v.trim();
-    if (t === "<" || t === "←") { move(b, i, -1); return; }
-    if (t === ">" || t === "→") { move(b, i, +1); return; }
-    if (!t) { r2.blocks[b].splice(i, 1); if (!r2.blocks[b].length && r2.blocks.length > 1) r2.blocks.splice(b, 1); }
-    else { const w = t.match(/^(\d+)([wWxX])$/); if (w) { s.id = w[1]; s.mark = w[2].toUpperCase(); } else { s.id = t; s.mark = ""; } }
-    $("rowtext").value = rowToText(r2); renderChips(); updateInfo(); renderTabs(); updateCode();
-  });
-}
-function move(b, i, d) {
-  const r = model[sel.z].rows[sel.r], blk = r.blocks[b], j = i + d;
-  if (j < 0 || j >= blk.length) return;
-  [blk[i], blk[j]] = [blk[j], blk[i]];
-  $("rowtext").value = rowToText(r); renderChips(); updateInfo(); renderTabs(); updateCode();
-}
-function updateCode() { $("code").value = rowCode(model[sel.z].rows[sel.r]); }
+  $("editor").tabIndex = 0;
+  renderInspector(flat);
 
-function toJSONRow(r) {
-  const marks = {};
-  const blocks = r.blocks.filter(b => b.length).map(b => ({
-    seats: b.map(s => { if (s.mark) marks[s.id] = s.mark; return s.id; }),
-  }));
-  const jr = { row: r.row, blocks };
-  if (Object.keys(marks).length) jr.marks = marks;
-  const inf = Object.fromEntries(Object.entries(r.inferred).filter(([k]) => r.blocks.some(b => b.some(s => s.id === k))));
-  if (Object.keys(inf).length) jr.inferred_numbers = inf;
-  return jr;
-}
-function editedDoc() {
-  const out = JSON.parse(JSON.stringify(doc));
-  const GEOM = ["arc", "shape", "runs", "radius", "view", "offset", "start", "end", "inner", "outer", "blocked"];
-  out.zones.forEach((z, i) => {
-    const src = doc.zones[i].rows;                 // the geometry, edited in the Geometry tab
-    z.rows = model[i].rows.map((r, ri) => {
-      const jr = toJSONRow(r), sb = src[ri];
-      if (sb && sb.blocks.length === jr.blocks.length) {
-        jr.blocks.forEach((b, bi) => {
-          for (const k of GEOM) if (sb.blocks[bi][k] != null) b[k] = sb.blocks[bi][k];
-        });
-        if (sb.offset != null) jr.offset = sb.offset;
-      }
-      return jr;
-    });
+  $("editor").querySelectorAll(".gap").forEach(el => el.onclick = () => {
+    const b = +el.dataset.b, next = E.rowSeats(curRow());
+    if (!el.classList.contains("break")) { const i = +el.dataset.i; next.splice(b, 1, next[b].slice(0, i), next[b].slice(i)); }
+    else { next[b - 1] = next[b - 1].concat(next[b]); next.splice(b, 1); }
+    commit(next, pick);
   });
-  return out;
+  $("editor").querySelectorAll(".insert").forEach(el => el.onclick = () => startAdd(+el.dataset.at));
+  $("editor").querySelectorAll(".seat").forEach(el => el.onclick = e => {
+    const kk = +el.dataset.k;
+    pick = e.shiftKey && pick ? { a: pick.a, f: kk } : { a: kk, f: kk };
+    adding = null; chipError = "";
+    renderChips(E.rowIssues(curRow(), doc));
+    $("editor").focus({ preventScroll: true });
+  });
+  const add = $("addseat");
+  if (add) {
+    const at = adding, prev = flat[at - 1]?.s;
+    add.value = prev && /^\d+$/.test(prev.id) ? String(+prev.id + 1) : "";
+    add.focus(); add.select();
+    add.onkeydown = e => {
+      if (e.key === "Escape") { e.preventDefault(); adding = null; chipError = ""; renderChips(E.rowIssues(curRow(), doc)); $("editor").focus(); }
+      if (e.key !== "Enter") return;
+      e.preventDefault();
+      const { seats, error } = parseSeats(add.value.trim());
+      if (error) { chipError = error; renderInspector(flatOf(E.rowSeats(curRow()))); return; }
+      // the new seats go into the block of the "+" clicked: the one before it, or the first block at the start
+      const next = E.rowSeats(curRow());
+      let b = 0, i = 0;
+      if (at > 0) { const p = flatOf(next)[at - 1]; b = p.b; i = p.i + 1; }
+      next[b].splice(i, 0, ...seats.map(s => ({ ...s, from: undefined })));
+      commit(next, { a: at, f: at + seats.length - 1 });
+    };
+    add.onblur = () => setTimeout(() => { if (adding === at && document.activeElement !== add) { adding = null; renderChips(E.rowIssues(curRow(), doc)); } }, 150);
+  }
 }
+function startAdd(at) { adding = at; chipError = ""; renderChips(E.rowIssues(curRow(), doc)); }
+
+// what the selection can do; every action ends in commit()
+const act = {
+  remove() {
+    const [lo, hi] = picked(), next = E.rowSeats(curRow());
+    const keep = new Set(flatOf(next).filter((_, k) => k < lo || k > hi).map(x => x.s));
+    commit(next.map(blk => blk.filter(s => keep.has(s))), { a: lo, f: lo });
+  },
+  // move the selected seats one place; at a block edge they cross into the next block
+  move(d) {
+    const [lo, hi] = picked(), next = E.rowSeats(curRow()), flat = flatOf(next);
+    const at = d < 0 ? lo - 1 : hi + 1;
+    const edgeL = d < 0 && flat[lo].i === 0, edgeR = d > 0 && flat[hi].i === next[flat[hi].b].length - 1;
+    if (edgeL || edgeR) {
+      const b = flat[lo].b;
+      if (flat[hi].b !== b || (edgeL ? b === 0 : b === next.length - 1)) return;
+      const moving = next[b].splice(flat[lo].i, hi - lo + 1);
+      if (edgeL) next[b - 1].push(...moving); else next[b + 1].unshift(...moving);
+      return commit(next, pick);
+    }
+    if (at < 0 || at >= flat.length || flat[at].b !== flat[lo].b) return;
+    const blk = next[flat[lo].b], o = flat[at].i, [s] = blk.splice(o, 1);
+    blk.splice(d < 0 ? flat[hi].i : flat[lo].i, 0, s);
+    commit(next, { a: pick.a + d, f: pick.f + d });
+  },
+  // a mark on the whole selection: added to all unless all have it already
+  mark(c) {
+    const [lo, hi] = picked(), next = E.rowSeats(curRow()), flat = flatOf(next).slice(lo, hi + 1);
+    const can = flat.filter(x => E.impliedMark(x.s.id) !== c);
+    if (!can.length) return;
+    const all = can.every(x => x.s.mark.includes(c));
+    for (const { s } of can) s.mark = E.normMark(all ? s.mark.replace(c, "") : s.mark + c);
+    commit(next, pick);
+  },
+  split() {
+    const [lo] = picked(), next = E.rowSeats(curRow()), p = flatOf(next)[lo];
+    if (p.i === 0) {                                // already starts a block: merge it with the one before
+      if (!p.b) return;
+      next[p.b - 1] = next[p.b - 1].concat(next[p.b]); next.splice(p.b, 1);
+    } else next.splice(p.b, 1, next[p.b].slice(0, p.i), next[p.b].slice(p.i));
+    commit(next, pick);
+  },
+  // a new id (and inferred number) for one seat; marks stay, except the one the old id implied
+  set(id, inf) {
+    const [lo] = picked(), next = E.rowSeats(curRow()), { s } = flatOf(next)[lo];
+    id = id.trim(); inf = inf.trim();
+    if (!/^(\d+|[A-Z]+\d+)$/.test(id)) { chipError = `“${id}” is not a seat id (e.g. 12, W1)`; return renderInspector(flatOf(E.rowSeats(curRow()))); }
+    if (inf && !/^\d+$/.test(inf)) { chipError = "an inferred number is digits only"; return renderInspector(flatOf(E.rowSeats(curRow()))); }
+    const kept = s.mark.replace(E.impliedMark(s.id), "");
+    s.id = id; s.inf = /^\d+$/.test(id) ? "" : inf; s.mark = E.normMark(kept + E.impliedMark(id));
+    commit(next, pick);
+  },
+};
+
+function renderInspector(flat) {
+  const box = $("inspector"); if (!box) return;
+  const pk = picked();
+  const err = chipError ? `<p class="chip-err">${esc(chipError)}</p>` : "";
+  if (!pk) {
+    box.innerHTML = `<p class="hint">Click a seat to edit it (Shift-click for a range), or “+” to add seats. Keys: ←/→ select, Alt+←/→ move, Delete, a mark letter (${[...letters()].map(c => `<kbd>${c.toLowerCase()}</kbd>`).join(" ")}), Enter to edit the id, <kbd>+</kbd> insert, <kbd>|</kbd> new block, Esc.</p>${err}`;
+    return;
+  }
+  const one = pk[0] === pk[1], items = flat.slice(pk[0], pk[1] + 1), s = items[0].s;
+  const sameBlock = items.every(x => x.b === items[0].b);
+  const legend = doc.marks || {};
+  const marks = [...letters()].map(c => {
+    const can = items.filter(x => E.impliedMark(x.s.id) !== c), on = can.length && can.every(x => x.s.mark.includes(c));
+    const some = !on && can.some(x => x.s.mark.includes(c));
+    return `<button class="mk ${c} ${on ? "on" : ""} ${some ? "some" : ""}" data-mk="${c}" ${can.length ? "" : "disabled"} title="${esc(legend[c] || c)} (key ${c.toLowerCase()})">${c}</button>`;
+  }).join("");
+  box.innerHTML = `
+    <div class="insp">
+      <b>${one ? `Seat ${esc(s.id)}` : `${items.length} seats, ${esc(s.id)}–${esc(items.at(-1).s.id)}`}</b>
+      <span class="muted">block ${items[0].b + 1}${sameBlock ? "" : `–${items.at(-1).b + 1}`}</span>
+      ${one ? `<label>id <input id="i-id" value="${esc(s.id)}" size="5" spellcheck="false"></label>
+        ${/^\d+$/.test(s.id) ? "" : `<label title="the number this unnumbered box stands for">inferred <input id="i-inf" value="${esc(s.inf)}" size="4" spellcheck="false"></label>`}` : ""}
+      <span class="mks">${marks}</span>
+      <span class="acts">
+        <button data-act="left" title="move left (Alt+←)" ${sameBlock ? "" : "disabled"}>◀ move</button>
+        <button data-act="right" title="move right (Alt+→)" ${sameBlock ? "" : "disabled"}>move ▶</button>
+        <button data-act="before" title="insert before">+ before</button>
+        <button data-act="after" title="insert after (+)">+ after</button>
+        <button data-act="split" title="${items[0].i === 0 ? "merge this block with the one before (|)" : "start a new block here (|)"}" ${items[0].i === 0 && !items[0].b ? "disabled" : ""}>${items[0].i === 0 ? "merge ¦" : "split ¦"}</button>
+        <button data-act="remove" class="danger" title="delete (Delete)">delete${one ? "" : ` ${items.length}`}</button>
+      </span>
+    </div>${err}`;
+  box.querySelectorAll("[data-mk]").forEach(b => b.onclick = () => act.mark(b.dataset.mk));
+  const go = { left: () => act.move(-1), right: () => act.move(1), before: () => startAdd(pk[0]), after: () => startAdd(pk[1] + 1), split: act.split, remove: act.remove };
+  box.querySelectorAll("[data-act]").forEach(b => b.onclick = () => go[b.dataset.act]());
+  if (one) {
+    const save = () => act.set($("i-id").value, $("i-inf")?.value ?? "");
+    const unchanged = () => $("i-id").value.trim() === s.id && ($("i-inf")?.value.trim() ?? s.inf) === s.inf;
+    box.querySelectorAll("#i-id, #i-inf").forEach(inp => inp.onkeydown = e => {
+      if (e.key === "Enter") { e.preventDefault(); unchanged() ? $("editor").focus() : save(); }
+      if (e.key === "Escape") { e.preventDefault(); chipError = ""; renderInspector(flatOf(E.rowSeats(curRow()))); $("editor").focus(); }
+    });
+  }
+}
+
+// keys on the chips
+function chipKeys(e) {
+  if (e.target.id !== "editor") return;
+  const n = curRow().blocks.reduce((t, b) => t + b.seats.length, 0);
+  const k = e.key, redraw = () => renderChips(E.rowIssues(curRow(), doc));
+  if ((k === "ArrowLeft" || k === "ArrowRight") && !e.altKey) {
+    e.preventDefault();
+    const d = k === "ArrowLeft" ? -1 : 1;
+    if (!pick) pick = { a: d < 0 ? n - 1 : 0, f: d < 0 ? n - 1 : 0 };
+    else { const f = Math.max(0, Math.min(n - 1, pick.f + d)); pick = e.shiftKey ? { a: pick.a, f } : { a: f, f }; }
+    chipError = ""; return redraw();
+  }
+  if (k === "Home" || k === "End") { e.preventDefault(); const f = k === "Home" ? 0 : n - 1; pick = e.shiftKey && pick ? { a: pick.a, f } : { a: f, f }; return redraw(); }
+  if (k === "Escape") { if (pick || adding !== null) { e.preventDefault(); clearPick(); redraw(); } return; }
+  if (k === "+" || k === "=") { e.preventDefault(); return startAdd(pick ? picked()[1] + 1 : n); }
+  if (!pick) return;
+  if (e.altKey && (k === "ArrowLeft" || k === "ArrowRight")) { e.preventDefault(); return act.move(k === "ArrowLeft" ? -1 : 1); }
+  if (k === "Delete" || k === "Backspace") { e.preventDefault(); return act.remove(); }
+  if (k === "|") { e.preventDefault(); return act.split(); }
+  if (k === "Enter") { e.preventDefault(); const i = $("i-id"); if (i) { i.focus(); i.select(); } return; }
+  if (k.length === 1 && !e.metaKey && !e.ctrlKey && letters().includes(k.toUpperCase())) { e.preventDefault(); return act.mark(k.toUpperCase()); }
+}
+
+function updateCode() { $("code").value = E.rowCode(curRow()); }
+
+// ---------------------------------------------------------------- output
+
 function rowsBlock() {
-  const z = model[sel.z], marksAll = [];
-  const lines = z.rows.map(r => rowCode(r).replace(/,$/, "") + ",");
-  return "rows = [\n" + lines.join("\n") + "\n]";
+  return "rows = [\n" + doc.zones[sel.z].rows.map(r => "    " + E.rowCode(r)).join("\n") + "\n]";
 }
-$("copyrow").onclick = () => { navigator.clipboard.writeText($("code").value); $("status").textContent = "row copied"; };
+async function copy(text, done) {
+  try { await navigator.clipboard.writeText(text); $("status").textContent = done; }
+  catch { $("status").textContent = "clipboard blocked: select the text below and copy it"; }
+}
+$("copyrow").onclick = () => { updateCode(); copy($("code").value, "row copied"); };
 $("copyall").onclick = () => {
-  const z = model[sel.z];
-  $("code").value = z.rows.map(rowCode).join("\n");
-  navigator.clipboard.writeText($("code").value);
-  $("status").textContent = `${z.rows.length} rows copied`;
+  const z = doc.zones[sel.z];
+  $("code").value = z.rows.map(E.rowCode).join("\n");
+  copy($("code").value, `${z.rows.length} rows of ${z.name} copied`);
 };
-$("copyrows").onclick = () => {
-  $("code").value = rowsBlock();
-  navigator.clipboard.writeText($("code").value);
-  $("status").textContent = "rows = [ … ] copied — paste into venues/<id>.py";
-};
+$("copyrows").onclick = () => { $("code").value = rowsBlock(); copy($("code").value, "rows = [ … ] copied — paste into venues/<id>.py"); };
 $("dl").onclick = () => {
-  const blob = new Blob([JSON.stringify(editedDoc(), null, 1)], { type: "application/json" });
+  const bad = doc.zones.flatMap(z => z.rows.flatMap(r => E.rowIssues(r, doc).filter(i => i.level === "bad").map(i => `${z.name} ${r.row}: ${i.text}`)));
+  if (bad.length && !confirm(`${bad.length} problem(s) the build would reject:\n\n${bad.slice(0, 12).join("\n")}${bad.length > 12 ? "\n…" : ""}\n\nDownload anyway?`)) return;
+  const blob = new Blob([E.fileJSON(doc, order)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `${$("venue").value}.json`;
+  a.download = `${venueId}.json`;
   a.click(); URL.revokeObjectURL(a.href);
-  $("status").textContent = `downloaded ${$("venue").value}.json — save it over data/${$("venue").value}.json`;
+  const n = E.diffDocs(orig, doc).length;
+  $("status").textContent = `downloaded ${venueId}.json (${n} change${n === 1 ? "" : "s"}) — save it over data/${venueId}.json`;
 };
-$("venue").onchange = () => { history.replaceState(null,"",`?venue=${$("venue").value}`); load($("venue").value); };
-document.querySelectorAll("#tabbar button").forEach(b => b.onclick = () => { tab = b.dataset.tab; renderAll(); });
+$("venue").onchange = () => {
+  if ((E.diffDocs(orig, doc).length) && !confirm("Leave this venue? Changes not downloaded are lost.")) { $("venue").value = venueId; return; }
+  history.replaceState(null, "", `?venue=${$("venue").value}`);
+  load($("venue").value);
+};
+document.querySelectorAll("#tabbar button").forEach(b => b.onclick = () => { tab = b.dataset.tab; base = null; setURL(); renderAll(); });
+$("undo").onclick = undo; $("redo").onclick = redo;
+// ⌘Z / Ctrl+Z undo, ⇧⌘Z / Ctrl+Y redo; small inputs keep their own text undo until they are committed
+addEventListener("keydown", e => {
+  if (!(e.metaKey || e.ctrlKey) || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k !== "z" && k !== "y") return;
+  const t = e.target;
+  if (t.tagName === "INPUT" && t.type !== "number" && t.value !== t.defaultValue) return;
+  e.preventDefault();
+  if (k === "y" || e.shiftKey) redo(); else undo();
+});
+addEventListener("beforeunload", e => { if (doc && E.diffDocs(orig, doc).length) e.preventDefault(); });
 boot();
 })();
 </script>

@@ -228,9 +228,45 @@ the build fails if any part of house stops matching it.
    the printed totals and every pit against LCSD's stated figure, then writes `data/<id>.json` and `.csv`.
 4. Add the venue to `data/index.json`, with its `region` (Hong Kong Island, Kowloon or New Territories)
    and the date it was `added`.
-5. `python tools/check_locations.py` confirms each address and coordinate against LCSD's open data.
+5. Check the rows (and, for a round hall, the geometry) in the [row reviewer](#row-reviewer).
+6. `python tools/check_locations.py` confirms each address and coordinate against LCSD's open data.
 
 Python 3.11+ with the packages in `requirements.txt`. The row drafter's OCR uses Apple Vision (macOS).
+
+### Row reviewer
+
+`tools/review.html` is an internal page for checking and correcting a venue file. It is not published.
+Serve the repository root and open it with the venue's id:
+
+```sh
+python3 -m http.server 8770 --bind 127.0.0.1
+# http://127.0.0.1:8770/tools/review.html?venue=<id>
+```
+
+- **Seats**: each row as text (`1-5 | W1=6 7r 8rl`: `|` is a block edge, lowercase letters are the
+  venue's marks, `W1`/`X1` are unnumbered boxes, `=n` an inferred number) and as seat chips you can
+  select, mark, move, add, split and delete from the keyboard. Problems the build would reject are
+  listed under the row, and the header checks every part of house against its printed total by the
+  same rules as `venues/common.py`.
+- **Geometry** (round halls drawn as an arc): click a seat or an axis to pick its block or run, then
+  nudge or drag its numbers. The map flags overlapping seats, seats outside their block's bounds and
+  seats in a vomitorium. A plan image can be drawn under the map, from your own disk or from
+  `work/<id>/underlay.png` (with an optional `underlay.json` of `{upp, dx, dy, opacity}`); it is never
+  written to the file.
+- Undo/redo (⌘Z / ⇧⌘Z) covers both tabs, and "Changes since load" lists every difference from the file.
+  If `work/<id>/seats.json` exists, a panel shows the plan's seats that no row uses yet.
+- **Download JSON** writes the file exactly as `venues/common.py` would, so the diff shows only your
+  edits. Row edits must also go into `venues/<id>.py` ("Copy rows = [ … ]" gives the `row(...)` calls),
+  or the next build drops them. Block geometry is not in `venues/<id>.py`: `tools/derive_runs.py`
+  writes it from the plan into `data/<id>.json`, so a hand-tuned file is overwritten by rebuilding the
+  venue or rerunning that tool. Keep the downloaded file, and redo the tuning after either one.
+
+The editing logic is in `app/seatedit.js` (no page code), so other pages can reuse it. Its tests read
+every venue file and need only Node 18+:
+
+```sh
+node --test tools/seatedit.test.js
+```
 
 ## Sources and rules
 
@@ -281,10 +317,10 @@ and publishing.
 
 ## License
 
-- **Code**: MIT, see [LICENSE](LICENSE), except the planner.
-- **Planner** (`app/planner.html`): [PolyForm Noncommercial 1.0.0](LICENSE-PLANNER.md). Using the hosted
-  planner is free for anyone, including businesses; commercial use of the planner's code needs written
-  permission.
+- **Code**: MIT, see [LICENSE](LICENSE), except the planner and the row reviewer.
+- **Planner** (`app/planner.html`) and **row reviewer** (`tools/review.html`):
+  [PolyForm Noncommercial 1.0.0](LICENSE-PLANNER.md). Using the hosted planner is free for anyone,
+  including businesses; commercial use of the code of either needs written permission.
 - **Seat lists** (`data/`): this project's own contribution is licensed under
   [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), see [LICENSE-DATA](LICENSE-DATA).
   Keep the credit line and sources recorded in each file. Neither licence grants rights LCSD holds in

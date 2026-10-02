@@ -1,12 +1,13 @@
-# Licence for the planner
+# Licence for the planner and the row reviewer
 
-This licence covers **`app/planner.html`** (the planner) only. The rest of the code is under the MIT
-licence (`LICENSE`); this project's contribution to the seat lists is under CC BY 4.0 (`LICENSE-DATA`).
+This licence covers **`app/planner.html`** (the planner) and **`tools/review.html`** (the row reviewer,
+an internal tool that is not published on the site) only. The rest of the code is under the MIT licence
+(`LICENSE`); this project's contribution to the seat lists is under CC BY 4.0 (`LICENSE-DATA`).
 
 - **Using the hosted planner** at https://code.denniswu.org/hkperf-venue-seats/ is free for anyone,
   including businesses such as promoters planning a paid event.
-- **The planner's code** may be used, copied, changed and shared for non-commercial purposes under the
-  PolyForm Noncommercial License 1.0.0 below. Any commercial use of the code, such as building it into a
+- **The code of the planner and the reviewer** may be used, copied, changed and shared for
+  non-commercial purposes under the PolyForm Noncommercial License 1.0.0 below. Any commercial use of the code, such as building it into a
   product or a paid service, needs the licensor's written permission; ask through the project's repository,
   https://github.com/dennismywu/hkperf-venue-seats.
 
