@@ -142,6 +142,9 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .disclaimer text { fill: var(--ink); font-size: 10px; }
 .disclaimer .lead { font-weight: 700; }
 .disclaimer a text { fill: var(--acc); text-decoration: underline; }
+/* a customised version (the customiser, the planner): the user's own, not published data */
+.disclaimer.custom rect { fill: var(--acc-bg); stroke: var(--acc); }
+.disclaimer.custom .lead { fill: var(--acc); }
 .stagetext { fill: var(--muted); font-size: 11px; text-anchor: middle; dominant-baseline: central; letter-spacing: .1em; }
 .note { color: var(--muted); font-size: 12px; }
 

@@ -1,5 +1,5 @@
 // Customisations (app/seatedit.js): id-anchored changes on top of a published seat list.
-// Run: node --test tools/
+// Run: node --test tools/*.test.js
 const test = require("node:test");
 const assert = require("node:assert");
 const fs = require("node:fs");
@@ -265,6 +265,39 @@ test("whatever the user does, the list it keeps applies cleanly and holds one ch
       assert.deepStrictEqual(E.decodeChanges(E.encodeChanges(list)), list);
     }
   }
+});
+
+test("the view for drawing keeps removed seats in place and says what changed", () => {
+  const doc = load("ncwcc-th");
+  const v = E.customView(doc, [
+    A("A", "W4", "after", "W5", "W"),
+    { op: "remove", zone: "Theatre", row: "B", id: "7" },
+    { op: "marks", zone: "Theatre", row: "B", id: "8", marks: "W" },
+    { op: "rename", zone: "Theatre", row: "B", id: "9", to: "9A" },
+  ]);
+  assert.strictEqual(E.rowText(row(v.doc, "Theatre", "B")), "1-6 8w 9A 10-20");
+  assert.strictEqual(E.rowText(row(v.shown, "Theatre", "B")), "1-7 8w 9A 10-20");
+  assert.deepStrictEqual(Object.keys(v.status.get("Theatre|B|7")), ["removed"]);
+  assert.strictEqual(v.status.get("Theatre|B|8").wasMarks, "");
+  assert.strictEqual(v.status.get("Theatre|B|9A").wasId, "9");
+  assert.ok(v.status.get("Theatre|A|W5").added);
+  assert.ok(!v.status.has("Theatre|B|10"));
+  // a removed seat whose id is taken again is not drawn twice
+  const w = E.customView(doc, [{ op: "remove", zone: "Theatre", row: "B", id: "8" }, { op: "rename", zone: "Theatre", row: "B", id: "7", to: "8" }]);
+  assert.strictEqual(E.rowText(row(w.shown, "Theatre", "B")), E.rowText(row(w.doc, "Theatre", "B")));
+});
+
+test("a new seat's id is suggested from its neighbour", () => {
+  const doc = load("ncwcc-th");
+  const B = row(doc, "Theatre", "B"), A_ = row(doc, "Theatre", "A");
+  assert.strictEqual(E.suggestId(B, "20", "after"), "21");
+  assert.strictEqual(E.suggestId(B, "7", "after"), "7A");
+  assert.strictEqual(E.suggestId(B, "1", "before"), "1A");
+  assert.strictEqual(E.suggestId(A_, "W4", "after", "W"), "W5");
+  assert.strictEqual(E.suggestId(B, "7", "after", "X"), "X1");
+  assert.strictEqual(E.suggestId(A_, "W4", "after"), "17");
+  const taken = { row: "Z", blocks: [{ seats: ["7", "7A", "7B", "8"] }] };
+  assert.strictEqual(E.suggestId(taken, "7", "after"), "7C");
 });
 
 test("a seat is renamed, keeping its marks", () => {

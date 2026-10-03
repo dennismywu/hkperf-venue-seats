@@ -1,0 +1,788 @@
+<!doctype html>
+<!--
+  HK Venue Seats customiser.
+  Licence: PolyForm Noncommercial License 1.0.0 (see LICENSE-PLANNER.md in the repository,
+  https://github.com/dennismywu/hkperf-venue-seats). Using the hosted customiser is free for anyone;
+  commercial use of this code needs the licensor's written permission.
+  Required Notice: Copyright (c) 2026 Dennis Wu (https://code.denniswu.org/hkperf-venue-seats/)
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customiser · HK Venue Seats</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 16px; padding-top: 16px; align-items: start; }
+@media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.panel { position: sticky; top: calc(var(--keys-h, 80px) + 12px); max-height: calc(100vh - var(--keys-h, 80px) - 24px); overflow: auto; }
+@media (max-width: 900px) { .panel { position: static; max-height: none; } }
+.group { padding: 12px 0; border-top: 1px solid var(--line); }
+.group:first-of-type { border-top: 0; padding-top: 0; }
+.group h3 { font-size: 13px; margin: 0 0 8px; font-weight: 650; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.group h3 small { font-weight: 400; color: var(--muted); }
+.help { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
+.row-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn.small { padding: 4px 9px; font-size: 12px; }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn[aria-pressed="true"] { background: var(--acc-bg); border-color: var(--acc); color: var(--acc); font-weight: 650; }
+.notice { font-size: 13px; padding: 8px 10px; border-radius: 8px; background: var(--r-bg); color: var(--ink); border: 1px solid color-mix(in srgb, var(--r) 40%, transparent); margin: 0 0 12px; }
+.notice.ok { background: var(--acc-bg); border-color: color-mix(in srgb, var(--acc) 40%, transparent); }
+.msg { font-size: 12.5px; margin: 8px 0 0; min-height: 1em; }
+.msg.bad { color: var(--bad); } .msg.ok { color: var(--ok); }
+.field { display: grid; gap: 4px; font-size: 12px; color: var(--muted); margin-top: 8px; }
+.field input { font: inherit; font-size: 13px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; min-width: 0; width: 100%; }
+.inline { display: flex; gap: 6px; align-items: center; }
+.inline input { flex: 1; }
+.seathead { font-size: 15px; font-weight: 650; }
+.seathead small { display: block; font-size: 12px; font-weight: 400; color: var(--muted); }
+/* the row strip: the row's seats in seat order, with insert points between them */
+.strip { display: flex; flex-wrap: wrap; gap: 2px; align-items: center; margin-top: 8px; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); max-height: 160px; overflow: auto; }
+.strip .chip { font: inherit; font-size: 11px; min-width: 24px; padding: 2px 4px; border: 1px solid var(--seat-line); border-radius: 4px; background: var(--seat); color: var(--seat-ink); cursor: pointer; font-variant-numeric: tabular-nums; }
+.strip .chip.W { background: var(--w-bg); border-color: var(--w); color: var(--w); }
+.strip .chip.X { background: var(--x-bg); border-color: var(--x); color: var(--x); }
+.strip .chip.R { background: var(--r-bg); border-color: var(--r); }
+.strip .chip.off { opacity: .35; border-style: dashed; }
+.strip .chip.added { outline: 2px solid var(--acc); outline-offset: -1px; }
+.strip .chip.removed { opacity: .35; text-decoration: line-through; border-style: dashed; }
+.strip .chip.sel { box-shadow: 0 0 0 2px var(--hover); }
+.strip .ins { font: inherit; font-size: 10px; width: 12px; padding: 0; border: 0; background: none; color: var(--muted); cursor: pointer; }
+.strip .ins:hover, .strip .ins:focus-visible { color: var(--acc); font-weight: 700; }
+.strip .aisle { width: 8px; height: 16px; border-left: 1px dashed var(--muted); margin: 0 2px; }
+/* changes */
+.changes { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.changes li { display: flex; gap: 6px; align-items: center; font-size: 12.5px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.changes li span { flex: 1; min-width: 0; }
+.changes li.bad { border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
+.changes li.bad small { display: block; color: var(--bad); }
+.changes li.inactive small { display: block; color: var(--muted); }
+.changes button { font-size: 11px; padding: 2px 6px; }
+/* seats on the customiser's map */
+#map svg { user-select: none; -webkit-user-select: none; }
+.seat { cursor: pointer; }
+.seat.off { cursor: not-allowed; }
+.seat.c-added rect { stroke: var(--acc); stroke-width: 2.4; stroke-dasharray: none; }
+.seat.c-removed { opacity: .4; } .seat.c-removed rect { fill: none; stroke-dasharray: 2 2; }
+.seat.c-removed text { text-decoration: line-through; }
+.seat .c-dot { fill: var(--acc); pointer-events: none; }
+.seat.sel rect { stroke: var(--hover); stroke-width: 2.8; stroke-dasharray: none; }
+.seat.sel { opacity: 1; }
+.rowlabel { cursor: pointer; } .rowlabel:hover, .rowlabel.sel { fill: var(--acc); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); margin-top: 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { position: relative; display: inline-block; width: 13px; height: 13px; border-radius: 3px; border: 1px solid var(--seat-line); background: var(--seat); }
+.legend i.added { border: 2px solid var(--acc); }
+.legend i.removed { opacity: .4; border-style: dashed; background: none; }
+.legend i.changed::after { content: ""; position: absolute; right: 1px; top: 1px; width: 4px; height: 4px; border-radius: 50%; background: var(--acc); }
+.legend i.off { opacity: .3; border-style: dashed; }
+.legend i.sel { border: 2.5px solid var(--hover); }
+.files { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.files input[type="file"] { display: none; }
+.to-planner { margin-top: 10px; width: 100%; justify-content: center; }
+/* consent */
+dialog.consent { max-width: 620px; width: calc(100% - 32px); border: 1px solid var(--line); border-radius: 12px; padding: 0; background: var(--panel); color: var(--ink); }
+dialog.consent::backdrop { background: rgb(0 0 0 / .45); }
+.consent .in { padding: 22px 24px; }
+.consent h2 { margin: 0 0 6px; font-size: 20px; }
+.consent ul { padding-left: 18px; margin: 12px 0; } .consent li { margin-bottom: 8px; font-size: 14px; }
+.consent .agree { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; margin: 14px 0; }
+.consent .agree input { margin-top: 3px; accent-color: var(--acc); }
+.consent .actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+dialog.small { max-width: 460px; }
+.gated { visibility: hidden; }
+/* narrow screens: the inspector is a sheet at the bottom of the screen while a seat is selected */
+@media (max-width: 900px) {
+  #inspector.open { position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; max-height: 55vh; overflow: auto;
+    background: var(--panel); border-top: 1px solid var(--line); border-radius: 12px 12px 0 0; padding: 12px 16px 16px;
+    box-shadow: 0 -4px 16px rgb(0 0 0 / .18); }
+}
+#inspector .close { display: none; float: right; }
+@media (max-width: 900px) { #inspector.open .close { display: inline-flex; } }
+</style>
+</head>
+<body>
+<dialog class="consent" id="consent" aria-labelledby="consent-h">
+  <div class="in">
+    <h2 id="consent-h">Before you customise</h2>
+    <p class="sub">The customiser makes your own version of this venue's seat list, seat by seat. Please read how it treats it.</p>
+    <ul>
+      <li><b>It is your version, not the venue's.</b> What you make here is not the venue's seat plan and not this
+        project's published data. Check any change with the venue before you rely on it.</li>
+      <li><b>Nothing is kept.</b> It runs entirely in your browser: your changes are not sent anywhere or saved by this
+        site. No cookies, no browser storage. They travel only in this page's link (the part after #, which the
+        browser never sends).</li>
+      <li><b>To keep your changes, save them</b> as a file on your own device, and open it here again later. You can
+        pass them to the planner.</li>
+      <li id="consent-stats"></li>
+    </ul>
+    <label class="agree"><input type="checkbox" id="agree"> I understand and agree. (Because nothing is stored, the
+      customiser asks again on every visit.)</label>
+    <div class="actions">
+      <a class="btn" id="decline" href="index.html">Back to the viewer</a>
+      <button class="btn primary" id="accept" type="button" disabled>Open the customiser</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="consent small" id="leavedlg" aria-labelledby="leave-h">
+  <form class="in" method="dialog">
+    <h2 id="leave-h">Leave the customiser?</h2>
+    <p class="sub" id="leave-text">Your changes are not saved. The customiser keeps nothing, so if you leave now they
+      are lost. To keep them, save them as a file on your device first.</p>
+    <div class="actions" style="margin-top:14px">
+      <button class="btn" value="cancel" type="submit" formnovalidate>Stay</button>
+      <button class="btn" id="leave-save" type="button">Save changes…</button>
+      <button class="btn primary" id="leave-go" type="button">Leave without saving</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="app" class="gated">
+<header class="wrap">
+  <div>
+    <h1 id="title">Your customised version</h1>
+    <div class="sub" id="subtitle"></div>
+    <div class="byline">HK Venue Seats · by <a class="byline-link" href="../">Dennis Wu</a></div>
+  </div>
+  <div class="headctl">
+    <a class="btn" id="back" href="index.html">← Back to the viewer</a>
+    <button type="button" id="theme" class="themeswitch" role="switch" aria-checked="false" aria-label="Switch to dark mode" title="Switch to dark mode">
+      <span class="knob"></span>
+      <svg class="ico sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="ico moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="keybar" id="keybar">
+  <div class="wrap keys" id="keys" aria-live="polite"></div>
+</div>
+
+<main class="wrap layout">
+  <aside class="card panel" aria-label="Customising tools">
+    <p class="notice ok" id="basenote"></p>
+    <p class="notice" id="filenotice" hidden></p>
+    <div class="group" id="inspector" aria-label="Selected seat">
+      <button class="btn small close" id="insp-close" type="button" aria-label="Close">×</button>
+      <div id="insp"></div>
+      <p class="msg" id="msg" aria-live="polite"></p>
+    </div>
+    <div class="group">
+      <h3>Your changes <small id="nchanges"></small></h3>
+      <ul class="changes" id="changes"></ul>
+      <div class="row-btns" style="margin-top:8px">
+        <button class="btn small" id="undo" type="button" title="Undo (Ctrl/⌘ Z)">Undo</button>
+        <button class="btn small" id="redo" type="button" title="Redo (Ctrl/⌘ Shift Z)">Redo</button>
+        <button class="btn small" id="reset" type="button">Reset to the published seat list</button>
+      </div>
+      <p class="help" id="urlnote" hidden>Your changes no longer fit easily in a link. Save them to a file to keep them.</p>
+    </div>
+    <div class="group">
+      <h3>Save and reopen</h3>
+      <div class="files">
+        <button class="btn small" id="save" type="button">Save changes</button>
+        <label class="btn small" for="upload">Open a file…</label>
+        <input type="file" id="upload" accept="application/json,.json">
+      </div>
+      <p class="help" id="filenote">Saves your changes as a file on your device, for reopening here; the site keeps no
+        copy. Opens a saved customisation, or the customisation in a saved plan.</p>
+      <a class="btn primary to-planner" id="to-planner" href="planner.html">Plan with this customised version →</a>
+    </div>
+  </aside>
+
+  <section class="card" aria-label="Seat map">
+    <div class="tools">
+      <span>Click a seat to change it, or a row letter to see the row. Arrow keys move along and across rows.</span>
+      <div id="zoomctl" role="group" aria-label="Zoom"></div>
+    </div>
+    <div class="legend" aria-label="Legend">
+      <span><i class="added"></i>Added by you</span><span><i class="removed"></i>Removed by you</span>
+      <span><i class="changed"></i>Marks or number changed</span><span><i class="sel"></i>Selected</span>
+      <span><i class="off"></i>Not in this configuration</span>
+    </div>
+    <div id="map"></div>
+  </section>
+</main>
+
+<div class="wrap">
+  <footer class="site" aria-labelledby="credits-h">
+    <h2 id="credits-h">Credits</h2>
+    <p id="credit-venue"></p>
+    <p>HK Venue Seats is an independent project, not affiliated with or endorsed by LCSD. A customised version is
+      made by you: it is not the venue's seat plan and not this project's published data.</p>
+    <p><b>Disclaimer.</b> You use this application and its data at your own risk, and you are responsible for
+      checking any seat, number or configuration against the venue's own plan before you rely on it. The project
+      claims no rights in the venue plans or data, which remain LCSD's. The data is provided &ldquo;as is&rdquo;,
+      with no warranty of accuracy or completeness, and the project accepts no liability and no claim for
+      compensation for any loss arising from a discrepancy in the data.</p>
+    <p><b>Privacy.</b> The customiser runs in your browser and needs no account; it sends nothing and stores nothing
+      on the server. This site counts visits anonymously on its own server, with no IP addresses or other personal
+      data, and never what you type or choose. <a class="privacy-link" href="#">Privacy and usage</a></p>
+    <div class="meta">
+      <span>© 2026 Dennis Wu</span>
+      <span>Free to use here, for anyone. Customiser code: <a id="foot-licence" href="https://polyformproject.org/licenses/noncommercial/1.0.0" rel="noopener">PolyForm Noncommercial 1.0.0</a> (commercial reuse of the code by permission)</span>
+      <span>Seat lists: <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a></span>
+      <a id="foot-site" href="#" rel="noopener">Project page</a>
+      <a id="foot-repo" href="#" rel="noopener">Source on GitHub</a>
+    </div>
+  </footer>
+</div>
+</div>
+<div id="tip"></div>
+
+<script src="config.js"></script>
+<script src="seatmap.js"></script>
+<script src="seatedit.js"></script>
+<script src="analytics.js"></script>
+<script src="theme.js"></script>
+<script>
+const DATA = "../data/";
+const CONFIG = window.SEATS_CONFIG || {};
+const E = window.SeatEdit;
+const keyOf = (zone, row, seat) => `${zone}|${row}|${seat}`;
+
+// Everything the visitor makes lives in these variables only (and in this page's link).
+let doc = null, sha = "", cfg = null;
+let changes = [];                  // the customisation: id-anchored changes on the published seat list
+let undoStack = [], redoStack = [];
+let view = null;                   // E.customView(doc, changes)
+let sel = null;                    // {zone, row, id}: id null when a whole row is selected
+let gByKey = new Map();            // "zone|row|seat" -> the seat's <g> on the map
+
+if (CONFIG.repo) $("foot-licence").href = `${CONFIG.repo}/blob/${CONFIG.branch || "main"}/LICENSE-PLANNER.md`;
+document.querySelectorAll(".byline-link").forEach(a => { if (CONFIG.site) a.href = CONFIG.site; });
+for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo]]) {
+  const a = $(id);
+  url ? (a.href = url) : (a.hidden = true);
+}
+document.querySelectorAll(".privacy-link").forEach(a => CONFIG.site ? (a.href = CONFIG.site + "privacy.html") : a.remove());
+
+// ---------------------------------------------------------------- what the link carries (#c=…&u=…)
+
+const hashPart = k => (location.hash.match(new RegExp(`[#&]${k}=([\\w-]+)`)) || [])[1];
+let passed = null, passedChanges = [], badLink = false;
+try { passed = hashPart("c") ? decodeConfig(hashPart("c")) : null; } catch (e) { passed = null; }
+try { passedChanges = hashPart("u") ? E.decodeChanges(hashPart("u")) : []; } catch (e) { badLink = true; }
+const venueParam = () => passed?.venue || new URLSearchParams(location.search).get("venue");
+const fragment = () => `#c=${encodeConfig({ venue: doc.venue.id, ...cfg })}${changes.length ? `&u=${E.encodeChanges(changes)}` : ""}`;
+const pageLink = (page, id = doc.venue.id) => `${page}?venue=${encodeURIComponent(id)}${fragment()}`;
+
+// ---------------------------------------------------------------- consent first
+
+$("consent-stats").innerHTML = statsEnabled
+  ? `<b>Anonymous usage statistics.</b> Like the rest of the site, this page's visits are counted, and once you agree,
+     which customiser features are used (by name only, e.g. “change added”, “saved”), with GoatCounter on the
+     site's own server: no cookies, no IP addresses kept, never which seats or anything you type.
+     <a class="privacy-link" href="${CONFIG.site ? esc(CONFIG.site + "privacy.html") : "#"}">Privacy and usage</a>`
+  : `<b>No usage statistics</b> are collected on this page at present.`;
+{
+  const v = venueParam();
+  if (v) $("decline").href = `index.html?venue=${encodeURIComponent(v)}${location.hash}`;
+}
+startStats();   // anonymous page view, as on every page; feature events can only follow agreement
+$("agree").onchange = () => { $("accept").disabled = !$("agree").checked; };
+$("accept").onclick = () => {
+  $("consent").close();
+  $("app").classList.remove("gated");
+  track("customiser-consent-agreed");
+  init().catch(e => { $("basenote").className = "notice"; $("basenote").textContent = `Could not load the venue: ${e.message}`; });
+};
+$("consent").addEventListener("cancel", e => e.preventDefault());
+$("consent").showModal();
+
+// ---------------------------------------------------------------- load the venue and the base
+
+async function init() {
+  const venues = (await getJSON(DATA + "index.json")).venues;
+  const v = venues.find(x => x.id === venueParam()) || venues[0];
+  const r = await fetch(DATA + v.file);
+  if (!r.ok) throw new Error(`${v.file}: HTTP ${r.status}`);
+  const text = await r.text();
+  doc = JSON.parse(text);
+  sha = await E.seatListSha256(text);
+  cfg = sanitize(passed?.venue === doc.venue.id ? passed : null);
+  changes = passed?.venue === doc.venue.id || !passed ? passedChanges : [];
+  $("title").textContent = `Your customised version · ${doc.venue.name_en}`;
+  document.title = `Customised · ${doc.venue.name_en}`;
+  $("credit-venue").innerHTML = `${esc(doc.source.credit)} Seating plan for this venue: <a href="${esc(doc.source.url)}" rel="noopener">${esc(doc.source.url)}</a>.`;
+  new ResizeObserver(() => document.documentElement.style.setProperty("--keys-h", $("keybar").offsetHeight + "px")).observe($("keybar"));
+  if (badLink) fileNotice("The changes in this link could not be read, so you start from the published seat list.");
+  else if (changes.length) track("customiser-opened");
+  markSaved(passedChanges.length ? null : changes);
+  update({ redraw: true });
+}
+
+function sanitize(c) {
+  const d = defaults(doc);
+  if (!c) return d;
+  return {
+    pit: Number.isInteger(c.pit) && doc.orchestra_pits?.[c.pit] ? c.pit : -1,
+    marks: Object.fromEntries(Object.keys(d.marks).map(k => [k, typeof c.marks?.[k] === "boolean" ? c.marks[k] : d.marks[k]])),
+    zones: Object.fromEntries(Object.keys(d.zones).map(k => [k, typeof c.zones?.[k] === "boolean" ? c.zones[k] : d.zones[k]])),
+    standing: !!c.standing,
+  };
+}
+
+function describe() {
+  const pit = doc.orchestra_pits?.[cfg.pit];
+  const off = Object.keys(cfg.marks).filter(m => !cfg.marks[m]).map(m => MARK_NAMES[m].toLowerCase());
+  const closed = Object.keys(cfg.zones).filter(z => !cfg.zones[z]);
+  return [pit ? pit.name : "no orchestra pit", off.length ? `${off.join(", ")} not counted` : "all seat types counted",
+    ...closed.length ? [`${closed.join(", ")} closed`] : []].join(" · ");
+}
+
+// ---------------------------------------------------------------- counts against the base
+
+const why = (d, zone, row, mark, seat) => excludedIn(d, cfg, zone, row, mark, seat);
+function count(d) {
+  const t = { seats: 0, W: 0 };
+  for (const z of d.zones) for (const r of z.rows) for (const s of seatsOf(r)) {
+    const m = markOf(r, s);
+    if (why(d, z.name, r.row, m, s)) continue;
+    t.seats++; if (m.includes("W")) t.W++;
+  }
+  return t;
+}
+const signed = n => n > 0 ? `+${fmt(n)}` : n < 0 ? `−${fmt(-n)}` : "±0";
+function keys() {
+  const base = count(doc), now = count(view.doc);
+  const ds = now.seats - base.seats, dw = now.W - base.W;
+  const items = [
+    ["main", fmt(now.seats), `Seats in this configuration (${signed(ds)})`],
+    ...("W" in (doc.marks || {}) ? [["", fmt(now.W), `${MARK_NAMES.W} (${signed(dw)})`]] : []),
+    ["", fmt(changes.length), changes.length === 1 ? "Change from the published list" : "Changes from the published list"],
+    ...(view.notFitting.length ? [["", `<span class="neg">${fmt(view.notFitting.length)}</span>`, "No longer fit"]] : []),
+  ];
+  $("keys").innerHTML = items.map(([c, v, l]) => `<div class="key ${c}"><b>${v}</b><span>${esc(l)}</span></div>`).join("");
+  const parts = [];
+  if (ds) parts.push(`${signed(ds)} seat${Math.abs(ds) === 1 ? "" : "s"}`);
+  if (dw) parts.push(`${signed(dw)} wheelchair`);
+  return parts.join(", ");
+}
+
+// ---------------------------------------------------------------- the map is the editor
+
+function draw() {
+  const keep = zoom.svg && !zoom.fit ? { scale: zoom.scale, left: $("map").scrollLeft, top: $("map").scrollTop } : null;
+  const svg = drawSeatMap(view.shown, { custom: { changes: changes.length } });
+  gByKey = new Map();
+  svg.querySelectorAll(".pitband").forEach(b => b.classList.toggle("on", +b.dataset.pit === cfg.pit));
+  svg.querySelectorAll(".zonelabel").forEach(z => z.classList.toggle("off", !!z.dataset.zone && cfg.zones[z.dataset.zone] === false));
+  for (const g of svg.querySelectorAll(".seat")) {
+    const d = g.dataset, k = keyOf(d.zone, d.row, d.seat), st = view.status.get(k);
+    gByKey.set(k, g);
+    const off = st?.removed ? "" : why(view.doc, d.zone, d.row, d.mark, d.seat);
+    g.classList.toggle("off", !!off && !st);
+    if (off) d.off = off;
+    if (!st) continue;
+    if (st.added) g.classList.add("c-added");
+    if (st.removed) g.classList.add("c-removed");
+    if ("wasMarks" in st || st.wasId) {
+      const r = g.querySelector("rect");
+      el("circle", { class: "c-dot", cx: +r.getAttribute("x") + S - 3, cy: +r.getAttribute("y") + 3, r: 2.2 }, g);
+    }
+  }
+  showMap($("map"), svg);
+  if (keep) {
+    zoom.fit = false; zoom.scale = keep.scale;
+    const vb = svg.viewBox.baseVal;
+    svg.setAttribute("width", Math.round(vb.width * keep.scale)); svg.setAttribute("height", Math.round(vb.height * keep.scale));
+    $("map").scrollLeft = keep.left; $("map").scrollTop = keep.top;
+    if (zoom.label) zoom.label.textContent = `${Math.round(keep.scale * 100)}%`;
+  }
+  paintSel();
+}
+
+function paintSel() {
+  document.querySelectorAll("#map .seat.sel, #map .rowlabel.sel").forEach(x => x.classList.remove("sel"));
+  if (!sel) return;
+  if (sel.id) gByKey.get(keyOf(sel.zone, sel.row, sel.id))?.classList.add("sel");
+  document.querySelectorAll("#map .rowlabel").forEach(t => t.classList.toggle("sel", t.dataset.zone === sel.zone && t.dataset.row === sel.row));
+}
+
+// A seat can be chosen when it counts in this configuration, or when you changed it.
+const selectable = k => { const g = gByKey.get(k); return !!g && (!g.classList.contains("off") || view.status.has(k)); };
+
+$("map").addEventListener("click", e => {
+  const g = e.target.closest(".seat"), label = e.target.closest(".rowlabel");
+  if (g) {
+    const d = g.dataset, k = keyOf(d.zone, d.row, d.seat);
+    if (!selectable(k)) return say(`${d.row} ${d.seat}: not in this configuration (${d.off}). Change the configuration in the viewer to work on it.`, "bad");
+    select({ zone: d.zone, row: d.row, id: d.seat });
+  } else if (label) select({ zone: label.dataset.zone, row: label.dataset.row, id: null });
+});
+
+function select(s, focus = false) {
+  sel = s; say("");
+  paintSel(); inspector();
+  if (focus && s?.id) gByKey.get(keyOf(s.zone, s.row, s.id))?.focus({ preventScroll: false });
+}
+
+// ---------------------------------------------------------------- the row and the seat's place on screen
+
+const rowIn = (d, zone, row) => d.zones.find(z => z.name === zone)?.rows.find(r => r.row === row);
+const shownSeats = (zone, row) => seatsOf(rowIn(view.shown, zone, row) || { blocks: [] });
+const centre = g => { const r = g.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
+// Which way "after" (higher in seat order) runs on screen for a seat: right, left, down or up.
+function afterWay(zone, row, id) {
+  const ids = shownSeats(zone, row), i = ids.indexOf(id);
+  const at = gByKey.get(keyOf(zone, row, id));
+  const j = i + 1 < ids.length ? i + 1 : i - 1;
+  const nb = j >= 0 && gByKey.get(keyOf(zone, row, ids[j]));
+  if (!at || !nb || j === i) return (doc.layout?.seat_1_side || "right") === "right" ? "left" : "right";
+  const a = centre(at), b = centre(nb), sgn = j > i ? 1 : -1;
+  const dx = (b.x - a.x) * sgn, dy = (b.y - a.y) * sgn;
+  return Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
+}
+const OPPOSITE = { left: "right", right: "left", up: "down", down: "up" };
+const WORDS = { left: "on the left", right: "on the right", up: "above", down: "below" };
+const sideFor = (zone, row, id, way) => afterWay(zone, row, id) === way ? "after" : "before";
+
+// ---------------------------------------------------------------- the inspector
+
+function inspector() {
+  const box = $("insp");
+  $("inspector").classList.toggle("open", !!sel);
+  if (!sel) {
+    box.innerHTML = `<h3>Selected seat</h3><p class="help" style="margin:0">Click a seat on the map to change it: its marks,
+      its number, or a seat beside it. Click a row letter to see the whole row. Seats faded on the map are not in this
+      configuration.</p>`;
+    return;
+  }
+  const r = rowIn(view.shown, sel.zone, sel.row), ids = seatsOf(r);
+  const strip = rowStrip(r);
+  if (!sel.id) {
+    box.innerHTML = `<div class="seathead">Row ${esc(sel.row)}<small>${esc(sel.zone)} · ${fmt(ids.length)} seats</small></div>${strip}
+      <p class="help">Click a seat to select it; click + between two seats to add one there.</p>`;
+    wireStrip();
+    return;
+  }
+  const k = keyOf(sel.zone, sel.row, sel.id), st = view.status.get(k) || {};
+  const mark = markOf(r, sel.id), letters_ = Object.keys(doc.marks || {});
+  const off = gByKey.get(k)?.dataset.off;
+  const state = st.added ? "Added by you" : st.removed ? "Removed by you" :
+    [("wasMarks" in st) ? `marks were ${st.wasMarks ? letters(st.wasMarks).map(l => MARK_ONE[l] || l).join(", ") : "none"}` : "",
+     st.wasId ? `published as ${st.wasId}` : ""].filter(Boolean).join("; ") || "As published";
+  const way = afterWay(sel.zone, sel.row, sel.id), ways = [OPPOSITE[way] === "left" || OPPOSITE[way] === "up" ? OPPOSITE[way] : way];
+  ways.push(OPPOSITE[ways[0]]);
+  const hasW = letters_.includes("W");
+  const block = rowIn(view.doc, sel.zone, sel.row)?.blocks.find(b => b.seats.includes(sel.id));
+  const fixed = block && (block.runs?.length || (block.start != null && block.end != null));
+  if (st.removed) {
+    box.innerHTML = `<div class="seathead">Row ${esc(sel.row)} · seat ${esc(sel.id)}<small>${esc(sel.zone)} · Removed by you</small></div>
+      <div class="row-btns" style="margin-top:8px"><button class="btn small primary" id="restore" type="button">Put this seat back</button></div>${strip}`;
+    $("restore").onclick = () => restore(changes.findIndex(c => c.op === "remove" && c.zone === sel.zone && c.row === sel.row && c.id === sel.id));
+    wireStrip();
+    return;
+  }
+  box.innerHTML = `<div class="seathead">Row ${esc(sel.row)} · seat ${esc(sel.id)}<small>${esc(sel.zone)} · ${esc(state)}${off ? ` · not counted in this configuration (${esc(off)})` : ""}</small></div>
+    <div class="field">Marks<div class="row-btns" role="group" aria-label="Marks">${letters_.map(l =>
+      `<button class="btn small" type="button" data-mark="${l}" aria-pressed="${mark.includes(l)}" title="${esc(MARK_ONE[l] || l)}">${l} · ${esc(MARK_ONE[l] || l)}</button>`).join("")}</div></div>
+    <div class="field">Change<div class="row-btns">
+      ${hasW ? ways.map(w => `<button class="btn small" type="button" data-add="W" data-way="${w}">Add a wheelchair space ${WORDS[w]}</button>`).join("") : ""}
+      ${hasW && !mark.includes("W") ? `<button class="btn small" type="button" id="make-w">Make this a wheelchair space</button>` : ""}
+      ${ways.map(w => `<button class="btn small" type="button" data-add="" data-way="${w}">Add a seat ${WORDS[w]}</button>`).join("")}
+      <button class="btn small" type="button" id="remove">Remove seat</button></div></div>
+    <label class="field">Number (and marks, e.g. 15r, 15rl, W3)
+      <span class="inline"><input type="text" id="token" value="${esc(E.seatToken({ id: sel.id, mark, inf: "" }))}" autocomplete="off" spellcheck="false">
+      <button class="btn small" type="button" id="token-go">Apply</button></span></label>
+    ${fixed ? `<p class="help">This block is drawn between fixed aisles; its seats close up when you add one.</p>` : ""}
+    ${strip}`;
+  box.querySelectorAll("[data-mark]").forEach(b => b.onclick = () => {
+    const l = b.dataset.mark, next = mark.includes(l) ? mark.replace(l, "") : mark + l;
+    if (change({ op: "marks", zone: sel.zone, row: sel.row, id: sel.id, marks: next })) track("customiser-mark-set");
+  });
+  box.querySelectorAll("[data-add]").forEach(b => b.onclick = () => addBeside(b.dataset.add, b.dataset.way));
+  if ($("make-w")) $("make-w").onclick = () => { if (change({ op: "marks", zone: sel.zone, row: sel.row, id: sel.id, marks: mark + "W" })) track("customiser-mark-set"); };
+  $("remove").onclick = removeSel;
+  const applyToken = () => tokenChange($("token").value.trim(), mark);
+  $("token-go").onclick = applyToken;
+  $("token").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); applyToken(); } };
+  wireStrip();
+}
+
+function rowStrip(r) {
+  const out = [];
+  r.blocks.forEach((b, bi) => {
+    if (bi) out.push(`<span class="aisle" aria-hidden="true" title="aisle"></span>`);
+    b.seats.forEach((id, i) => {
+      const k = keyOf(sel.zone, sel.row, id), st = view.status.get(k) || {}, m = markOf(r, id);
+      const cls = ["chip", ...letters(m), st.added ? "added" : "", st.removed ? "removed" : "", !selectable(k) ? "off" : "", sel.id === id ? "sel" : ""].join(" ");
+      if (i) out.push(`<button class="ins" type="button" data-after="${esc(b.seats[i - 1])}" aria-label="Add a seat between ${esc(b.seats[i - 1])} and ${esc(id)}" title="Add a seat here">+</button>`);
+      out.push(`<button class="${cls}" type="button" data-seat="${esc(id)}" title="${esc(id)}${m ? " · " + esc(letters(m).map(l => MARK_ONE[l] || l).join(", ")) : ""}">${esc(id)}</button>`);
+    });
+  });
+  return `<div class="strip" aria-label="Row ${esc(sel.row)}, in seat order">${out.join("")}</div>`;
+}
+function wireStrip() {
+  document.querySelectorAll("#insp .strip .chip").forEach(c => c.onclick = () => {
+    const k = keyOf(sel.zone, sel.row, c.dataset.seat);
+    if (!selectable(k)) return say(`${sel.row} ${c.dataset.seat}: not in this configuration.`, "bad");
+    select({ ...sel, id: c.dataset.seat });
+  });
+  document.querySelectorAll("#insp .strip .ins").forEach(b => b.onclick = () => {
+    const at = b.dataset.after;
+    if (!selectable(keyOf(sel.zone, sel.row, at))) return say("Add seats beside a seat in this configuration.", "bad");
+    const id = E.suggestId(rowIn(view.doc, sel.zone, sel.row), at, "after");
+    if (change({ op: "add", zone: sel.zone, row: sel.row, at, side: "after", id, marks: "" }, { zone: sel.zone, row: sel.row, id })) track("customiser-change-added");
+  });
+}
+
+// ---------------------------------------------------------------- making changes
+
+function say(text, cls = "") { $("msg").textContent = text; $("msg").className = "msg " + cls; }
+
+// Record change c; select `then` afterwards. Returns true when it was made.
+function change(c, then = sel) {
+  const r = E.recordChange(doc, changes, c);
+  if (r.error) { say(r.error.charAt(0).toUpperCase() + r.error.slice(1) + ".", "bad"); return false; }
+  undoStack.push(changes); redoStack = [];
+  changes = r.changes;
+  sel = then;
+  update({ redraw: true });
+  return true;
+}
+
+function addBeside(box, way) {
+  const side = sideFor(sel.zone, sel.row, sel.id, way);
+  const id = E.suggestId(rowIn(view.doc, sel.zone, sel.row), sel.id, side, box);
+  const ok = change({ op: "add", zone: sel.zone, row: sel.row, at: sel.id, side, id, marks: box }, { zone: sel.zone, row: sel.row, id });
+  if (ok) { track("customiser-change-added"); say(`Added ${id}${box === "W" ? ", a wheelchair space," : ""} ${WORDS[way]}.`, "ok"); }
+}
+
+function removeSel() {
+  const ids = shownSeats(sel.zone, sel.row), i = ids.indexOf(sel.id);
+  const wasAdded = view.status.get(keyOf(sel.zone, sel.row, sel.id))?.added;
+  const id = sel.id;
+  // a removed published seat stays on the map as a ghost, selected; a seat you added simply goes
+  const then = wasAdded ? { ...sel, id: ids[i + 1] ?? ids[i - 1] ?? null } : sel;
+  if (change({ op: "remove", zone: sel.zone, row: sel.row, id }, then)) { track("customiser-change-removed"); say(`Removed ${id}.`, "ok"); }
+}
+
+// "15rl", "W3", "14A": a new number and/or marks for the selected seat
+function tokenChange(text, mark) {
+  const m = text.match(/^(\d+|[WX]\d+|\d+[A-Z])([a-z]*)$/);
+  if (!m) return say(`“${text}” is not a seat (e.g. 15, 15r, 15rl, W3, 14A).`, "bad");
+  const id = m[1], marks = E.normMark(E.impliedMark(id) + m[2].toUpperCase());
+  const { zone, row } = sel, was = sel.id;
+  const before = changes, beforeUndo = undoStack.length;
+  // a W/X box needs its mark before it takes its name; a box losing its name loses the mark after
+  const steps = [];
+  const markStep = () => marks !== E.normMark(mark) && steps.push([{ op: "marks", zone, row, id: E.impliedMark(id) ? was : id, marks }]);
+  const nameStep = () => id !== was && steps.push([{ op: "rename", zone, row, id: was, to: id }]);
+  if (E.impliedMark(id)) { markStep(); nameStep(); } else { nameStep(); markStep(); }
+  if (!steps.length) return say("No change.");
+  for (const [c] of steps) {
+    const r = E.recordChange(doc, changes, c);
+    if (r.error) { changes = before; undoStack.length = beforeUndo; update({ redraw: true }); return say(r.error.charAt(0).toUpperCase() + r.error.slice(1) + ".", "bad"); }
+    changes = r.changes;
+  }
+  undoStack.push(before); redoStack = [];
+  sel = { zone, row, id };
+  if (id !== was) track("customiser-renamed");
+  if (marks !== E.normMark(mark)) track("customiser-mark-set");
+  update({ redraw: true });
+  say("Changed.", "ok");
+}
+
+function restore(i) {
+  if (i < 0) return;
+  undoStack.push(changes); redoStack = [];
+  changes = E.dropChange(changes, i);
+  track("customiser-change-removed");
+  update({ redraw: true });
+}
+
+$("undo").onclick = () => { if (!undoStack.length) return; redoStack.push(changes); changes = undoStack.pop(); track("customiser-undo"); update({ redraw: true }); };
+$("redo").onclick = () => { if (!redoStack.length) return; undoStack.push(changes); changes = redoStack.pop(); update({ redraw: true }); };
+$("reset").onclick = () => { if (!changes.length) return; undoStack.push(changes); redoStack = []; changes = []; update({ redraw: true }); };
+$("insp-close").onclick = () => select(null);
+
+// ---------------------------------------------------------------- your changes
+
+function describeChange(c) {
+  const where = `${doc.zones.length > 1 ? c.zone + " " : ""}row ${c.row}`;
+  const marks = m => m ? letters(m).map(l => MARK_ONE[l] || l).join(", ") : "no marks";
+  if (c.op === "add") return `Added ${c.id}${c.marks ? ` (${marks(c.marks)})` : ""} next to ${c.at}, ${where}`;
+  if (c.op === "remove") return `Removed ${c.id}, ${where}`;
+  if (c.op === "marks") return `${c.id}, ${where}: ${marks(c.marks)}`;
+  return `Renumbered ${c.id} as ${c.to}, ${where}`;
+}
+// the id a change's seat has on the map now
+function seatNow(c) {
+  if (c.op === "add") return c.id;
+  const ren = changes.find(x => x.op === "rename" && x.zone === c.zone && x.row === c.row && x.id === c.id);
+  return c.op === "remove" ? c.id : ren && !view.notFitting.some(n => n.change === ren) ? ren.to : c.id;
+}
+function changeList() {
+  const bad = new Map(view.notFitting.map(n => [n.change, n.reason]));
+  $("nchanges").textContent = changes.length ? `${fmt(changes.length)}` : "none";
+  $("changes").innerHTML = changes.length ? changes.map((c, i) => {
+    const reason = bad.get(c), id = seatNow(c), g = gByKey.get(keyOf(c.zone, c.row, id));
+    const inactive = !reason && c.op !== "remove" && g?.dataset.off;
+    return `<li class="${reason ? "bad" : inactive ? "inactive" : ""}"><span>${esc(describeChange(c))}${reason ? `<small>No longer fits: ${esc(reason)}</small>` : ""}${inactive ? `<small>Not active in this configuration (${esc(g.dataset.off)})</small>` : ""}</span>
+      ${reason ? "" : `<button class="btn small" type="button" data-show="${i}" aria-label="Show on the map">Show</button>`}
+      <button class="btn small" type="button" data-drop="${i}" aria-label="Undo this change">×</button></li>`;
+  }).join("") : `<li><span class="help" style="margin:0">None yet. Your version is the published seat list.</span></li>`;
+  $("changes").querySelectorAll("[data-drop]").forEach(b => b.onclick = () => restore(+b.dataset.drop));
+  $("changes").querySelectorAll("[data-show]").forEach(b => b.onclick = () => {
+    const c = changes[+b.dataset.show];
+    select({ zone: c.zone, row: c.row, id: seatNow(c) }, true);
+    gByKey.get(keyOf(c.zone, c.row, seatNow(c)))?.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" });
+  });
+  $("undo").disabled = !undoStack.length; $("redo").disabled = !redoStack.length; $("reset").disabled = !changes.length;
+}
+
+// ---------------------------------------------------------------- one update for everything
+
+let reportedNotFitting = 0;
+function update({ redraw = false } = {}) {
+  view = E.customView(doc, changes);
+  if (view.notFitting.length > reportedNotFitting) track("customiser-no-longer-fits");
+  reportedNotFitting = view.notFitting.length;
+  if (redraw) draw();
+  // the selection may have gone (undo, or a seat removed)
+  if (sel?.id && !gByKey.has(keyOf(sel.zone, sel.row, sel.id))) sel = { ...sel, id: null };
+  if (sel && !rowIn(view.shown, sel.zone, sel.row)) sel = null;
+  paintSel();
+  const effect = keys();
+  $("subtitle").textContent = `Based on: ${describe()} · seat list ${sha.slice(0, 12)}${effect ? ` · ${effect}` : ""}`;
+  $("basenote").innerHTML = `Configuration from the viewer: ${esc(describe())}. <a href="${esc(pageLink("index.html"))}" id="change-config">Change it in the viewer</a>; your changes go with it.`;
+  $("change-config").onclick = e => { e.preventDefault(); leaveTo(pageLink("index.html"), true); };
+  inspector(); changeList();
+  history.replaceState(null, "", `${location.pathname}?venue=${encodeURIComponent(doc.venue.id)}${fragment()}`);
+  $("urlnote").hidden = location.href.length <= 2000;
+  $("back").href = pageLink("index.html");
+  $("to-planner").href = pageLink("planner.html");
+}
+
+// ---------------------------------------------------------------- keyboard
+
+document.addEventListener("keydown", e => {
+  if (!doc || $("consent").open || $("leavedlg").open) return;
+  const typing = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName);
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !typing) { e.preventDefault(); (e.shiftKey ? $("redo") : $("undo")).click(); return; }
+  if (typing) return;
+  if (e.key === "Escape") { select(null); return; }
+  if (!sel?.id) return;
+  if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); removeSel(); return; }
+  if (e.key === "Enter" && document.activeElement?.closest?.("#map")) { e.preventDefault(); $("insp").querySelector("button, input")?.focus(); return; }
+  const dir = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down" }[e.key];
+  if (!dir) return;
+  e.preventDefault();
+  const way = afterWay(sel.zone, sel.row, sel.id), along = dir === way ? 1 : dir === OPPOSITE[way] ? -1 : 0;
+  if (along) {
+    const ids = shownSeats(sel.zone, sel.row);
+    for (let i = ids.indexOf(sel.id) + along; i >= 0 && i < ids.length; i += along)
+      if (selectable(keyOf(sel.zone, sel.row, ids[i]))) return select({ ...sel, id: ids[i] }, true);
+    return;
+  }
+  // across rows: the nearest seat in the row before or after, on screen
+  const z = view.shown.zones.find(x => x.name === sel.zone), ri = z.rows.findIndex(r => r.row === sel.row);
+  const across = (dir === "down" || dir === "right") ? 1 : -1;
+  const here = centre(gByKey.get(keyOf(sel.zone, sel.row, sel.id)));
+  for (let j = ri + across; j >= 0 && j < z.rows.length; j += across) {
+    const r = z.rows[j];
+    const best = seatsOf(r).filter(id => selectable(keyOf(z.name, r.row, id)))
+      .map(id => ({ id, d: (p => Math.hypot(p.x - here.x, p.y - here.y))(centre(gByKey.get(keyOf(z.name, r.row, id)))) }))
+      .sort((a, b) => a.d - b.d)[0];
+    if (best) return select({ zone: z.name, row: r.row, id: best.id }, true);
+  }
+});
+
+// ---------------------------------------------------------------- files (on the visitor's own device)
+
+const base = () => ({ venue: doc.venue.id, seat_list_sha256: sha, configuration: { venue: doc.venue.id, ...cfg } });
+let savedPrint = null, leaving = false;
+const unsaved = () => savedPrint !== null && JSON.stringify(changes) !== savedPrint;
+function markSaved(list = changes) { savedPrint = list ? JSON.stringify(list) : "[]"; }
+function save(blob, name) {
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement("a"), { href: url, download: name });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+$("save").onclick = () => {
+  save(new Blob([E.customFile(base(), changes, "Made with the HK Venue Seats customiser. Your own version, not the venue's seat plan and not published data. This file was saved on your device; the site keeps no copy.")],
+    { type: "application/json" }), `${doc.venue.id}-customised.json`);
+  markSaved();
+  track("customiser-saved");
+  $("filenote").textContent = `Saved ${doc.venue.id}-customised.json to your device.`;
+};
+function fileNotice(text) { $("filenotice").hidden = !text; $("filenotice").textContent = text || ""; }
+
+$("upload").onchange = async () => {
+  const file = $("upload").files[0];
+  $("upload").value = "";
+  if (!file) return;
+  try {
+    const text = await file.text();
+    let c;
+    try { c = E.readCustom(text); }
+    catch (e) { if (/plan-protected/.test(text)) throw new Error("a protected plan: open it in the planner, which can unlock it"); throw e; }
+    if (!c) throw new Error("this plan holds no customisation");
+    if (c.base.venue !== doc.venue.id) {
+      const href = `customiser.html?venue=${encodeURIComponent(c.base.venue)}#c=${encodeConfig({ ...c.base.configuration, venue: c.base.venue })}&u=${E.encodeChanges(c.changes)}`;
+      return leaveTo(href, false, `This file is for another venue (${c.base.venue}); the customiser opens it there.`);
+    }
+    undoStack.push(changes); redoStack = [];
+    cfg = sanitize(c.base.configuration);
+    changes = c.changes;
+    markSaved();
+    track("customiser-opened");
+    update({ redraw: true });
+    const nf = view.notFitting.length;
+    fileNotice(c.base.seat_list_sha256 !== sha
+      ? `The published seat list has been corrected since this file was saved. Every change was checked again: ${nf ? `${fmt(nf)} no longer fit (listed in Your changes)` : "all still fit"}.`
+      : nf ? `${fmt(nf)} change(s) no longer fit (listed in Your changes).` : "");
+    $("filenote").textContent = `Opened ${file.name}${c.note ? `: ${c.note}` : "."}`;
+  } catch (e) {
+    $("filenote").textContent = `Could not open ${file.name}: ${e.message}.`;
+  }
+};
+
+// ---------------------------------------------------------------- leaving
+// Changes travel in the link to the viewer and the planner; leaving any other way (closing, another site)
+// loses them unless saved.
+function leaveTo(href, carries, text) {
+  if (carries || !unsaved()) { leaving = true; location.href = href; return; }
+  $("leave-text").textContent = (text ? text + " " : "") + "Your changes here are not saved. The customiser keeps nothing, so if you leave now they are lost.";
+  $("leave-go").onclick = () => { leaving = true; location.href = href; };
+  $("leave-save").onclick = () => { $("save").click(); $("leavedlg").close(); leaving = true; location.href = href; };
+  $("leavedlg").showModal();
+}
+addEventListener("beforeunload", e => {
+  if (leaving || !unsaved()) return;
+  e.preventDefault();
+  e.returnValue = "";
+});
+for (const id of ["back", "to-planner"]) $(id).addEventListener("click", () => {
+  leaving = true;
+  track(id === "to-planner" ? "customiser-to-planner" : "customiser-to-viewer");
+});
+
+// ---------------------------------------------------------------- tooltip and zoom
+
+const tip = $("tip");
+function showTip(g, x, y) {
+  const d = g.dataset, k = keyOf(d.zone, d.row, d.seat), st = view.status.get(k) || {};
+  let h = `<b>${esc(d.row)} ${esc(d.seat)}</b>` + (d.zone && d.zone !== d.row ? ` · ${esc(d.zone)}` : "");
+  if (d.mark) h += `<br>${letters(d.mark).map(l => esc(MARK_ONE[l] || l)).join(" · ")}`;
+  if (st.added) h += "<br>Added by you";
+  if (st.removed) h += "<br>Removed by you";
+  if ("wasMarks" in st) h += `<br>Marks changed by you (were ${st.wasMarks ? esc(letters(st.wasMarks).map(l => MARK_ONE[l] || l).join(", ")) : "none"})`;
+  if (st.wasId) h += `<br>Renumbered by you (published as ${esc(st.wasId)})`;
+  if (d.off && !st.removed) h += `<br><span class="off">Not counted: ${esc(d.off)}</span>`;
+  tip.innerHTML = h; tip.style.display = "block";
+  const r = tip.getBoundingClientRect();
+  tip.style.left = Math.min(x + 12, innerWidth - r.width - 8) + "px";
+  tip.style.top = (y + 14 + r.height > innerHeight ? y - r.height - 10 : y + 14) + "px";
+}
+$("map").addEventListener("pointermove", e => { const g = e.target.closest(".seat"); g ? showTip(g, e.clientX, e.clientY) : (tip.style.display = "none"); });
+$("map").addEventListener("pointerleave", () => tip.style.display = "none");
+$("map").addEventListener("focusin", e => { const g = e.target.closest(".seat"); if (g) { const r = g.getBoundingClientRect(); showTip(g, r.right, r.bottom); } });
+$("map").addEventListener("focusout", () => tip.style.display = "none");
+zoomControls($("zoomctl"));
+</script>
+</body>
+</html>

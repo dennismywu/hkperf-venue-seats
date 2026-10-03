@@ -1,4 +1,4 @@
-// Checks app/seatedit.js against every seat list in data/. Run: node --test tools/
+// Checks app/seatedit.js against every seat list in data/. Run: node --test tools/*.test.js
 const test = require("node:test");
 const assert = require("node:assert");
 const fs = require("node:fs");

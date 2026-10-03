@@ -182,9 +182,10 @@ function drawStanding(svg, doc, cx, y) {
 }
 
 // Draws the whole map for doc and returns the <svg>; the caller places it and styles the seats.
-function drawSeatMap(doc) {
-  if (doc.layout?.arrangement === "arc") return drawArcMap(doc);
-  if (doc.layout?.banks?.length) return drawBankedMap(doc);
+// opts.custom = {changes: n}: the map is a user's customised version; finishMap says so inside the drawing.
+function drawSeatMap(doc, opts = {}) {
+  if (doc.layout?.arrangement === "arc") return drawArcMap(doc, opts);
+  if (doc.layout?.banks?.length) return drawBankedMap(doc, opts);
   const rightFirst = (doc.layout?.seat_1_side || "right") === "right";
   // width of the widest row (centred rows); side blocks push to the edges of this width
   let maxW = 0;
@@ -252,7 +253,7 @@ function drawSeatMap(doc) {
   if (doc.standing?.places?.length && !standingDrawn) {
     y = drawStanding(svg, doc, x0 + maxW / 2, y - ZONE_GAP + 10) + ZONE_GAP;
   }
-  return finishMap(svg, doc, W, y - ZONE_GAP + 14);
+  return finishMap(svg, doc, W, y - ZONE_GAP + 14, opts);
 }
 
 // A pit's dashed outline: a rectangle with its name inside the top-left corner, or the polygon pts with its
@@ -265,11 +266,13 @@ function pitBand(svg, i, pit, x, y, w, h, pts, label) {
   el("text", label || { x: x + 8, y: y + h / 2 }, band).textContent = pit.name;
 }
 
-// Disclaimer inside the drawing, so it stays with any screenshot of the map; then size the drawing.
-function finishMap(svg, doc, W, y) {
+// Disclaimer inside the drawing, so it stays with any screenshot of the map; then size the drawing. A
+// customised version (opts.custom) also says, beside it, that it is the user's own and not published data.
+function finishMap(svg, doc, W, y, opts = {}) {
+  const chars = Math.floor((W - 24) / 5.1);
   const lines = wrap("This map is drawn from the seat data published with it: a machine-assisted reading of the rows " +
     "and seats of the venue. It is not the actual seat plan. For the actual seat plan, refer to the version " +
-    "published by LCSD:", Math.floor((W - 24) / 5.1));
+    "published by LCSD:", chars);
   const box = el("g", { class: "disclaimer" }, svg);
   const boxH = (lines.length + 2) * 13 + 10;
   el("rect", { x: 2, y, width: W - 4, height: boxH, rx: 4 }, box);
@@ -277,7 +280,18 @@ function finishMap(svg, doc, W, y) {
   lines.forEach((l, i) => { el("text", { x: 12, y: y + 16 + (i + 1) * 13 }, box).textContent = l; });
   const a = el("a", { href: doc.source.url, target: "_blank", rel: "noopener" }, box);
   el("text", { x: 12, y: y + 16 + (lines.length + 1) * 13 }, a).textContent = doc.source.url;
-  const H = y + boxH + 4;
+  let H = y + boxH + 4;
+  if (opts.custom) {
+    const n = opts.custom.changes;
+    const more = wrap(`Not the venue's seat plan and not published data. ${n === 1 ? "1 change" : `${n} changes`} from the ` +
+      "published seat list, made by you.", chars);
+    const c = el("g", { class: "disclaimer custom" }, svg);
+    const cH = (more.length + 1) * 13 + 10;
+    el("rect", { x: 2, y: H, width: W - 4, height: cH, rx: 4 }, c);
+    el("text", { class: "lead", x: 12, y: H + 16 }, c).textContent = "Customised by you";
+    more.forEach((l, i) => { el("text", { x: 12, y: H + 16 + (i + 1) * 13 }, c).textContent = l; });
+    H += cH + 4;
+  }
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   svg.setAttribute("width", W); svg.setAttribute("height", H);
   return svg;
@@ -336,7 +350,7 @@ function pieceItems(piece, reversed, aisle) {
 }
 const pieceLength = items => items.reduce((a, it) => a + it.before + S, 0);
 
-function drawBankedMap(doc) {
+function drawBankedMap(doc, opts = {}) {
   const banks = doc.layout.banks.map(bk => {
     const level = bk.side === "front" || bk.side === "back" || bk.rows_run === "across";   // rows drawn level, facing the stage
     const aisle = bk.side === "left" || bk.side === "right";
@@ -601,7 +615,7 @@ function drawBankedMap(doc) {
     pitBand(svg, i, pit, 0, 0, 0, 0, pts, { x: rows[0].x0 - LABEL_W - 6, y: (rows[0].y0 + rows[0].y1) / 2, "text-anchor": "end" });
   });
   const bottom = oy + Math.max(houseBottom, ...ext.map(e => e.y1)) + LBL + 10;
-  return finishMap(svg, doc, W, bottom);
+  return finishMap(svg, doc, W, bottom, opts);
 }
 
 // ---------------------------------------------------------------- arc maps
@@ -609,7 +623,7 @@ function drawBankedMap(doc) {
 // the stage wedge; each zone's arc holds its angular span (360 = a closed ring), its bearing (where the
 // arc begins: 0 = up, clockwise) and its radius band (tier, ring). Rows are concentric rings about the
 // centre; the seats of a row are spread along its arc, rotated to the tangent.
-function drawArcMap(doc) {
+function drawArcMap(doc, opts = {}) {
   const layout = doc.layout || {}, arc = layout.arc || {};
   const RAD = Math.PI / 180;
   const stageSpan = arc.stage_span ?? 150;
@@ -858,7 +872,7 @@ function drawArcMap(doc) {
   svg.appendChild(g);
   // where the centre is in the drawing, and the scale, so a tool can turn a pointer into bearing and radius
   Object.assign(svg.dataset, { ox, oy, scale: arc.scale ?? 1 });
-  return finishMap(svg, doc, W, maxY - minY);
+  return finishMap(svg, doc, W, maxY - minY, opts);
 }
 
 // ---------------------------------------------------------------- zoom
