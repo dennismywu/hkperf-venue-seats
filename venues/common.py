@@ -66,7 +66,7 @@ def row(label, *blocks, marks=None, inferred=None, note=None):
 
 BANK_SIDES = {"front", "back", "left", "right"}
 LEVEL_SIDES = ("front", "back")          # banks drawn level, facing the stage
-BANK_ALIGN = {"downstage", "upstage", "house", "room"}
+BANK_ALIGN = {"downstage", "upstage", "stage", "house", "room"}
 
 
 def find_row(doc, ref):
@@ -159,7 +159,7 @@ def check_banks(doc):
         if "level_with" in b:
             zone, r = find_row(doc, b["level_with"])
             assert b["side"] not in LEVEL_SIDES and (zone, r["row"]) in front_rows and not {"after", "beside"} & set(b), \
-                f"bank {b['id']}: level_with {b['level_with']!r} must be a row of a front bank"
+                f"bank {b['id']}: level_with {b['level_with']!r} must be a row of a front or back bank"
         assert b["side"] in LEVEL_SIDES or {"after", "beside", "level_with"} & set(b) or b.get("align", "downstage") in BANK_ALIGN, f"bank {b['id']}: align"
         for ref in b["rows"]:
             zone, r = find_row(doc, ref)

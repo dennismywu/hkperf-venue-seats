@@ -184,9 +184,9 @@ of the stage (a thrust stage, or rows along the side walls). The files still hol
 | `in_line` | side banks whose rows run along: `true` when the rows follow one another down the wall rather than sit side by side |
 | `seat_1` | which end seat 1 is at: `left`/`right` for rows drawn level (`front`/`back` banks, `across`); `downstage`/`upstage` for upright rows |
 | `after` | side banks: the `id` of a front bank; the bank sits against the side wall after it (e.g. boxes between the stalls and the balcony) |
-| `level_with` | side banks: a row of a front bank; the bank starts level with that row, against the side wall (e.g. boxes beside the stalls) |
+| `level_with` | side banks: a row of a front or back bank; the bank starts level with that row, against the side wall (e.g. boxes beside the stalls) |
 | `beside` | side banks whose rows run across: the `id` of a front bank; each row sits level with the same row of that bank, across the aisle (e.g. side blocks of the same rows) |
-| `align` | other side banks: beside the stage, level with its front (`downstage`) or back (`upstage`); beside the front banks (`house`); or along the room (`room`) |
+| `align` | other side banks: beside the stage, level with its front (`downstage`) or back (`upstage`), or centred on it (`stage`); beside the front banks (`house`); or along the room (`room`) |
 
 The viewer draws the stage in the middle, front banks below it, back banks above it (rows level and facing
 the stage from the far side), and side banks beside it, or against the side walls after a front bank, or level

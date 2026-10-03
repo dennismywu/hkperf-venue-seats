@@ -292,14 +292,15 @@ function finishMap(svg, doc, W, y) {
 //   rows: ["AA", ...] or [{row: "A", block: 1}, ...]   nearest the stage first
 //   seat_1: front banks "left" | "right"; side banks "downstage" | "upstage" (the end seat 1 is at)
 //   align (side banks): "downstage" (level with the stage's front), "upstage" (with its back),
-//     "house" (beside the front banks, from their first row), "room" (centred on stage and front banks)
+//     "stage" (centred on the stage, columns centred on one another), "house" (beside the front banks,
+//     from their first row), "room" (centred on stage and front banks)
 //   rows_run (side banks): "along" (default; each row upright, running along the side) or "across"
 //     (each row level, facing the stage; rows one behind another, e.g. boxes on a side wall)
 //   in_line (side banks, rows along): rows one after another down the wall, not side by side
 //   after (side banks): the id of a front bank; the bank sits against the side wall after it
 //   rows may name their part of house, {"zone": "Stalls 2", "row": "A"}, where row letters repeat
-//   level_with (side banks): a row of a front bank ("R", or {zone, row}); the bank starts level with that row, outside the
-//     front rows (e.g. boxes on the side walls beside the stalls)
+//   level_with (side banks): a row of a front or back bank ("R", or {zone, row}); the bank starts level with that row,
+//     outside the front rows (e.g. boxes on the side walls beside the stalls)
 //   beside (side banks, rows across): the id of a front bank; each row sits level with the same row of
 //     that bank, across the aisle from it (rows the front bank lacks continue below it)
 //   label: optional heading drawn with the bank
@@ -429,6 +430,8 @@ function drawBankedMap(doc) {
     b.pieces.forEach(p => zonesSeen.add(p.z.name));
     const top = backBottom - b.h;
     place.push({ b, x: -b.w / 2, y: top });
+    // back rows can be named by level_with too (side columns beside the far house)
+    b.pieces.forEach((p, i) => frontRowY.set(rowKey(p.z, p.row), top + (b.pieces.length - 1 - i) * (S + ROW_GAP)));
     backBottom = top - BANK_GAP;
   }
   const houseBottom = y - BANK_GAP;
@@ -444,7 +447,8 @@ function drawBankedMap(doc) {
     for (const b of sides.filter(s => !s.after && !s.beside && !s.level_with && s.side === (dir < 0 ? "left" : "right"))) {
       if (outer(b)) edge = Math.max(edge, frontHalf + BANK_GAP);
       const x = dir < 0 ? -edge - b.w : edge;
-      const top = b.align === "upstage" ? 0 : b.align === "house" ? houseTop : b.align === "room" ? (houseBottom - b.h) / 2 : stageH - b.h;
+      const top = b.align === "upstage" ? 0 : b.align === "stage" ? (stageH - b.h) / 2 : b.align === "house" ? houseTop
+        : b.align === "room" ? (houseBottom - b.h) / 2 : stageH - b.h;
       place.push({ b, x, y: top });
       edge += b.w + BANK_GAP;
     }
@@ -558,7 +562,8 @@ function drawBankedMap(doc) {
         const col = b.side === "left" ? b.pieces.length - 1 - i : i;
         const cx = X + col * (S + COL_GAP);
         // columns in a bank line up at the end given by align (downstage by default)
-        const y0 = b.align === "upstage" || b.align === "house" || b.level_with ? Y : b.align === "room" ? Y + (b.h - len) / 2 : Y + b.h - len;
+        const y0 = b.align === "upstage" || b.align === "house" || b.level_with ? Y
+          : b.align === "room" || b.align === "stage" ? Y + (b.h - len) / 2 : Y + b.h - len;
         const up = b.seat_1 === "upstage";          // seat 1 at the top
         let cy = up ? y0 : y0 + len - S;
         p.items.forEach((it, j) => {

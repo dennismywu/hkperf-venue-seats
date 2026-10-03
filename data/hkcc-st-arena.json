@@ -1,0 +1,1194 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.5",
+ "venue": {
+  "id": "hkcc-st-arena",
+  "name_en": "Hong Kong Cultural Centre Studio Theatre (arena stage)",
+  "name_zh": "香港文化中心 劇場（中央舞台）"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.lcsd.gov.hk/en/hkcc/common/images/facilities/studiotheatre/ST-Arena-New.gif",
+  "page": "https://www.lcsd.gov.hk/en/hkcc/facilities/studiotheatre.html",
+  "file": "ST-Arena-New.gif",
+  "sha256": "bb5d0a755ba82073def8562815dbbe1f91f7ed0142d7869010607217fbbb07c5",
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government."
+ },
+ "references": [
+  {
+   "what": "Seat totals by tier for each layout, and the vomitory losses",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/hkcc-st-lfe.pdf",
+   "title": "Hong Kong Cultural Centre – Studio Theatre, FULL Technical Information",
+   "document_version": "V. 2025.05.29",
+   "sha256": "ee61856ee6ef71c1478e88467e81e562c36c172008006424466d7daf199db54d",
+   "retrieved": "2026-10-03",
+   "quotes": [
+    "Max. Total Seating: Arena Stage: 496 seats Thrust Stage: 303 seats Transverse Stage: 382 seats End Stage: 321 seats",
+    "West Tier 150 (West Vomitory 18) North Tier 45 (North Vomitory 9) East Tier 154 (East Vomitory 18) South Tier 45 (South Vomitory 9) Balcony West 21 Balcony North 30 Balcony East 21 Balcony Southarea 30 Total 496",
+    "West Tier 150 (West Vomitory 18) North Tier 45 (North Vomitory 9) South Tier 45 (South Vomitory 9) Balcony West 21 Balcony North 21 Balcony South 21 Total 303",
+    "West Tier 150 (West Vomitory 18) East Tier 154 (East Vomitory 18) Balcony West 21 Balcony East 21 Balcony North 18 Balcony South 18 Total 382",
+    "Main Tier 270 Balcony West 21 Balcony North 15 Balcony South 15 Total 321",
+    "Vomitory entries can be made available with a loss of 9 or 18 seats."
+   ],
+   "note": "The plans print only the grand total; the tiers are the sheet's, and every tier equals the boxes the plan draws minus its management seats. The tiers are placed on the plan: West is the main house drawn at the bottom, East the house across an arena or transverse stage at the top, North the left side, South the right side. The sheet also gives vomitory losses (9 or 18 seats) but not the rows they take; no rows are removed here."
+  }
+ ],
+ "location": {
+  "address_en": "10 Salisbury Road, Tsim Sha Tsui, Kowloon, Hong Kong",
+  "address_zh": "香港九龍尖沙咀梳士巴利道十號",
+  "district": "Yau Tsim Mong",
+  "latitude": 22.29386,
+  "longitude": 114.17053,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "50110016",
+   "name_in_source": "Hong Kong Cultural Centre (Studio Theatre)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Hong Kong Cultural Centre"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "marks": {
+  "W": "Seat suitable for audience on wheel chairs (box prints W, no number)",
+  "X": "Management seat (crossed box, no number)"
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "note": "The stage sits in the middle with the audience on all four sides. The west house (rows CA-CP, drawn at the bottom) faces it with seat 1 at the left; the east house (rows AA-AP, drawn at the top and read upside down on the plan) faces it with seat 1 at the right. Rows DA-DC-DE (left, North) and BA-BC-BE (right, South) are galleries drawn upright, numbered from the audience's end by the stage. CQ and AQ are outer rows of wheelchair boxes set apart from CP and AP, and DQ and BQ are outer columns of wheelchair boxes in groups. Numbering skips the letters I and O. This is one of the theatre's seating layouts; the other three are separate seat lists.",
+  "banks": [
+   {
+    "id": "west",
+    "side": "front",
+    "rows": [
+     "CA",
+     "CC",
+     "CE",
+     "CG",
+     "CJ",
+     "CL",
+     "CN",
+     "CP"
+    ],
+    "seat_1": "left"
+   },
+   {
+    "id": "balcony-west",
+    "side": "front",
+    "rows": [
+     "CQ"
+    ],
+    "seat_1": "left"
+   },
+   {
+    "id": "east",
+    "side": "back",
+    "rows": [
+     "AA",
+     "AC",
+     "AE",
+     "AG",
+     "AJ",
+     "AL",
+     "AN",
+     "AP"
+    ],
+    "seat_1": "right"
+   },
+   {
+    "id": "balcony-east",
+    "side": "back",
+    "rows": [
+     "AQ"
+    ],
+    "seat_1": "right"
+   },
+   {
+    "id": "north",
+    "side": "left",
+    "rows": [
+     "DA",
+     "DC",
+     "DE"
+    ],
+    "seat_1": "upstage",
+    "align": "stage"
+   },
+   {
+    "id": "south",
+    "side": "right",
+    "rows": [
+     "BA",
+     "BC",
+     "BE"
+    ],
+    "seat_1": "upstage",
+    "align": "stage"
+   },
+   {
+    "id": "balcony-north",
+    "side": "left",
+    "rows": [
+     "DQ"
+    ],
+    "seat_1": "upstage",
+    "level_with": "AN"
+   },
+   {
+    "id": "balcony-south",
+    "side": "right",
+    "rows": [
+     "BQ"
+    ],
+    "seat_1": "upstage",
+    "level_with": "AN"
+   }
+  ]
+ },
+ "printed_totals": {
+  "West Tier": 150,
+  "East Tier": 154,
+  "North Tier": 45,
+  "South Tier": 45,
+  "Balcony West": 21,
+  "Balcony East": 21,
+  "Balcony North": 30,
+  "Balcony South": 30,
+  "Total": 496
+ },
+ "totals_source": "The grand total is printed on the plan; the tiers are LCSD's technical sheet (V. 2025.05.29).",
+ "zones": [
+  {
+   "name": "West Tier",
+   "name_zh": "西翼",
+   "rows": [
+    {
+     "row": "CA",
+     "blocks": [
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "CC",
+     "blocks": [
+      {
+       "seats": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "CE",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "CG",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "CJ",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "CL",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "CN",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "CP",
+     "blocks": [
+      {
+       "seats": [
+        "X1",
+        "X2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "X3",
+        "X4"
+       ]
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X",
+      "X3": "X",
+      "X4": "X"
+     },
+     "inferred_numbers": {
+      "X1": "1",
+      "X2": "2",
+      "X3": "20",
+      "X4": "21"
+     },
+     "note": "Four crossed management boxes, no number: two open the row where 1-2 would be and two close it where 20-21 would be, so each pair fills those numbers exactly."
+    }
+   ]
+  },
+  {
+   "name": "East Tier",
+   "name_zh": "東翼",
+   "rows": [
+    {
+     "row": "AA",
+     "blocks": [
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AC",
+     "blocks": [
+      {
+       "seats": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AE",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AG",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AJ",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AL",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AN",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    },
+    {
+     "row": "AP",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "North Tier",
+   "name_zh": "北翼",
+   "rows": [
+    {
+     "row": "DA",
+     "blocks": [
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      }
+     ],
+     "note": "Left of the stage. Drawn upright on the plan, numbered from the audience's end by the stage."
+    },
+    {
+     "row": "DC",
+     "blocks": [
+      {
+       "seats": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18"
+       ]
+      }
+     ],
+     "note": "Left of the stage. Drawn upright on the plan, numbered from the audience's end by the stage."
+    },
+    {
+     "row": "DE",
+     "blocks": [
+      {
+       "seats": [
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      }
+     ],
+     "note": "Left of the stage. Drawn upright on the plan, numbered from the audience's end by the stage."
+    }
+   ]
+  },
+  {
+   "name": "South Tier",
+   "name_zh": "南翼",
+   "rows": [
+    {
+     "row": "BA",
+     "blocks": [
+      {
+       "seats": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ]
+      }
+     ],
+     "note": "Right of the stage. Drawn upright on the plan, numbered from the audience's end by the stage."
+    },
+    {
+     "row": "BC",
+     "blocks": [
+      {
+       "seats": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18"
+       ]
+      }
+     ],
+     "note": "Right of the stage. Drawn upright on the plan, numbered from the audience's end by the stage."
+    },
+    {
+     "row": "BE",
+     "blocks": [
+      {
+       "seats": [
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+       ]
+      }
+     ],
+     "note": "Right of the stage. Drawn upright on the plan, numbered from the audience's end by the stage."
+    }
+   ]
+  },
+  {
+   "name": "Balcony West",
+   "name_zh": "西樓座",
+   "rows": [
+    {
+     "row": "CQ",
+     "blocks": [
+      {
+       "seats": [
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "W5",
+        "W6",
+        "W7",
+        "W8",
+        "W9",
+        "W10",
+        "W11",
+        "W12",
+        "W13",
+        "W14",
+        "W15",
+        "W16",
+        "W17",
+        "W18",
+        "W19",
+        "W20",
+        "W21"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W",
+      "W5": "W",
+      "W6": "W",
+      "W7": "W",
+      "W8": "W",
+      "W9": "W",
+      "W10": "W",
+      "W11": "W",
+      "W12": "W",
+      "W13": "W",
+      "W14": "W",
+      "W15": "W",
+      "W16": "W",
+      "W17": "W",
+      "W18": "W",
+      "W19": "W",
+      "W20": "W",
+      "W21": "W"
+     },
+     "note": "The outer row of the west house, set apart from CP. A row of wheelchair boxes printing W with no number; the numbers are not printed."
+    }
+   ]
+  },
+  {
+   "name": "Balcony East",
+   "name_zh": "東樓座",
+   "rows": [
+    {
+     "row": "AQ",
+     "blocks": [
+      {
+       "seats": [
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "W5",
+        "W6",
+        "W7",
+        "W8",
+        "W9",
+        "W10",
+        "W11",
+        "W12",
+        "W13",
+        "W14",
+        "W15",
+        "W16",
+        "W17",
+        "W18",
+        "W19",
+        "W20",
+        "W21"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W",
+      "W5": "W",
+      "W6": "W",
+      "W7": "W",
+      "W8": "W",
+      "W9": "W",
+      "W10": "W",
+      "W11": "W",
+      "W12": "W",
+      "W13": "W",
+      "W14": "W",
+      "W15": "W",
+      "W16": "W",
+      "W17": "W",
+      "W18": "W",
+      "W19": "W",
+      "W20": "W",
+      "W21": "W"
+     },
+     "note": "The outer row of the east house, set apart from AP. A row of wheelchair boxes printing W with no number; the numbers are not printed."
+    }
+   ]
+  },
+  {
+   "name": "Balcony North",
+   "name_zh": "北樓座",
+   "rows": [
+    {
+     "row": "DQ",
+     "blocks": [
+      {
+       "seats": [
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "W5",
+        "W6"
+       ]
+      },
+      {
+       "seats": [
+        "W7",
+        "W8",
+        "W9",
+        "W10",
+        "W11",
+        "W12"
+       ]
+      },
+      {
+       "seats": [
+        "W13",
+        "W14",
+        "W15",
+        "W16",
+        "W17",
+        "W18"
+       ]
+      },
+      {
+       "seats": [
+        "W19",
+        "W20",
+        "W21",
+        "W22",
+        "W23",
+        "W24"
+       ]
+      },
+      {
+       "seats": [
+        "W25",
+        "W26",
+        "W27",
+        "W28",
+        "W29",
+        "W30"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W",
+      "W5": "W",
+      "W6": "W",
+      "W7": "W",
+      "W8": "W",
+      "W9": "W",
+      "W10": "W",
+      "W11": "W",
+      "W12": "W",
+      "W13": "W",
+      "W14": "W",
+      "W15": "W",
+      "W16": "W",
+      "W17": "W",
+      "W18": "W",
+      "W19": "W",
+      "W20": "W",
+      "W21": "W",
+      "W22": "W",
+      "W23": "W",
+      "W24": "W",
+      "W25": "W",
+      "W26": "W",
+      "W27": "W",
+      "W28": "W",
+      "W29": "W",
+      "W30": "W"
+     },
+     "note": "The outer column on the left. Drawn as separate groups of wheelchair bays, 6-6-6-6-6."
+    }
+   ]
+  },
+  {
+   "name": "Balcony South",
+   "name_zh": "南樓座",
+   "rows": [
+    {
+     "row": "BQ",
+     "blocks": [
+      {
+       "seats": [
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "W5",
+        "W6"
+       ]
+      },
+      {
+       "seats": [
+        "W7",
+        "W8",
+        "W9",
+        "W10",
+        "W11",
+        "W12"
+       ]
+      },
+      {
+       "seats": [
+        "W13",
+        "W14",
+        "W15",
+        "W16",
+        "W17",
+        "W18"
+       ]
+      },
+      {
+       "seats": [
+        "W19",
+        "W20",
+        "W21",
+        "W22",
+        "W23",
+        "W24"
+       ]
+      },
+      {
+       "seats": [
+        "W25",
+        "W26",
+        "W27",
+        "W28",
+        "W29",
+        "W30"
+       ]
+      }
+     ],
+     "marks": {
+      "W1": "W",
+      "W2": "W",
+      "W3": "W",
+      "W4": "W",
+      "W5": "W",
+      "W6": "W",
+      "W7": "W",
+      "W8": "W",
+      "W9": "W",
+      "W10": "W",
+      "W11": "W",
+      "W12": "W",
+      "W13": "W",
+      "W14": "W",
+      "W15": "W",
+      "W16": "W",
+      "W17": "W",
+      "W18": "W",
+      "W19": "W",
+      "W20": "W",
+      "W21": "W",
+      "W22": "W",
+      "W23": "W",
+      "W24": "W",
+      "W25": "W",
+      "W26": "W",
+      "W27": "W",
+      "W28": "W",
+      "W29": "W",
+      "W30": "W"
+     },
+     "note": "The outer column on the right. Drawn as separate groups of wheelchair bays, 6-6-6-6-6."
+    }
+   ]
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "West Tier": {
+   "boxes": 154,
+   "management_X": 4,
+   "wheelchair_W": 0,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 150,
+   "printed": 150
+  },
+  "East Tier": {
+   "boxes": 154,
+   "management_X": 0,
+   "wheelchair_W": 0,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 154,
+   "printed": 154
+  },
+  "North Tier": {
+   "boxes": 45,
+   "management_X": 0,
+   "wheelchair_W": 0,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 45,
+   "printed": 45
+  },
+  "South Tier": {
+   "boxes": 45,
+   "management_X": 0,
+   "wheelchair_W": 0,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 45,
+   "printed": 45
+  },
+  "Balcony West": {
+   "boxes": 21,
+   "management_X": 0,
+   "wheelchair_W": 21,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 21,
+   "printed": 21
+  },
+  "Balcony East": {
+   "boxes": 21,
+   "management_X": 0,
+   "wheelchair_W": 21,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 21,
+   "printed": 21
+  },
+  "Balcony North": {
+   "boxes": 30,
+   "management_X": 0,
+   "wheelchair_W": 30,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 30,
+   "printed": 30
+  },
+  "Balcony South": {
+   "boxes": 30,
+   "management_X": 0,
+   "wheelchair_W": 30,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 30,
+   "printed": 30
+  }
+ }
+}
