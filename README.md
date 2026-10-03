@@ -82,7 +82,49 @@ Wan Ho and four at Ngau Chi Wan — so each layout is its own seat list.
 - the map sits in its own frame: zoom in and out (buttons, or Ctrl/⌘ + wheel or a trackpad pinch), fit the
   whole plan, or view it at actual size.
 
-"Plan with this configuration" opens the planner with the viewer's current settings.
+"Plan with this configuration" opens the planner with the viewer's current settings, and "Customise this
+configuration" opens the customiser. The viewer always shows the published seat list: a link that carries a
+customisation (`&u=…`) shows a banner and passes it on, but never draws it.
+
+## Customiser
+
+`app/customiser.html` makes your own version of a venue's seat list, seat by seat, on top of a viewer
+configuration: for example a wheelchair space added next to the existing ones after talking to the venue.
+It keeps nothing, like the planner:
+
+- **Consent first**, and asked again on every visit.
+- **Clearly yours.** The title, and a notice inside the map (so it stays with a screenshot), say it is a
+  customised version: not the venue's seat plan and not published data. Seats you added, removed or changed
+  are marked on the map.
+- **A list of changes, not a copy.** A customisation is a short list of changes on top of the published seat
+  list: add a seat beside another, remove a seat, set a seat's marks, renumber a seat. Each names its seat by
+  part of house, row and seat id (see `docs/adr/0001`), so it is reapplied on top of a corrected seat list; a
+  change that no longer fits is listed with the reason, never dropped or misapplied.
+- **Seat level only.** No block is ever emptied, so banks and orchestra pits are never moved; rows, blocks
+  and parts of house are not added or removed. The configuration comes from the viewer ("Change it in the
+  viewer" takes your changes along); only seats counted in it can be changed.
+- **Travels in the link, kept in a file.** The changes ride in the URL fragment (`#c=…&u=…`) to the viewer and
+  the planner; to keep them, save a customisation file on your device.
+
+Click a seat (or a row letter) to change it; arrow keys move along and across rows, Delete removes, Ctrl/⌘Z
+undoes. "Plan with this customised version" opens the planner on it.
+
+### Customisation files
+
+**`hkperf-venue-seats/custom@0.1`**: plain JSON with `base` (`venue`, `seat_list_sha256`: the SHA-256 of
+`data/<id>.json` as fetched, and `configuration`), `changes` and `note`. Each change is one of:
+
+```json
+{"op": "add", "zone": "Theatre", "row": "A", "at": "W4", "side": "after", "id": "W5", "marks": "W"}
+{"op": "remove", "zone": "Theatre", "row": "B", "id": "7"}
+{"op": "marks", "zone": "Theatre", "row": "B", "id": "8", "marks": "RL"}
+{"op": "rename", "zone": "Theatre", "row": "B", "id": "9", "to": "9A"}
+```
+
+`side` is order in the row's seat list (from seat 1's side), not left or right on the map. Published seats
+are always named by their published id; an added seat by its own. In the URL (`&u=`) the same list is
+base64url JSON of short tuples (`["+", zone, row, at, "<"|">", id, marks]`, `["-", …, id]`,
+`["m", …, id, marks]`, `["r", …, id, to]`).
 
 ## Planner
 
@@ -95,6 +137,8 @@ Wan Ho and four at Ngau Chi Wan — so each layout is its own seat list.
   the planner. There is no spreadsheet export; to share a plan, take a screen capture.
 - **Configuration from the viewer.** The viewer passes its settings in the URL fragment (`#c=…`), which
   browsers never send to the server. Only the seats counted in that configuration can be planned.
+- **A customised version from the customiser** (`&u=…`) is applied, and the planner says it is working on
+  one; it does not edit it ("Edit in the customiser" goes back).
 
 What it does:
 
@@ -113,10 +157,13 @@ What it does:
 
 A saved plan is yours to keep and to read with your own tools; the format is open.
 
-- **`hkperf-venue-seats/plan@0.2`**: plain JSON with `venue`, `configuration` (as passed from the viewer),
+- **`hkperf-venue-seats/plan@0.3`**: plain JSON with `venue`, `configuration` (as passed from the viewer),
   `categories` (`id`, `name`, `price`, `colour`), `target`, `sell_through_percent`, and `seats`: a map from
   `"<part of house>|<row>|<seat>"` to `{category, reserved, name}` (only what is set). `category` is a category
-  `id` or `"blocked"`.
+  `id` or `"blocked"`. A plan on a customised version also holds it, as `customisation: {base, changes}`
+  (as in a customisation file); opening the plan uses that customisation, whatever the link carried. Seats
+  that are not in the configuration or the customised version are left out and counted. `plan@0.1` and
+  `plan@0.2` files (no customisation) still open.
 - **`hkperf-venue-seats/plan-protected@0.1`**: the same plan, encrypted in the browser with a passphrase, which
   the planner offers by default when a plan holds people's names. `kdf` gives PBKDF2-SHA-256 parameters
   (`salt`, `iterations`), `cipher` gives AES-256-GCM with its `iv`, and `data` is the ciphertext (base64). To read
@@ -134,7 +181,7 @@ A saved plan is yours to keep and to read with your own tools; the format is ope
 ## Usage statistics
 
 Every page counts page views, and named interface events such as `planner-category-added` (in the
-planner only after its consent), with a self-hosted GoatCounter: no cookies, no IP addresses kept, never
+planner and the customiser only after their consent), with a self-hosted GoatCounter: no cookies, no IP addresses kept, never
 anything a visitor types or selects. Each page's footer says so, and using the site means agreeing to it;
 `site/privacy.html` gives the detail. The web server's logs keep no IP addresses either. `app/analytics.js` does nothing until
 `goatcounter` is set in `app/config.js`; `deploy/goatcounter/` has the set-up.
@@ -261,11 +308,12 @@ python3 -m http.server 8770 --bind 127.0.0.1
   writes it from the plan into `data/<id>.json`, so a hand-tuned file is overwritten by rebuilding the
   venue or rerunning that tool. Keep the downloaded file, and redo the tuning after either one.
 
-The editing logic is in `app/seatedit.js` (no page code), so other pages can reuse it. Its tests read
-every venue file and need only Node 18+:
+The editing logic is in `app/seatedit.js` (no page code), shared with the customiser and the planner
+(customisations: `applyCustom`, `recordChange`, the URL and file formats). Its tests read every venue file
+and need only Node 18+:
 
 ```sh
-node --test tools/seatedit.test.js
+node --test tools/*.test.js
 ```
 
 ## Sources and rules
@@ -317,10 +365,10 @@ and publishing.
 
 ## License
 
-- **Code**: MIT, see [LICENSE](LICENSE), except the planner and the row reviewer.
-- **Planner** (`app/planner.html`) and **row reviewer** (`tools/review.html`):
-  [PolyForm Noncommercial 1.0.0](LICENSE-PLANNER.md). Using the hosted planner is free for anyone,
-  including businesses; commercial use of the code of either needs written permission.
+- **Code**: MIT, see [LICENSE](LICENSE), except the planner, the customiser and the row reviewer.
+- **Planner** (`app/planner.html`), **customiser** (`app/customiser.html`) and **row reviewer**
+  (`tools/review.html`): [PolyForm Noncommercial 1.0.0](LICENSE-PLANNER.md). Using the hosted planner and
+  customiser is free for anyone, including businesses; commercial use of their code needs written permission.
 - **Seat lists** (`data/`): this project's own contribution is licensed under
   [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), see [LICENSE-DATA](LICENSE-DATA).
   Keep the credit line and sources recorded in each file. Neither licence grants rights LCSD holds in

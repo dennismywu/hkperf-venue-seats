@@ -1,5 +1,5 @@
 // Customisations (app/seatedit.js): id-anchored changes on top of a published seat list.
-// Run: node --test tools/
+// Run: node --test tools/*.test.js
 const test = require("node:test");
 const assert = require("node:assert");
 const fs = require("node:fs");
