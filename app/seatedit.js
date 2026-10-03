@@ -444,7 +444,261 @@ function fileJSON(doc, order = new Map()) {
   return out(doc, [], 0);
 }
 
-const api = { MARK_ORDER, fileJSON, parseFile, countCheck, normMark, impliedMark, rowSeats, parseRowText, blocksText, rowText, seatToken,
+// ---------------------------------------------------------------- customisations
+
+// A customisation is a list of changes on top of a published seat list (docs/adr/0001):
+//   {op: "add", zone, row, at, side: "before"|"after", id, marks}   a new seat beside seat `at`
+//   {op: "remove", zone, row, id}
+//   {op: "marks", zone, row, id, marks}
+//   {op: "rename", zone, row, id, to}
+// Published seats are named by their published id, whatever they are renamed to; added seats by their own
+// id. "before"/"after" is order in the row's seat list (from seat 1's side), not left/right on the map.
+// The list holds at most one net change per seat (recordChange keeps it so).
+
+// a seat id a user may give: a number, a W or X box, or a number with one capital letter (14A)
+const SEAT_ID = /^(\d+|[WX]\d+|\d+[A-Z])$/;
+const NOT_ID = id => `“${id}” is not a seat id (e.g. 12, 12A, W1)`;
+const NEEDS_MARK = (id, p) => `${id} is a ${p} box: it needs its ${p} mark`;
+const noMark = (marks, letters) => { const u = [...marks].filter(m => !letters.has(m)); return u.length ? `this venue has no mark ${u.join("")}` : ""; };
+
+// The customised version with each seat's origin: rows.get("zone\u0000row") = {zi, ri, blocks} with seats
+// {id, mark, inf, from, pub (published id) | addBy (its add), gone, marksBy, renameBy}; anchors maps each
+// applied add to the seat it was placed beside.
+function build(doc, changes) {
+  const out = structuredClone(doc);
+  const letters = new Set(Object.keys(out.marks || {}));
+  const bad = new Map(), anchors = new Map(), rows = new Map();
+  const refuse = (c, reason) => { if (!bad.has(c)) bad.set(c, reason); };
+  const byRow = new Map();
+  for (const c of changes) {
+    const key = `${c.zone}\u0000${c.row}`;
+    if (!byRow.has(key)) byRow.set(key, []);
+    byRow.get(key).push(c);
+  }
+  for (const [key, list] of byRow) {
+    const [zone, label] = key.split("\u0000");
+    const zi = out.zones.findIndex(z => z.name === zone);
+    const ri = zi < 0 ? -1 : out.zones[zi].rows.findIndex(r => r.row === label);
+    if (ri < 0) { list.forEach(c => refuse(c, `row ${label} is not in ${zone}`)); continue; }
+    const blocks = rowSeats(out.zones[zi].rows[ri]).map(b => b.map(s => ({ ...s, pub: s.id })));
+    rows.set(key, { zi, ri, blocks });
+    const pubSeat = id => blocks.flat().find(s => s.pub === id && !s.gone);
+    const missing = id => `seat ${id} is not in row ${label}`;
+    const finalId = s => s.renameBy ? s.renameBy.to : s.id;
+    const of = op => list.filter(c => c.op === op);
+    for (const c of list) if (!(c.op in { add: 1, remove: 1, marks: 1, rename: 1 })) refuse(c, `unknown change “${c.op}”`);
+
+    // removes leave the seat in place, gone, until the end: a seat may still be added beside it
+    for (const c of of("remove")) {
+      const s = pubSeat(c.id);
+      if (!s) refuse(c, missing(c.id)); else { s.gone = true; s.removeBy = c; }
+    }
+    for (const c of of("marks")) {
+      const s = pubSeat(c.id), why = s ? noMark(c.marks || "", letters) : missing(c.id);
+      if (why) refuse(c, why); else { s.pubMark ??= s.mark; s.mark = normMark(c.marks || ""); s.marksBy = c; }
+    }
+    for (const c of of("rename")) {
+      const s = pubSeat(c.id);
+      if (!s) refuse(c, missing(c.id));
+      else if (!SEAT_ID.test(c.to)) refuse(c, NOT_ID(c.to));
+      else s.renameBy = c;
+    }
+    // renames are made together (7 → 8 with 8 → 7 is fine); where two seats end with one id, the later
+    // rename is undone
+    for (let again = true; again;) {
+      again = false;
+      const live = blocks.flat().filter(s => !s.gone), seen = new Map();
+      for (const s of live) {
+        const id = finalId(s);
+        if (!seen.has(id)) { seen.set(id, s); continue; }
+        const pair = [seen.get(id), s].filter(x => x.renameBy).sort((a, b) => changes.indexOf(b.renameBy) - changes.indexOf(a.renameBy));
+        if (!pair.length) continue;
+        refuse(pair[0].renameBy, `row ${label} already has a seat ${id}`);
+        delete pair[0].renameBy;
+        again = true;
+        break;
+      }
+    }
+    for (const s of blocks.flat()) {
+      const p = s.renameBy && impliedMark(s.renameBy.to);
+      if (p && !s.mark.includes(p)) { refuse(s.renameBy, NEEDS_MARK(s.renameBy.to, p)); delete s.renameBy; }
+      const q = s.marksBy && impliedMark(finalId(s));
+      if (q && !s.mark.includes(q)) { refuse(s.marksBy, NEEDS_MARK(finalId(s), q)); s.mark = s.pubMark; delete s.marksBy; }
+    }
+    // adds, each placed once the seat it sits beside is in the row (published seats by published id)
+    let pending = of("add").filter(c => !bad.has(c));
+    for (let moved = true; moved && pending.length;) {
+      moved = false;
+      for (const c of [...pending]) {
+        const all = blocks.flat();
+        const at = all.find(s => s.pub === c.at) || all.find(s => s.addBy && s.id === c.at);
+        if (!at) continue;
+        pending = pending.filter(x => x !== c);
+        moved = true;
+        const marks = normMark(c.marks || ""), p = impliedMark(c.id);
+        const why = !SEAT_ID.test(c.id) ? NOT_ID(c.id)
+          : all.some(s => !s.gone && finalId(s) === c.id) ? `row ${label} already has a seat ${c.id}`
+          : noMark(marks, letters) || (p && !marks.includes(p) ? NEEDS_MARK(c.id, p) : "");
+        if (why) { refuse(c, why); continue; }
+        const b = blocks.find(x => x.includes(at));
+        b.splice(b.indexOf(at) + (c.side === "before" ? 0 : 1), 0, { id: c.id, mark: marks, inf: "", addBy: c });
+        anchors.set(c, at);
+      }
+    }
+    pending.forEach(c => refuse(c, missing(c.at)));
+    // no block is ever emptied, so bank and pit references never move: the later removes are undone
+    for (const b of blocks) {
+      const removes = b.filter(s => s.gone).sort((x, y) => changes.indexOf(y.removeBy) - changes.indexOf(x.removeBy));
+      while (b.length && b.every(s => s.gone)) {
+        const s = removes.shift();
+        refuse(s.removeBy, `a block needs at least one seat; mark seat ${s.id} X instead?`);
+        s.gone = false; delete s.removeBy;
+      }
+    }
+  }
+  for (const { zi, ri, blocks } of rows.values()) {
+    const seats = blocks.map(b => b.filter(s => !s.gone).map(s => {
+      const id = s.renameBy ? s.renameBy.to : s.id;
+      return { id, mark: s.mark, inf: s.renameBy && !impliedMark(id) ? "" : s.inf, from: s.from };
+    }));
+    out.zones[zi].rows[ri] = rebuildRow(out.zones[zi].rows[ri], seats).row;
+  }
+  const notFitting = changes.filter(c => bad.has(c)).map(change => ({ change, reason: bad.get(change) }));
+  return { doc: out, applied: changes.filter(c => !bad.has(c)), notFitting, rows, anchors };
+}
+
+// The customised version of doc: a copy, with {doc, applied, notFitting: [{change, reason}]}. Changes that
+// no longer fit (after a correction to the published list) are listed with the reason, never half made.
+function applyCustom(doc, changes) {
+  const { rows, anchors, ...out } = build(doc, changes);
+  return out;
+}
+
+// Add change c, made by the user on the customised version (seats named by their id there), to the list.
+// Returns {changes} (a new list, with at most one net change per seat) or {error} when it cannot be made.
+function recordChange(doc, changes, c) {
+  const zone = doc.zones.find(z => z.name === c.zone), published = zone?.rows.find(x => x.row === c.row);
+  if (!published) return { error: `row ${c.row} is not in ${c.zone}` };
+  const now = build(doc, changes);
+  const r = now.rows.get(`${c.zone}\u0000${c.row}`);
+  const seats = r ? r.blocks.flat() : rowSeats(published).flat().map(s => ({ ...s, pub: s.id }));
+  const idOf = s => s.renameBy ? s.renameBy.to : s.id;
+  const target = c.op === "add" ? c.at : c.id;
+  const s = seats.find(x => !x.gone && idOf(x) === target);
+  if (!s) return { error: `seat ${target} is not in row ${c.row}` };
+  const same = x => x.zone === c.zone && x.row === c.row;
+  let list = [...changes];
+  const put = (old, next) => { list = old ? list.map(x => x === old ? next : x).filter(Boolean) : next ? [...list, next] : list; };
+  const where = { zone: c.zone, row: c.row };
+  if (c.op === "add") {
+    put(null, { op: "add", ...where, at: s.addBy ? s.addBy.id : s.pub, side: c.side, id: c.id, marks: normMark(c.marks || "") });
+  } else if (s.addBy) {
+    const a = s.addBy;
+    if (c.op === "marks") put(a, { ...a, marks: normMark(c.marks || "") });
+    else if (c.op === "rename") {
+      list = list.map(x => x.op === "add" && same(x) && x.at === a.id ? { ...x, at: c.to } : x);
+      put(a, { ...a, id: c.to });
+    } else if (c.op === "remove") {
+      // seats added beside it take its place beside its own neighbour
+      list = list.map(x => x.op === "add" && same(x) && x.at === a.id ? { ...x, at: a.at, side: a.side } : x);
+      put(a, null);
+    } else return { error: `unknown change “${c.op}”` };
+  } else {
+    const pub = s.pub, mine = op => list.find(x => x.op === op && same(x) && x.id === pub);
+    if (c.op === "marks") {
+      const m = normMark(c.marks || ""), was = published.marks?.[pub] || "";
+      put(mine("marks"), m === was ? null : { op: "marks", ...where, id: pub, marks: m });
+    } else if (c.op === "rename") put(mine("rename"), c.to === pub ? null : { op: "rename", ...where, id: pub, to: c.to });
+    else if (c.op === "remove") { put(mine("marks"), null); put(mine("rename"), null); put(null, { op: "remove", ...where, id: pub }); }
+    else return { error: `unknown change “${c.op}”` };
+  }
+  const next = build(doc, list);
+  const fresh = next.notFitting.find(n => !now.notFitting.some(o => JSON.stringify(o.change) === JSON.stringify(n.change)));
+  if (fresh) return { error: fresh.reason };
+  return { changes: list };
+}
+
+// Remove entry i from the list ("Your changes"). Seats added beside an added seat move beside its neighbour.
+function dropChange(changes, i) {
+  const c = changes[i];
+  if (!c) return [...changes];
+  return changes.filter((_, k) => k !== i).map(x => c.op === "add" && x.op === "add" && x.zone === c.zone && x.row === c.row && x.at === c.id ? { ...x, at: c.at, side: c.side } : x);
+}
+
+// ---------------------------------------------------------------- customisations in the URL (#c=…&u=…)
+
+// base64url of UTF-8 JSON, as #c= (encodeConfig in seatmap.js), with each change as a short tuple:
+// ["+", zone, row, at, "<"|">", id, marks], ["-", zone, row, id], ["m", zone, row, id, marks], ["r", zone, row, id, to]
+const b64url = s => {
+  const bytes = new TextEncoder().encode(s);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+};
+const unb64url = s => new TextDecoder("utf-8", { fatal: true }).decode(Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0)));
+function encodeChanges(changes) {
+  return b64url(JSON.stringify(changes.map(c =>
+    c.op === "add" ? ["+", c.zone, c.row, c.at, c.side === "before" ? "<" : ">", c.id, c.marks || ""]
+    : c.op === "remove" ? ["-", c.zone, c.row, c.id]
+    : c.op === "marks" ? ["m", c.zone, c.row, c.id, c.marks || ""]
+    : ["r", c.zone, c.row, c.id, c.to])));
+}
+const TUPLE = { "+": 7, "-": 4, m: 5, r: 5 };
+function decodeChanges(u) {
+  let list;
+  try { list = JSON.parse(unb64url(u)); } catch { list = null; }
+  const ok = Array.isArray(list) && list.every(t => Array.isArray(t) && TUPLE[t[0]] === t.length && t.slice(1).every(v => typeof v === "string")
+    && (t[0] !== "+" || t[4] === "<" || t[4] === ">"));
+  if (!ok) throw new Error("this link does not hold a customisation it can read (not a customisation)");
+  return list.map(t => {
+    const [k, zone, row] = t, where = { zone, row };
+    if (k === "+") return { op: "add", ...where, at: t[3], side: t[4] === "<" ? "before" : "after", id: t[5], marks: t[6] };
+    if (k === "-") return { op: "remove", ...where, id: t[3] };
+    if (k === "m") return { op: "marks", ...where, id: t[3], marks: t[4] };
+    return { op: "rename", ...where, id: t[3], to: t[4] };
+  });
+}
+
+// ---------------------------------------------------------------- customisation files
+
+const CUSTOM_SCHEMA = "hkperf-venue-seats/custom@0.1";
+// plan files that may hold a customisation (in `customisation`), and those that never do
+const PLAN_WITH_CUSTOM = ["hkperf-venue-seats/plan@0.3"];
+const PLAN_WITHOUT = ["hkperf-venue-seats/plan@0.1", "hkperf-venue-seats/plan@0.2"];
+
+// hex SHA-256 of a seat list file's text, as fetched (the base of a customisation)
+async function seatListSha256(text) {
+  const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function customFile(base, changes, note = "") {
+  return JSON.stringify({ schema: CUSTOM_SCHEMA, saved: new Date().toISOString(), base, changes, note }, null, 1) + "\n";
+}
+
+const isChange = c => c && typeof c === "object" && typeof c.zone === "string" && typeof c.row === "string" && (
+  c.op === "add" ? [c.at, c.id, c.marks].every(v => typeof v === "string") && (c.side === "before" || c.side === "after")
+  : c.op === "remove" ? typeof c.id === "string"
+  : c.op === "marks" ? typeof c.id === "string" && typeof c.marks === "string"
+  : c.op === "rename" && typeof c.id === "string" && typeof c.to === "string");
+// The customisation in a custom@0.1 or plan@0.3 file: {base, changes, note}; null for a plan without one.
+// Throws on anything else.
+function readCustom(text) {
+  const no = why => new Error(`this file is not a customisation it can read (${why})`);
+  let f;
+  try { f = JSON.parse(text); } catch { throw no("not JSON"); }
+  if (PLAN_WITHOUT.includes(f?.schema)) return null;
+  const c = f?.schema === CUSTOM_SCHEMA ? f : PLAN_WITH_CUSTOM.includes(f?.schema) ? f.customisation : undefined;
+  if (c === undefined && !PLAN_WITH_CUSTOM.includes(f?.schema)) throw no(f?.schema ? `schema ${f.schema}` : "no schema");
+  if (c == null) return null;
+  const b = c.base;
+  if (!b || typeof b.venue !== "string" || typeof b.seat_list_sha256 !== "string" || typeof b.configuration !== "object") throw no("no base");
+  if (!Array.isArray(c.changes) || !c.changes.every(isChange)) throw no("a change it does not know");
+  return { base: b, changes: c.changes, note: typeof c.note === "string" ? c.note : "" };
+}
+
+const api = { MARK_ORDER, applyCustom, recordChange, dropChange, encodeChanges, decodeChanges, seatListSha256, customFile, readCustom,
+  CUSTOM_SCHEMA, fileJSON, parseFile, countCheck, normMark, impliedMark, rowSeats, parseRowText, blocksText, rowText, seatToken,
   rebuildRow, applyRow, remapRefs, refRow, rowIssues, totals, rowCode, pyList, diffDocs, sameRow, runsOf, hasGeom };
 if (typeof module !== "undefined") module.exports = api;
 else root.SeatEdit = api;
