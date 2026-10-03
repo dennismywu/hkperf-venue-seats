@@ -44,6 +44,8 @@
 .to-planner { margin-top: 12px; width: 100%; justify-content: center; }
 .share { margin-top: 8px; width: 100%; justify-content: center; }
 .sharebox { margin-top: 6px; font-size: 12px; color: var(--muted); }
+.custom-banner { font-size: 13px; padding: 8px 10px; border-radius: 8px; background: var(--acc-bg); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); margin: 0 0 10px; }
+.custom-banner a { color: var(--acc); font-weight: 650; }
 .sharebox input { width: 100%; margin-top: 4px; font: inherit; font-size: 12px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
 
 /* facts */
@@ -118,9 +120,12 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
     <a class="btn primary to-planner" id="to-planner" href="planner.html">Plan with this configuration →</a>
     <p class="hint">Opens the planner: price categories, ballpark totals and names on seats, all kept in your
       browser.</p>
+    <a class="btn to-planner" id="to-customiser" href="customiser.html">Customise this configuration →</a>
+    <p class="hint">Make your own version, seat by seat (e.g. a wheelchair space agreed with the venue), then plan with it.</p>
   </aside>
 
   <section class="card" aria-label="Seat map">
+    <p class="custom-banner" id="custom-banner" hidden></p>
     <div class="tools">
       <div>
         <span class="swatch"><svg width="17" height="17" viewBox="-1 -1 17 17"><g class="seat"><rect x="0" y="0" width="15" height="15" rx="2"/></g></svg>Counted</span>
@@ -210,6 +215,11 @@ for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo],
 
 let doc = null;
 let state = null;
+// A customisation in the link (&u=…, from the customiser) is carried to the customiser and the planner but never
+// drawn here: the viewer shows only published data (docs/adr/0002).
+const carried = (location.hash.match(/[#&]u=([\w-]+)/) || [])[1] || "";
+const carriedFor = (location.hash.match(/^#c=([\w-]+)/) || [])[1];
+const carriedN = (() => { try { return JSON.parse(atob(carried.replace(/-/g, "+").replace(/_/g, "/"))).length; } catch (e) { return 0; } })();
 
 async function init() {
   let venues;
@@ -462,8 +472,17 @@ function update(flash = true) {
   document.querySelectorAll("#map .zonelabel").forEach(z => z.classList.toggle("off", !state.zones[z.dataset.zone]));
   document.querySelector("#map .standing")?.classList.toggle("on", state.standing);
   $("dl-config-note").textContent = configSummary(t);
-  $("to-planner").href = `planner.html?venue=${encodeURIComponent(doc.venue.id)}#c=${encodeConfig({ venue: doc.venue.id, ...state })}`;
-  history.replaceState(null, "", viewerLink().replace(location.origin + location.pathname, ""));
+  const cfgPart = `#c=${encodeConfig({ venue: doc.venue.id, ...state })}`;
+  const u = carriedHere() ? `&u=${carried}` : "";
+  $("to-planner").href = `planner.html?venue=${encodeURIComponent(doc.venue.id)}${cfgPart}${u}`;
+  $("to-customiser").href = `customiser.html?venue=${encodeURIComponent(doc.venue.id)}${cfgPart}${u}`;
+  $("to-planner").textContent = u ? "Plan with your customised version →" : "Plan with this configuration →";
+  $("to-customiser").textContent = u ? "Back to your customised version →" : "Customise this configuration →";
+  const banner = $("custom-banner");
+  banner.hidden = !u;
+  if (u) banner.innerHTML = `You have a customisation (${carriedN === 1 ? "1 change" : `${fmt(carriedN)} changes`}), not shown here: the viewer shows only
+    the published seat list. <a href="${esc($("to-customiser").href)}">Back to the customiser</a>`;
+  history.replaceState(null, "", viewerLink().replace(location.origin + location.pathname, "") + (u && !isDefault() ? u : u ? `${cfgPart}${u}` : ""));
   $("sharebox").hidden = true;
   refreshEffects(t);
   const def = isDefault();
@@ -748,6 +767,12 @@ $("dev").onchange = () => $("map").classList.toggle("devmode", $("dev").checked)
 { const on = new URLSearchParams(location.search).get("dev") === "1"; $("dev").checked = on; $("map").classList.toggle("devmode", on); }
 
 $("to-planner").addEventListener("click", () => track("viewer-to-planner"));
+$("to-customiser").addEventListener("click", () => track("viewer-to-customiser"));
+// the carried customisation belongs to the venue it was made on
+function carriedHere() {
+  if (!carried) return false;
+  try { return decodeConfig(carriedFor).venue === doc.venue.id; } catch (e) { return false; }
+}
 startStats();
 $("stats-note").hidden = !statsEnabled;
 document.querySelectorAll(".privacy-link").forEach(a => CONFIG.site ? (a.href = CONFIG.site + "privacy.html") : a.remove());

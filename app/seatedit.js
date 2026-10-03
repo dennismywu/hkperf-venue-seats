@@ -574,6 +574,48 @@ function applyCustom(doc, changes) {
   return out;
 }
 
+// For drawing a customised version: {doc, shown, status, applied, notFitting}. doc is the customised version;
+// shown is the same with removed seats left in place (drawn as ghosts); status maps "zone|row|seat" (the id
+// drawn) to what changed: {added}, {removed}, {wasMarks} and/or {wasId}.
+function customView(doc, changes) {
+  const { rows, anchors, ...out } = build(doc, changes);
+  const shown = structuredClone(out.doc), status = new Map();
+  for (const [key, { zi, ri, blocks }] of rows) {
+    const [zone, label] = key.split("\u0000");
+    const finalId = s => s.renameBy ? s.renameBy.to : s.id;
+    const live = new Set(blocks.flat().filter(s => !s.gone).map(finalId));
+    const seats = blocks.map(b => b.filter(s => !s.gone || !live.has(s.id)).map(s => {
+      const id = s.gone ? s.id : finalId(s), st = {};
+      if (s.addBy) st.added = true;
+      else if (s.gone) st.removed = true;
+      else {
+        if (s.marksBy) st.wasMarks = s.pubMark;
+        if (s.renameBy) st.wasId = s.pub;
+      }
+      if (Object.keys(st).length) status.set(`${zone}|${label}|${id}`, st);
+      return { id, mark: s.mark, inf: s.renameBy && !s.gone && !impliedMark(id) ? "" : s.inf, from: s.from };
+    }));
+    shown.zones[zi].rows[ri] = rebuildRow(doc.zones[zi].rows[ri], seats).row;
+  }
+  return { ...out, shown, status };
+}
+
+// A free id for a seat added beside seat `at` of a (customised) row: the next W/X box when box is "W" or "X";
+// otherwise the neighbouring number if free, else the number with a letter (7A, 7B...).
+function suggestId(row, at, side, box = "") {
+  const ids = new Set(row.blocks.flatMap(b => b.seats));
+  if (box === "W" || box === "X") {
+    const top = Math.max(0, ...[...ids].map(id => (id.match(new RegExp(`^${box}(\\d+)$`)) || [])[1]).filter(Boolean).map(Number));
+    return `${box}${top + 1}`;
+  }
+  const n = /^\d+$/.test(at) ? +at : +(row.inferred_numbers?.[at] || (at.match(/^(\d+)[A-Z]$/) || [])[1] || 0)
+    || Math.max(0, ...[...ids].filter(id => /^\d+$/.test(id)).map(Number));
+  const next = side === "before" ? n - 1 : n + 1;
+  if (/^\d+$/.test(at) || row.inferred_numbers?.[at]) { if (next > 0 && !ids.has(String(next))) return String(next); }
+  for (const l of "ABCDEFGHIJKLMNOPQRSTUVWXYZ") if (!ids.has(`${n}${l}`)) return `${n}${l}`;
+  return "";
+}
+
 // Add change c, made by the user on the customised version (seats named by their id there), to the list.
 // Returns {changes} (a new list, with at most one net change per seat) or {error} when it cannot be made.
 function recordChange(doc, changes, c) {
@@ -697,7 +739,7 @@ function readCustom(text) {
   return { base: b, changes: c.changes, note: typeof c.note === "string" ? c.note : "" };
 }
 
-const api = { MARK_ORDER, applyCustom, recordChange, dropChange, encodeChanges, decodeChanges, seatListSha256, customFile, readCustom,
+const api = { MARK_ORDER, applyCustom, customView, suggestId, recordChange, dropChange, encodeChanges, decodeChanges, seatListSha256, customFile, readCustom,
   CUSTOM_SCHEMA, fileJSON, parseFile, countCheck, normMark, impliedMark, rowSeats, parseRowText, blocksText, rowText, seatToken,
   rebuildRow, applyRow, remapRefs, refRow, rowIssues, totals, rowCode, pyList, diffDocs, sameRow, runsOf, hasGeom };
 if (typeof module !== "undefined") module.exports = api;
