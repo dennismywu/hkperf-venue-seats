@@ -213,6 +213,7 @@ dialog.small { max-width: 460px; }
 <main class="wrap layout">
   <aside class="card panel" aria-label="Planning tools">
     <p class="notice" id="confignote" hidden></p>
+    <p class="notice ok" id="customnote" hidden></p>
     <div class="group">
       <h3>Selection <small id="selcount">none</small></h3>
       <div class="row-btns">
@@ -312,6 +313,7 @@ dialog.small { max-width: 460px; }
 
 <script src="config.js"></script>
 <script src="seatmap.js"></script>
+<script src="seatedit.js"></script>
 <script src="analytics.js"></script>
 <script src="theme.js"></script>
 <script>
@@ -323,6 +325,9 @@ const keyOf = (zone, row, seat) => `${zone}|${row}|${seat}`;
 
 // Everything the visitor enters lives in these variables only.
 let doc = null, cfg = null;
+// A customised version (from the customiser): published = the seat list as published, custom = {base, changes}
+// or null; doc is then the customised version. The planner applies a customisation, never edits it.
+let published = null, custom = null, seatListSha = "";
 let cats = [];                    // {id, name, price, colour}
 const assign = new Map();         // seat key -> category id, or "blocked" (not for sale)
 const reserved = new Set();       // seat keys reserved / not for public (they keep their category)
@@ -364,30 +369,61 @@ $("consent").showModal();
 
 async function init() {
   const venues = (await getJSON(DATA + "index.json")).venues;
-  const m = location.hash.match(/^#c=([\w-]+)/);
-  let passed = null;
+  const m = location.hash.match(/^#c=([\w-]+)/), mu = location.hash.match(/[#&]u=([\w-]+)/);
+  let passed = null, passedChanges = null;
   if (m) { try { passed = decodeConfig(m[1]); } catch (e) { passed = null; } }
+  if (mu) { try { passedChanges = SeatEdit.decodeChanges(mu[1]); } catch (e) { passedChanges = null; } }
   const wanted = passed?.venue || new URLSearchParams(location.search).get("venue");
   const v = venues.find(x => x.id === wanted) || venues[0];
-  doc = await getJSON(DATA + v.file);
+  const text = await (await fetch(DATA + v.file)).text();
+  published = JSON.parse(text);
+  seatListSha = await SeatEdit.seatListSha256(text);
+  doc = published;
   cfg = sanitize(passed?.venue === doc.venue.id ? passed : null);
+  if (passedChanges?.length && passed?.venue === doc.venue.id) setCustom(passedChanges);
   const note = $("confignote");
   note.hidden = false;
   if (passed?.venue === doc.venue.id) { note.className = "notice ok"; note.textContent = "Configuration taken from the viewer: " + describe(); }
   else note.textContent = "No configuration was passed from the viewer, so the printed configuration is used: " + describe();
-  $("title").textContent = `Planner · ${doc.venue.name_en}`;
+  links();
   $("subtitle").textContent = doc.venue.name_zh;
   document.title = `Planner · ${doc.venue.name_en}`;
   if (CONFIG.repo) $("foot-issues").href = `${CONFIG.repo}/issues/new?template=correction.yml&title=${encodeURIComponent(`[Correction] ${doc.venue.id}: `)}`;
   $("credit-venue").innerHTML = `${esc(doc.source.credit)} Seating plan for this venue: <a href="${esc(doc.source.url)}" rel="noopener">${esc(doc.source.url)}</a>.`;
-  $("back").href = `index.html?venue=${encodeURIComponent(doc.venue.id)}#c=${encodeConfig({ venue: doc.venue.id, ...cfg })}`;
-  $("decline").href = $("back").href;
+  links();
   new ResizeObserver(() => document.documentElement.style.setProperty("--keys-h", $("keybar").offsetHeight + "px")).observe($("keybar"));
   addCat("Price A"); addCat("Price B");
   legend();
   draw();
   render();
   markSaved();
+}
+
+// Work on the customised version made of changes (or on the published seat list when there are none).
+function setCustom(changes) {
+  custom = changes?.length ? { base: { venue: published.venue.id, seat_list_sha256: seatListSha, configuration: { venue: published.venue.id, ...cfg } }, changes } : null;
+  const out = custom ? SeatEdit.applyCustom(published, changes) : null;
+  doc = out ? out.doc : published;
+  const n = $("customnote");
+  n.hidden = !custom;
+  if (custom) {
+    const nf = out.notFitting.length;
+    n.innerHTML = `Working on your customised version (${changes.length === 1 ? "1 change" : `${fmt(changes.length)} changes`} from the published seat list${nf ? `; ${fmt(nf)} no longer fit and are left out` : ""}). ` +
+      `<a id="to-customiser" href="#">Edit in the customiser</a>`;
+  }
+  links();
+}
+const fragment = () => `#c=${encodeConfig({ venue: published.venue.id, ...cfg })}${custom ? `&u=${SeatEdit.encodeChanges(custom.changes)}` : ""}`;
+function links() {
+  if (!published) return;
+  $("back").href = `index.html?venue=${encodeURIComponent(published.venue.id)}${fragment()}`;
+  $("decline").href = $("back").href;
+  const c = $("to-customiser");
+  if (c) {
+    c.href = `customiser.html?venue=${encodeURIComponent(published.venue.id)}${fragment()}`;
+    c.onclick = e => { e.preventDefault(); leaveTo(c.href); };
+  }
+  $("title").textContent = `${custom ? "Planner · your customised version · " : "Planner · "}${published.venue.name_en}`;
 }
 
 function sanitize(c) {
@@ -427,7 +463,7 @@ function sellable() {
 // ---------------------------------------------------------------- map
 
 function draw() {
-  const svg = drawSeatMap(doc);
+  const svg = drawSeatMap(doc, custom ? { custom: { changes: custom.changes.length } } : {});
   const defs = el("defs", {}, svg);
   svg.prepend(defs);
   const pat = el("pattern", { id: "blockfill", width: 4, height: 4, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs);
@@ -872,11 +908,12 @@ function planJSON({ withNames = true } = {}) {
     if (a || n || reserved.has(k)) seats[k] = { ...(a ? { category: a } : {}), ...(reserved.has(k) ? { reserved: true } : {}), ...(n ? { name: n } : {}) };
   }
   return {
-    schema: "hkperf-venue-seats/plan@0.2",
+    schema: "hkperf-venue-seats/plan@0.3",
     saved: new Date().toISOString(),
     venue: doc.venue,
-    seat_list: { schema: doc.schema, plan_sha256: doc.source.sha256 },
+    seat_list: { schema: doc.schema, plan_sha256: doc.source.sha256, sha256: seatListSha },
     configuration: cfg,
+    ...(custom ? { customisation: { base: { ...custom.base, configuration: { venue: published.venue.id, ...cfg } }, changes: custom.changes } } : {}),
     categories: cats,
     target: +$("target").value || null,
     sell_through_percent: +$("sellthrough").value || null,
@@ -892,7 +929,7 @@ function save(blob, name) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 // ---- saving: optionally encrypted with a passphrase, optionally without names
-const PLAN_SCHEMAS = ["hkperf-venue-seats/plan@0.1", "hkperf-venue-seats/plan@0.2"];
+const PLAN_SCHEMAS = ["hkperf-venue-seats/plan@0.1", "hkperf-venue-seats/plan@0.2", "hkperf-venue-seats/plan@0.3"];
 const LOCKED_SCHEMA = "hkperf-venue-seats/plan-protected@0.1";
 const PBKDF2_ITERATIONS = 600000;
 
@@ -997,6 +1034,11 @@ $("upload").onchange = async () => {
       throw new Error(`this plan is for ${p.venue?.name_en || p.venue?.id}; open that venue in the planner first`);
     }
     cfg = sanitize(p.configuration);
+    // the file's customisation wins over the link's (plan@0.1 and 0.2 have none)
+    const fileCustom = SeatEdit.readCustom(JSON.stringify(p));
+    const before = JSON.stringify(custom?.changes || []), after = JSON.stringify(fileCustom?.changes || []);
+    setCustom(fileCustom?.changes || null);
+    const switched = before !== after;
     cats = (p.categories || []).map((c, i) => ({ id: String(c.id), name: String(c.name || `Price ${i + 1}`), price: Math.max(0, +c.price || 0), colour: /^#[0-9a-f]{6}$/i.test(c.colour) ? c.colour : PALETTE[i % PALETTE.length] }));
     nextCat = cats.reduce((m, c) => Math.max(m, +String(c.id).replace(/\D/g, "") || 0), 0) + 1;
     assign.clear(); names.clear(); reserved.clear(); sel = new Set();
@@ -1011,7 +1053,9 @@ $("upload").onchange = async () => {
     }
     $("target").value = p.target || ""; $("sellthrough").value = p.sell_through_percent || 80;
     $("confignote").className = "notice ok"; $("confignote").textContent = "Configuration from your plan file: " + describe();
-    note.textContent = `Opened ${file.name}.` + (skipped ? ` ${skipped} seat(s) are not in this configuration and were left out.` : "");
+    note.textContent = `Opened ${file.name}.` + (skipped ? ` ${skipped} seat(s) are not in this configuration${custom || fileCustom ? " or this customised version" : ""} and were left out.` : "") +
+      (switched ? (custom ? " The plan's own customised version is used." : " The plan is on the published seat list, so it is used without your customisation.") : "") +
+      (fileCustom && fileCustom.base.seat_list_sha256 !== seatListSha ? " The published seat list has been corrected since the plan was saved; its changes were checked again." : "");
     track("planner-upload");
     render();
     markSaved();
@@ -1032,14 +1076,13 @@ addEventListener("beforeunload", e => {
   e.preventDefault();
   e.returnValue = "";                              // the browser shows its own "leave site?" prompt
 });
-$("back").addEventListener("click", e => {
-  if (!unsaved()) return;
-  e.preventDefault();
-  const href = $("back").href;
+function leaveTo(href) {
+  if (!unsaved()) { leaving = true; location.href = href; return; }
   $("leave-go").onclick = () => { leaving = true; track("planner-left-unsaved"); location.href = href; };
   $("leave-save").onclick = () => { $("leavedlg").close(); $("dl-json").click(); };
   $("leavedlg").showModal();
-});
+}
+$("back").addEventListener("click", e => { e.preventDefault(); leaveTo($("back").href); });
 
 // ---------------------------------------------------------------- tooltip and zoom
 
