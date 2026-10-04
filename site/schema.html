@@ -44,14 +44,15 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <p><a href="./">← Hong Kong Performing Arts Venues Seat Configuration</a></p>
   <h1>Data format</h1>
   <p class="sub">How the seat lists are structured, and the rules behind them. Schema
-    <code>hkperf-venue-seats/seatlist@0.4</code>. Last updated 29 September 2026.</p>
+    <code>hkperf-venue-seats/seatlist@0.5</code>. Last updated 4 October 2026.</p>
 
   <div class="card">
     <p style="margin-top:0"><b>In short:</b> one JSON file per seating layout, with a CSV beside it. Each file lists
       the parts of house, their rows, the blocks within each row and the seats in each block, in number order, with
       the marks the plan prints. Everything is a fact read from the operator's published plan, with its source.
-      There are no seat coordinates: where rows sit around the stage is recorded as an arrangement, not a
-      measurement.</p>
+      There are no coordinates for single seats: where rows sit around the stage is recorded as an arrangement,
+      not a measurement. Only round and surround halls, whose rows bend around the stage, also record where each
+      run of seats lies on the plan (see <a href="#arc">Arc layouts</a>).</p>
     <p style="margin-bottom:0">Every file is checked when it is built: the seats counted must equal the totals
       printed on the plan.</p>
   </div>
@@ -69,6 +70,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     <li><a href="#sources">Sources and references</a></li>
     <li><a href="#location">Location</a></li>
     <li><a href="#banks">Banks: arrangement around the stage</a></li>
+    <li><a href="#arc">Arc layouts: round and surround halls</a></li>
     <li><a href="#layouts">Rooms with more than one layout</a></li>
     <li><a href="#csv">The CSV</a></li>
     <li><a href="#checks">What the build checks</a></li>
@@ -100,12 +102,12 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <h2 id="venue">3. A seat list, top to bottom</h2>
   <div class="tablewrap"><table>
     <tr><th>Key</th><th>Holds</th></tr>
-    <tr><td><code>schema</code></td><td>the format and version, <code>hkperf-venue-seats/seatlist@0.4</code></td></tr>
+    <tr><td><code>schema</code></td><td>the format and version, <code>hkperf-venue-seats/seatlist@0.5</code> (files written before 0.5 carry <code>@0.4</code>; see <a href="#versions">Versions</a>)</td></tr>
     <tr><td><code>venue</code></td><td><code>id</code>, <code>name_en</code>, <code>name_zh</code></td></tr>
     <tr><td><code>source</code></td><td>the seating plan the file was read from (see <a href="#sources">sources</a>)</td></tr>
     <tr><td><code>references</code></td><td>other operator documents that confirm or contradict a figure, with quotes</td></tr>
     <tr><td><code>location</code></td><td>address and coordinates, each with its source</td></tr>
-    <tr><td><code>layout</code></td><td><code>seat_1_side</code>, an optional <code>stage_label</code>, a note on how the plan is numbered, and optionally <code>banks</code></td></tr>
+    <tr><td><code>layout</code></td><td><code>seat_1_side</code>, an optional <code>stage_label</code>, a note on how the plan is numbered, and optionally <code>banks</code>, or for a round hall <code>arrangement: "arc"</code> with <code>arc</code> and <code>aisles</code></td></tr>
     <tr><td><code>marks</code></td><td>what each mark letter means on this plan</td></tr>
     <tr><td><code>printed_totals</code></td><td>the totals printed on the plan, per part of house and <code>Total</code></td></tr>
     <tr><td><code>totals_source</code></td><td>where the totals come from, when the plan prints none (optional)</td></tr>
@@ -220,7 +222,8 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
 
   <h2 id="sources">9. Sources and references</h2>
   <p><code>source</code> identifies the plan exactly: publisher, <code>url</code>, <code>file</code> name,
-    <code>sha256</code> of the file read, the plan's printed version if any, and the credit line. If the operator
+    <code>sha256</code> of the file read, the plan's printed version if any, and the credit line; where the file
+    holds more than one plan, <code>pdf_page</code> (from 1) names the page read. If the operator
     replaces the file, the hash shows the data was read from an earlier version.</p>
   <p><code>references</code> are other documents from the operator, each with URL, title, printed version,
     hash, date retrieved, exact <code>quotes</code> and a <code>note</code>. They confirm totals, wheelchair
@@ -265,12 +268,50 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
     the stage) and side banks beside it. Order and neighbours follow the plan; distances do not. Every block of
     every row must be in exactly one bank. Files without banks are drawn with every row facing the stage.</p>
 
-  <h2 id="layouts">12. Rooms with more than one layout</h2>
+  <h2 id="arc">12. Arc layouts: round and surround halls</h2>
+  <p>Where the seats wrap the stage, rows bend around it and banks cannot say where. Such a file sets
+    <code>layout.arrangement</code> to <code>"arc"</code> and records where each block lies, measured on the plan:
+    East Kowloon Cultural Centre's The Theatre (seats on three sides) and the Hong Kong Cultural Centre Concert Hall
+    (seats all round). Angles are <i>bearings</i>, degrees clockwise from the top of the plan, about
+    <code>layout.arc.centre</code>; lengths are in the plan's units. Seats are not placed one by one: the viewer
+    spreads a block's seats evenly along its run.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Key</th><th>Holds</th></tr>
+    <tr><td><code>layout.arc</code></td><td><code>centre</code>, the point bearings are taken about (plan units);
+      <code>scale</code>, plan units to the drawing; drawing options: <code>stage_span</code> (a stage wedge at the
+      top, in degrees) or <code>stage: {"shape": "circle", "radius": r}</code> (a stage in the middle),
+      <code>rotate_seats</code>, <code>ring_gap</code>, and <code>row_labels: "along"</code> (row labels in line
+      with each row's ends rather than above them)</td></tr>
+    <tr><td><code>layout.aisles</code></td><td>bearings of the aisles several rows share</td></tr>
+    <tr><td>block <code>shape</code>, <code>view</code>, <code>offset</code>, <code>start</code>, <code>end</code></td>
+      <td>a straight run (<code>"line"</code>) facing bearing <code>view</code> at distance <code>offset</code> from the
+      centre, its first and last seat centres at bearings <code>start</code> and <code>end</code>; an
+      <code>"arc"</code> block follows a circle of <code>radius</code> instead</td></tr>
+    <tr><td>block <code>runs</code></td><td>a block that bends: one entry per straight run, each with
+      <code>count</code> (how many of the block's seats it takes, in order) and its own <code>shape</code>,
+      <code>view</code>, <code>offset</code>, <code>start</code>, <code>end</code></td></tr>
+    <tr><td>block <code>inner</code>, <code>outer</code></td><td>the radius band the block's seats fill</td></tr>
+    <tr><td>zone <code>arc</code></td><td>for rows with no block geometry, the ring: <code>start</code>,
+      <code>span</code>, <code>dir</code> (<code>cw</code> or <code>ccw</code>); optionally <code>label_at</code>,
+      where the plan prints the part of house's name, <code>[x, y]</code> from the centre</td></tr>
+    <tr><td>zone <code>vomitoria</code></td><td>entrances cut through some rows: <code>rows</code>, bearings
+      <code>from</code>–<code>to</code>, radii <code>inner</code>–<code>outer</code>, and a <code>note</code></td></tr>
+  </table></div>
+  <p>A block of the Concert Hall's Stalls 1, row A, which bends twice:</p>
+  <pre><code>{"seats": ["18", "19", ..., "35"],
+ "runs": [{"count": 6, "shape": "line", "view": 25.34, "offset": 196.26, "start": 205.0, "end": 191.22},
+          {"count": 6, "shape": "line", "view": 360.0, "offset": 200.91, "start": 188.08, "end": 174.41},
+          {"count": 6, "shape": "line", "view": 334.41, "offset": 192.2, "start": 171.3, "end": 157.44}],
+ "inner": 185.2, "outer": 209.4}</code></pre>
+  <p>Everything else is as in any other file: the parts of house, rows, blocks, seat ids, marks, totals and
+    checks. A reader that ignores <code>arrangement</code> still gets every seat and every count.</p>
+
+  <h2 id="layouts">13. Rooms with more than one layout</h2>
   <p>Flexible rooms publish one plan per seating layout, e.g. an end stage and a thrust stage. Each layout is its
     own seat list with its own totals; a layout's name is in its <code>venue</code> names, and its
     <code>layout.note</code> says which other layouts exist.</p>
 
-  <h2 id="csv">13. The CSV</h2>
+  <h2 id="csv">14. The CSV</h2>
   <p>One line per seat box, in the order of the JSON:</p>
   <div class="tablewrap"><table>
     <tr><th>Column</th><th>Holds</th></tr>
@@ -287,7 +328,7 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <p>The viewer's download adds <code>counted</code> and <code>not_counted_reason</code> for the configuration
     chosen on screen.</p>
 
-  <h2 id="checks">14. What the build checks</h2>
+  <h2 id="checks">15. What the build checks</h2>
   <p>A seat list is written only if all of these hold; otherwise the build stops with the reason.</p>
   <ul>
     <li>Each part of house (or each group with <code>counted_in</code>): boxes − management seats = the printed total, and these add up to the printed overall total.</li>
@@ -298,9 +339,13 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <p>Where a plan's PDF carries text, every seat number in the file was also matched one for one against it;
     scanned plans were read by eye from zoomed crops. Each script's header says which.</p>
 
-  <h2 id="versions">15. Versions</h2>
+  <h2 id="versions">16. Versions</h2>
   <div class="tablewrap"><table>
     <tr><th>Version</th><th>Changes</th></tr>
+    <tr><td><code>seatlist@0.5</code></td><td>adds the <a href="#arc">arc layout</a> for round and surround halls
+      (<code>layout.arrangement</code>, <code>layout.arc</code>, <code>layout.aisles</code>, block geometry, zone
+      <code>arc</code> and <code>vomitoria</code>) and the bank alignment <code>stage</code>. Nothing earlier changed,
+      so a 0.4 reader still reads every seat; files written before 0.5 keep <code>@0.4</code></td></tr>
     <tr><td><code>seatlist@0.4</code></td><td>adds the <code>back</code> bank side for a far-side audience (transverse and arena stages); nothing else changed</td></tr>
     <tr><td><code>seatlist@0.3</code></td><td>adds optional <code>layout.banks</code> and the CSV's <code>bank</code> column; nothing else changed</td></tr>
     <tr><td><code>seatlist@0.2</code></td><td>the first published format</td></tr>
@@ -308,14 +353,14 @@ footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
   <p class="note">Planner files have their own formats (<code>plan@0.2</code>, <code>plan-protected@0.1</code>),
     described in the repository's README.</p>
 
-  <h2 id="prompt">16. Drawing a map with an AI model</h2>
+  <h2 id="prompt">17. Drawing a map with an AI model</h2>
   <p>The viewer is one way to draw the data. If you would rather have a language model draw a seat map for your
     own use, here is an example prompt. Attach or paste one seat-list JSON file after it. It asks for a
     self-contained SVG and for the model to count its own output, which you should still check against the
     file's <code>printed_totals</code>.</p>
   <p><button class="copy" type="button" id="copy-prompt">Copy the prompt</button> <span class="note" id="copied" aria-live="polite"></span></p>
   <pre><code id="prompt-text">You are drawing a schematic seat map from a structured seat list. The seat list follows the
-schema hkperf-venue-seats/seatlist@0.4 (https://code.denniswu.org/hkperf-venue-seats/schema.html).
+schema hkperf-venue-seats/seatlist@0.5 (https://code.denniswu.org/hkperf-venue-seats/schema.html).
 It is attached below. Produce one self-contained SVG, then a short check report.
 
 WHAT THE DATA IS
@@ -325,9 +370,18 @@ WHAT THE DATA IS
   If a row's inferred_numbers gives a number for such a box, you may show it in a tooltip, not on the seat.
 - A row's marks map seat ids to letters: W wheelchair space, X management seat, R restricted sightline,
   L limited legroom. Letters can combine ("RL").
-- There are NO coordinates. Do not invent positions, curves, rakes or distances. Draw a schematic.
+- There are NO seat coordinates. Do not invent positions, curves, rakes or distances. Draw a schematic.
+  The one exception is rule 0 (arc layouts), whose block positions are measured from the plan.
 
 LAYOUT RULES
+0. If layout.arrangement is "arc", ignore rules 1-2. Bearings are degrees clockwise from up, about
+   layout.arc.centre; multiply every offset, radius and inner/outer by layout.arc.scale (default 1).
+   For each block (or each entry of its runs, taking the next "count" seats): its seats lie evenly on a
+   straight line from the point at bearing "start" to the point at bearing "end", where a point at bearing
+   b lies at distance offset / cos(b - (view + 180)) from the centre. Turn each seat to run along the line.
+   Draw the stage as layout.arc.stage describes (a circle of that radius at the centre), else as a wedge
+   of stage_span degrees at the top. Put each zone's heading at its arc.label_at (x, y from the centre,
+   scaled) if given, else below the seats. Label each row at both ends, just beyond the end seats.
 1. If layout.banks is absent: put a stage box at the top. Draw each zone in order, with its name
    (name and name_zh) as a heading, and each row as one horizontal line under the previous one, centred.
    Within a row, draw blocks left to right in drawing order: if layout.seat_1_side is "right", reverse

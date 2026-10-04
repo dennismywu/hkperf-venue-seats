@@ -65,8 +65,12 @@ Wan Ho and four at Ngau Chi Wan — so each layout is its own seat list.
 - **It is** a list of facts about each hall: its parts of house, the rows in each, the seat numbers in each
   row (split into blocks where the row has aisles), the marks the plan prints, and the totals LCSD
   publishes. Every count is checked against those totals.
-- **It is not** a drawing. There are **no coordinates for seats, no background images and no copy of any
-  plan**. The viewer draws its own schematic: each row centred, blocks side by side, seats in number order.
+- **It is not** a drawing. There are **no coordinates for single seats, no background images and no copy
+  of any plan**. The viewer draws its own schematic: each row centred, blocks side by side, seats in number
+  order. The exception is round and surround halls (the `arc` layout, schema 0.5), where rows bend around
+  the stage and no schematic order would place them: each block there records where its run of seats lies,
+  as a bearing and distance from the hall's centre measured on the plan, and the viewer spreads the seats
+  evenly along it.
 
 ## Viewer
 
@@ -202,14 +206,14 @@ as [Data format](https://code.denniswu.org/hkperf-venue-seats/schema.html) (`sit
 
 One JSON file per venue in `data/`, listed in `data/index.json`, with a CSV beside it (one line per seat
 box: part of house, row, block, bank, seat, number and its basis, marks, pit rows). Schema
-`hkperf-venue-seats/seatlist@0.4`:
+`hkperf-venue-seats/seatlist@0.5` (files written before 0.5 carry `@0.4` and read the same):
 
 | Key | Holds |
 |---|---|
 | `venue` | `id`, English and Chinese names |
 | `source` | the seating plan: publisher, URL, file name, SHA-256, plan code or version, credit |
 | `location` | address, district, latitude and longitude, each with its source |
-| `layout` | which end seat 1 is at (`seat_1_side`), an optional `stage_label` for a house with no stage (a cinema's `SCREEN 銀幕`), notes on the numbering, and optionally `banks` (below) |
+| `layout` | which end seat 1 is at (`seat_1_side`), an optional `stage_label` (a cinema's `SCREEN 銀幕`), notes on the numbering, and optionally `banks` or, for a round hall, `arrangement: "arc"` with `arc` (both below) |
 | `marks` | the meaning of each mark letter: `W` wheelchair, `X` management, `R` restricted sightline, `L` limited legroom |
 | `printed_totals` | the totals printed on the plan, per part of house and overall |
 | `orchestra_pits` | each pit option: rows removed (row labels, or `{zone, row, block}` as in banks; with basis and reasoning), seats removed, total, quoted source |
@@ -241,8 +245,30 @@ the stage from the far side), and side banks beside it, or against the side wall
 with a front bank's rows across the aisle. Order and neighbours follow the plan; distances do not. Every block
 of every row must be in exactly one bank, or the build fails. Files without `banks` are drawn as before, every
 row facing the stage.
-Version 0.4 adds the `back` bank side; version 0.3 added `banks` and the CSV's `bank` column; nothing else
-changed from 0.2.
+
+**Arc layouts: round and surround halls (0.5).** Where the seats wrap the stage (EKCC The Theatre, Hong
+Kong Cultural Centre Concert Hall), banks cannot say where a row bends. Such a file sets
+`layout.arrangement` to `"arc"` and records each block's position as read from the plan. Angles are
+*bearings*: degrees clockwise from the top of the plan, about `layout.arc.centre`. Lengths are in the plan's
+units.
+
+| Key | Holds |
+|---|---|
+| `layout.arc` | `centre` (the point bearings are taken about, in plan units), `scale` (plan units → drawing), and drawing options: `stage_span` (the stage wedge, in degrees) or `stage: {"shape": "circle", "radius": r}` for a stage in the middle, `rotate_seats`, `ring_gap`, `row_labels: "along"` (labels in line with each row's ends) |
+| `layout.aisles` | bearings of the aisles shared by several rows (for the reviewer's overlay) |
+| block `shape`, `view`, `offset`, `start`, `end` | the block is a straight run (`"line"`) facing bearing `view`, `offset` from the centre; its first and last seat centres sit at bearings `start` and `end`. `"arc"` blocks follow a circle of `radius` instead |
+| block `runs` | a block that bends: one entry per straight run, each with `count` (how many of the block's seats it takes) and its own `shape`, `view`, `offset`, `start`, `end` |
+| block `inner`, `outer` | the radius band the block's seats fill |
+| zone `arc` | for rows without block geometry: `start`, `span` and `dir` (`cw`/`ccw`) of the ring; optionally `label_at`, where the plan prints the part of house's name, `[x, y]` from the centre |
+| zone `vomitoria` | entrances cut through some rows: `rows`, bearings `from`–`to`, radii `inner`–`outer`, `note` |
+
+Block geometry is measured from the plan by `tools/derive_runs.py` (plans with a text layer) or
+`tools/derive_glyph_runs.py` (plans that draw their numbers as outlines). It is not in `venues/<id>.py`; see
+the [row reviewer](#row-reviewer). The seats, rows, marks and counts are the same as in any other file, so a
+reader that ignores `arrangement` still gets every seat and every check.
+
+Version 0.5 adds the `arc` arrangement and the bank alignment `stage`; version 0.4 added the `back` bank
+side; version 0.3 added `banks` and the CSV's `bank` column; nothing else changed from 0.2.
 
 **Seats with no printed number.** Wheelchair and management boxes often print only `W` or `X`. Such a box
 is labelled `W1`, `W2`… (or `X1`…) in its row. It gets an inferred number only when the gap between its
