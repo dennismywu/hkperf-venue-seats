@@ -186,8 +186,9 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
       compensation for any loss arising from a discrepancy in the data.</p>
     <p><b>Privacy.</b> This viewer runs in your browser and needs no account; it sets no cookies and stores
       nothing on the server. This site counts visits anonymously on its own server, with no IP addresses or other
-      personal data, and never what you type or choose. <a class="privacy-link" href="#">Privacy and usage</a></p>
-    <p id="stats-note" hidden><b>Anonymous usage statistics.</b> This site counts visits and which features are used, with GoatCounter on its own server: no cookies, no IP addresses or other personal data, never what you type or choose. By using the site you agree to this. <a class="privacy-link" href="#">Privacy and usage</a></p>
+      personal data, and never what you type or choose, other than which venue is shown.
+      <a class="privacy-link" href="#">Privacy and usage</a></p>
+    <p id="stats-note" hidden><b>Anonymous usage statistics.</b> This site counts visits, which venue is shown, and which features are used, with GoatCounter on its own server: no cookies, no IP addresses or other personal data, and nothing else you type or choose. By using the site you agree to this. <a class="privacy-link" href="#">Privacy and usage</a></p>
     <div class="meta">
       <span>© 2026 Dennis Wu</span>
       <span>Code: MIT</span>
@@ -281,6 +282,7 @@ async function load(v) {
   if (CONFIG.repo) $("foot-issues").href = `${CONFIG.repo}/issues/new?template=correction.yml&title=${encodeURIComponent(`[Correction] ${doc.venue.id}: `)}`;
   $("credit-venue").innerHTML = `${esc(doc.source.credit)} Seating plan for this venue: ${link(doc.source.url)}.`;
   update(false);
+  track("viewer-venue-" + doc.venue.id);   // per-venue tally, on load and on every change
 }
 
 // ---------------------------------------------------------------- what counts

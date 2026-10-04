@@ -1,10 +1,10 @@
 # Usage statistics: self-hosted GoatCounter
 
 The viewer, the planner (after its consent screen) and the project page count page views and named
-interface events (for example `planner-category-added`) with GoatCounter running on the droplet at
-https://stats.denniswu.org/. GoatCounter sets no cookies and keeps no IP addresses; the pages never send
-anything a visitor types or selects. `app/analytics.js` does nothing until `goatcounter` is set in
-`app/config.js`.
+interface events (for example `viewer-venue-<id>`, which venue the viewer shows, and
+`planner-category-added`) with GoatCounter running on the droplet at https://stats.denniswu.org/. GoatCounter
+sets no cookies and keeps no IP addresses; the pages never send anything a visitor types or selects apart
+from the venue shown. `app/analytics.js` does nothing until `goatcounter` is set in `app/config.js`.
 
 ## One-time set-up (on the droplet, as root)
 

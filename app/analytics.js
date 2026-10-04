@@ -5,7 +5,17 @@
 (function () {
   const endpoint = (window.SEATS_CONFIG || {}).goatcounter || "";
   let started = false;
+  const pending = [];
   window.statsEnabled = !!endpoint;
+
+  function flush() {
+    if (!(window.goatcounter && window.goatcounter.count)) return;
+    while (pending.length) {
+      const name = pending.shift();
+      window.goatcounter.count({ path: name, title: name, event: true });
+    }
+  }
+
   window.startStats = function () {
     if (!endpoint || started) return;
     started = true;
@@ -13,10 +23,14 @@
     s.async = true;
     s.dataset.goatcounter = endpoint;
     s.src = endpoint.replace(/\/count$/, "/count.js");
+    s.onload = flush;
     document.head.append(s);
   };
   window.track = function (name) {
-    if (started && window.goatcounter && window.goatcounter.count)
+    if (!started) return;
+    if (window.goatcounter && window.goatcounter.count)
       window.goatcounter.count({ path: name, title: name, event: true });
+    else
+      pending.push(name);   // held until count.js loads, so an on-load event is not lost
   };
 })();

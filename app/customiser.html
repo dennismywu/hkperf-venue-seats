@@ -217,7 +217,8 @@ dialog.small { max-width: 460px; }
       compensation for any loss arising from a discrepancy in the data.</p>
     <p><b>Privacy.</b> The customiser runs in your browser and needs no account; it sends nothing and stores nothing
       on the server. This site counts visits anonymously on its own server, with no IP addresses or other personal
-      data, and never what you type or choose. <a class="privacy-link" href="#">Privacy and usage</a></p>
+      data, and never what you type or choose, other than which venue is shown.
+      <a class="privacy-link" href="#">Privacy and usage</a></p>
     <div class="meta">
       <span>© 2026 Dennis Wu</span>
       <span>Free to use here, for anyone. Customiser code: <a id="foot-licence" href="https://polyformproject.org/licenses/noncommercial/1.0.0" rel="noopener">PolyForm Noncommercial 1.0.0</a> (commercial reuse of the code by permission)</span>
@@ -272,7 +273,8 @@ const pageLink = (page, id = doc.venue.id) => `${page}?venue=${encodeURIComponen
 $("consent-stats").innerHTML = statsEnabled
   ? `<b>Anonymous usage statistics.</b> Like the rest of the site, this page's visits are counted, and once you agree,
      which customiser features are used (by name only, e.g. “change added”, “saved”), with GoatCounter on the
-     site's own server: no cookies, no IP addresses kept, never which seats or anything you type.
+     site's own server: no cookies, no IP addresses kept, never which seats or anything you type, other than which
+     venue is shown.
      <a class="privacy-link" href="${CONFIG.site ? esc(CONFIG.site + "privacy.html") : "#"}">Privacy and usage</a>`
   : `<b>No usage statistics</b> are collected on this page at present.`;
 {

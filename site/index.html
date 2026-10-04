@@ -283,7 +283,7 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
     Noncommercial 1.0.0 (<a href="#lic-h">licences</a>).
     <br>Privacy: the viewer and planner run in your browser and need no account, and the planner stores nothing
     on the server. This site counts visits anonymously on its own server, with no cookies, no IP addresses or
-    other personal data, and never what you type or choose.
+    other personal data, and never what you type or choose, other than which venue is shown.
     <a href="privacy.html">Privacy and usage</a>.
   </footer>
 </div>
@@ -389,8 +389,8 @@ async function venues() {
 venues();
 startStats();
 if (statsEnabled) document.getElementById("stats-note").innerHTML =
-  "<b>Anonymous usage statistics.</b> This site counts visits and which features are used, with GoatCounter on its " +
-  "own server: no cookies, no IP addresses or other personal data, never what you type or choose. By using the site " +
+  "<b>Anonymous usage statistics.</b> This site counts visits, which venue is shown, and which features are used, with GoatCounter on its " +
+  "own server: no cookies, no IP addresses or other personal data, and nothing else you type or choose. By using the site " +
   "you agree to this. <a href=\"privacy.html\">Privacy and usage</a>.<br>";
 </script>
 </body>

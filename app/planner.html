@@ -296,8 +296,9 @@ dialog.small { max-width: 460px; }
       compensation for any loss arising from a discrepancy in the data.</p>
     <p><b>Privacy.</b> This planner runs in your browser and needs no account; it sends nothing and stores nothing
       on the server. This site counts visits anonymously on its own server, with no IP addresses or other personal
-      data, and never what you type or choose. <a class="privacy-link" href="#">Privacy and usage</a></p>
-    <p id="stats-note" hidden><b>Anonymous usage statistics.</b> This site counts visits and which features are used, with GoatCounter on its own server: no cookies, no IP addresses or other personal data, never what you type or choose. By using the site you agree to this. <a class="privacy-link" href="#">Privacy and usage</a></p>
+      data, and never what you type or choose, other than which venue is shown.
+      <a class="privacy-link" href="#">Privacy and usage</a></p>
+    <p id="stats-note" hidden><b>Anonymous usage statistics.</b> This site counts visits, which venue is shown, and which features are used, with GoatCounter on its own server: no cookies, no IP addresses or other personal data, and nothing else you type or choose. By using the site you agree to this. <a class="privacy-link" href="#">Privacy and usage</a></p>
     <div class="meta">
       <span>© 2026 Dennis Wu</span>
       <span>Free to use here, for anyone. Planner code: <a id="foot-planner-licence" href="https://polyformproject.org/licenses/noncommercial/1.0.0" rel="noopener">PolyForm Noncommercial 1.0.0</a> (commercial reuse of the code by permission)</span>
@@ -349,7 +350,8 @@ for (const [id, url] of [["foot-site", CONFIG.site], ["foot-repo", CONFIG.repo],
 $("consent-stats").innerHTML = statsEnabled
   ? `<b>Anonymous usage statistics.</b> Like the rest of the site, this page's visits are counted, and once you agree,
      which planner features are used (by name only, e.g. “category added”, “plan saved”), with GoatCounter on
-     the site's own server: no cookies, no IP addresses kept, never anything you type or choose.
+     the site's own server: no cookies, no IP addresses kept, never anything you type or choose, other than which
+     venue is shown.
      <a class="privacy-link" href="#">Privacy and usage</a>`
   : `<b>No usage statistics</b> are collected on this page at present.`;
 $("stats-note").hidden = !statsEnabled;

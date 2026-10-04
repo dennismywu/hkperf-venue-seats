@@ -228,7 +228,7 @@ footer { padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--m
   <footer>
     <span id="stats-note"></span>
     <a href="https://www.denniswu.com/biography-chinese/" rel="author noopener">胡銘堯</a>的項目。座位資料整理自香港特別行政區政府康樂及文化事務署公布的座位圖及技術資料。座位數據：CC BY 4.0 · 程式碼：MIT · 規劃工具程式碼：PolyForm Noncommercial 1.0.0（<a href="#lic-h">授權</a>）。
-    <br>私隱：檢視器及規劃工具在你的瀏覽器內運行，無須帳戶，規劃工具亦不會在伺服器上儲存任何內容。本網站以自己的伺服器匿名統計瀏覽次數：不使用 cookie、不儲存 IP 位址或其他個人資料，亦從不記錄你輸入或選擇的內容。<a href="privacy.html">私隱及使用統計</a>。
+    <br>私隱：檢視器及規劃工具在你的瀏覽器內運行，無須帳戶，規劃工具亦不會在伺服器上儲存任何內容。本網站以自己的伺服器匿名統計瀏覽次數：不使用 cookie、不儲存 IP 位址或其他個人資料，亦從不記錄你輸入或選擇的內容（所顯示的場地除外）。<a href="privacy.html">私隱及使用統計</a>。
   </footer>
 </div>
 
@@ -348,8 +348,8 @@ async function venues() {
 venues();
 startStats();
 if (statsEnabled) document.getElementById("stats-note").innerHTML =
-  "<b>匿名使用統計。</b>本網站以自設伺服器上的 GoatCounter 計算瀏覽次數及使用了哪些功能：不使用 cookies，不保留 IP 地址或其他個人資料，" +
-  "亦從不記錄你輸入或選擇的內容。使用本網站即表示你同意。<a href=\"privacy.html\">私隱及使用統計</a>（英文）。<br>";
+  "<b>匿名使用統計。</b>本網站以自設伺服器上的 GoatCounter 計算瀏覽次數、所顯示的場地及使用了哪些功能：不使用 cookies，不保留 IP 地址或其他個人資料，" +
+  "亦從不記錄你輸入或選擇的其他內容。使用本網站即表示你同意。<a href=\"privacy.html\">私隱及使用統計</a>（英文）。<br>";
 </script>
 </body>
 </html>

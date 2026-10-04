@@ -185,9 +185,10 @@ A saved plan is yours to keep and to read with your own tools; the format is ope
 
 ## Usage statistics
 
-Every page counts page views, and named interface events such as `planner-category-added` (in the
-planner and the customiser only after their consent), with a self-hosted GoatCounter: no cookies, no IP addresses kept, never
-anything a visitor types or selects. Each page's footer says so, and using the site means agreeing to it;
+Every page counts page views, and named interface events such as `viewer-venue-<id>` (which venue the viewer
+shows) and `planner-category-added` (in the planner and the customiser only after their consent), with a
+self-hosted GoatCounter: no cookies, no IP addresses kept, never anything a visitor types or selects apart
+from the venue shown. Each page's footer says so, and using the site means agreeing to it;
 `site/privacy.html` gives the detail. The web server's logs keep no IP addresses either. `app/analytics.js` does nothing until
 `goatcounter` is set in `app/config.js`; `deploy/goatcounter/` has the set-up.
 
