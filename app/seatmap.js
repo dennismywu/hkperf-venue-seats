@@ -639,11 +639,18 @@ function drawArcMap(doc, opts = {}) {
   const inPits = () => "";
 
   // the stage: a wedge in the opening at the top, bearing 0
-  const sr = R0 * 0.9;
-  const a0 = -stageSpan / 2, a1 = stageSpan / 2;
-  const [sx0, sy0] = pos(sr, a0), [sx1, sy1] = pos(sr, a1);
-  el("path", { class: "stage", d: `M 0 0 L ${sx0} ${sy0} A ${sr} ${sr} 0 0 1 ${sx1} ${sy1} Z` }, svg);
-  const st = el("text", { class: "stagetext", x: 0, y: -sr * 0.45 }, svg);
+  // (layout.arc.stage {shape: "circle", radius}: a round stage at the centre, for a hall seated all round;
+  // radius in the file's units, before scale)
+  const roundStage = arc.stage?.shape === "circle";
+  const sr = roundStage ? arc.stage.radius * (arc.scale ?? 1) : R0 * 0.9;
+  if (roundStage) {
+    el("circle", { class: "stage", cx: 0, cy: 0, r: sr }, svg);
+  } else {
+    const a0 = -stageSpan / 2, a1 = stageSpan / 2;
+    const [sx0, sy0] = pos(sr, a0), [sx1, sy1] = pos(sr, a1);
+    el("path", { class: "stage", d: `M 0 0 L ${sx0} ${sy0} A ${sr} ${sr} 0 0 1 ${sx1} ${sy1} Z` }, svg);
+  }
+  const st = el("text", { class: "stagetext", x: 0, y: roundStage ? 0 : -sr * 0.45 }, svg);
   st.textContent = layout.stage_label || "STAGE 舞台";
 
   const gapW = 1.2;                               // aisle between blocks, in seat-widths
@@ -681,7 +688,7 @@ function drawArcMap(doc, opts = {}) {
       // a row whose blocks each carry a view axis is drawn as straight runs (a non-radial row):
       // each block faces `view` at distance `offset`, its seats evenly spaced from `start` to `end`
       if (row.blocks.length && row.blocks.every(b => { const g = geom(row, b); return b.runs?.length || (g.view != null && g.start != null && g.end != null); })) {
-        let firstP = null, lastP = null;
+        let firstP = null, lastP = null, firstU = null, lastU = null;
         // a block whose seats bend (a straight run, a turned corner seat, another straight run) lists
         // its pieces as runs: each takes the next `count` seats and carries its own shape and geometry
         const pieces = block => {
@@ -718,8 +725,11 @@ function drawArcMap(doc, opts = {}) {
             return [d * Math.sin(bearing * RAD), -d * Math.cos(bearing * RAD)];
           };
           const P0 = at(g.start), P1 = at(g.end);
-          if (!firstP) firstP = P0;
-          if (lastPiece) lastP = P1;
+          // the run's direction at each end, for row labels placed along it (layout.arc.row_labels "along")
+          const len = Math.hypot(P1[0] - P0[0], P1[1] - P0[1]);
+          const u = len ? [(P1[0] - P0[0]) / len, (P1[1] - P0[1]) / len] : null;
+          if (!firstP) { firstP = P0; firstU = u && [-u[0], -u[1]]; }
+          if (lastPiece) { lastP = P1; lastU = u; }
           // developer overlay: the block's axis, its shared-aisle ends and its inner/outer boundaries
           // data-geo names the block and run (zone/row/block/run), for the reviewer's Geometry tab
           const marked = { "data-geo": `${zi}/${ri}/${bi}/${block.runs?.length ? pi : -1}`, ...(block.arc ? { "data-arc": block.arc } : {}) };
@@ -779,11 +789,32 @@ function drawArcMap(doc, opts = {}) {
             }
           });
         }));
-        for (const P of [firstP, lastP]) {
-          const t = el("text", { class: "rowlabel", x: P[0], y: P[1] - S, "text-anchor": "middle" }, svg);
+        // row labels: above each end of the row, or (row_labels "along") just beyond each end, in line with
+        // the run, so they clear the seats however the run is turned. A long label (a named row such as
+        // "Wheel Chair Box") is drawn once, beside the middle of the row on the side away from the centre.
+        const along = arc.row_labels === "along";
+        const long = along && row.row.length > 3 && lastU;
+        const place = [];
+        if (long) {
+          const mid = [(firstP[0] + lastP[0]) / 2, (firstP[1] + lastP[1]) / 2];
+          let nrm = [-lastU[1], lastU[0]];
+          if (nrm[0] * mid[0] + nrm[1] * mid[1] < 0) nrm = [-nrm[0], -nrm[1]];
+          place.push([mid, nrm, S * 1.1]);
+        } else {
+          place.push([firstP, firstU, S * 0.9], [lastP, lastU, S * 0.9]);
+        }
+        for (const [P, U, d] of place) {
+          let x = P[0], y = P[1] - S, anchor = "middle";
+          if (along && U) {
+            x = P[0] + U[0] * d; y = P[1] + U[1] * d;
+            anchor = U[0] > 0.35 ? "start" : U[0] < -0.35 ? "end" : "middle";
+            if (anchor === "middle") y += U[1] * S * 0.2;
+          }
+          const t = el("text", { class: "rowlabel", x, y, "text-anchor": anchor }, svg);
           t.textContent = row.row;
           Object.assign(t.dataset, { row: row.row, zone: z.name });
           remember(P[0], P[1]);
+          remember(x, y);
         }
         return;
       }
@@ -820,7 +851,9 @@ function drawArcMap(doc, opts = {}) {
         remember(x, y);
       }
     });
-    headings.push({ name: z.name, zh: z.name_zh || "" });
+    // za.label_at: where the plan prints the part of house's name, as [x, y] from the centre in the file's
+    // units (before scale); without it the heading is stacked below the seats
+    headings.push({ name: z.name, zh: z.name_zh || "", at: za.label_at && za.label_at.map(v => v * k) });
   });
   // vomitoria: entrances that cut an angular gap through some rows only (drawn as a shaded wedge)
   doc.zones.forEach((z, zi) => (z.vomitoria || []).forEach((v, vi) => {
@@ -853,14 +886,19 @@ function drawArcMap(doc, opts = {}) {
     el("line", { class: b % 30 ? "" : "major", x1: 0, y1: 0, x2: x, y2: y }, grid);
     if (!(b % 30)) { const [tx, ty] = pos(far - 8, b); el("text", { x: tx, y: ty, "text-anchor": "middle" }, grid).textContent = `${b}°`; }
   }
-  // part-of-house headings, stacked below the seats (clear of the seating, radial or not)
+  // part-of-house headings: where the file places them (label_at), else stacked below the seats (clear of
+  // the seating, radial or not)
   const seatBottom = Math.max(...ext.map(e => e.y1));
-  headings.forEach((h, i) => {
-    const hy = seatBottom + pitch * (1.5 + i * 1.6);
-    const hl = el("text", { class: "zonelabel", x: 0, y: hy, "text-anchor": "middle" }, svg);
+  headings.filter(h => !h.at).forEach((h, i) => {
+    h.at = [0, seatBottom + pitch * (1.5 + i * 1.6)];
+    h.stacked = true;
+  });
+  headings.forEach(h => {
+    const hl = el("text", { class: "zonelabel", x: h.at[0], y: h.at[1], "text-anchor": "middle",
+                            ...(h.stacked ? {} : { "dominant-baseline": "central" }) }, svg);
     hl.textContent = `${h.name} ${h.zh}`.trim();
     hl.dataset.zone = h.name;
-    remember(0, hy, 60);
+    remember(h.at[0], h.at[1], h.stacked ? 60 : S);
   });
 
   const pad = pitch * 2;

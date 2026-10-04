@@ -41,6 +41,7 @@
   {"id": "hkcc-st-end", "name_en": "Hong Kong Cultural Centre Studio Theatre (end stage)", "name_zh": "香港文化中心 劇場（單向舞台）", "region": "Kowloon", "added": "2026-10-03", "file": "hkcc-st-end.json"},
   {"id": "hkcc-st-tv", "name_en": "Hong Kong Cultural Centre Studio Theatre (transverse stage)", "name_zh": "香港文化中心 劇場（橫向舞台）", "region": "Kowloon", "added": "2026-10-03", "file": "hkcc-st-tv.json"},
   {"id": "hkcc-st-thrust", "name_en": "Hong Kong Cultural Centre Studio Theatre (thrust stage)", "name_zh": "香港文化中心 劇場（三向舞台）", "region": "Kowloon", "added": "2026-10-03", "file": "hkcc-st-thrust.json"},
-  {"id": "hkcc-st-arena", "name_en": "Hong Kong Cultural Centre Studio Theatre (arena stage)", "name_zh": "香港文化中心 劇場（中央舞台）", "region": "Kowloon", "added": "2026-10-03", "file": "hkcc-st-arena.json"}
+  {"id": "hkcc-st-arena", "name_en": "Hong Kong Cultural Centre Studio Theatre (arena stage)", "name_zh": "香港文化中心 劇場（中央舞台）", "region": "Kowloon", "added": "2026-10-03", "file": "hkcc-st-arena.json"},
+  {"id": "hkcc-ch", "name_en": "Hong Kong Cultural Centre Concert Hall", "name_zh": "香港文化中心 音樂廳", "region": "Kowloon", "added": "2026-10-04", "file": "hkcc-ch.json"}
  ]
 }

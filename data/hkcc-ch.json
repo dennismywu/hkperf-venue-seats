@@ -1,0 +1,4583 @@
+{
+ "schema": "hkperf-venue-seats/seatlist@0.5",
+ "venue": {
+  "id": "hkcc-ch",
+  "name_en": "Hong Kong Cultural Centre Concert Hall",
+  "name_zh": "香港文化中心 音樂廳"
+ },
+ "source": {
+  "publisher": "Leisure and Cultural Services Department (LCSD)",
+  "url": "https://www.lcsd.gov.hk/en/hkcc/common/images/facilities/concerthall/concert_hall_seating%20plan_web_ch_2pages.pdf",
+  "page": "https://www.lcsd.gov.hk/en/hkcc/facilities/concerthall.html",
+  "file": "concert_hall_seating plan_web_ch_2pages.pdf",
+  "sha256": "59b8fd692fff23045f958fab0175135232dfa0c589b34e1151528f0665dd7a9c",
+  "pdf_page": 2,
+  "plan_code": null,
+  "printed_date": null,
+  "credit": "Seat facts compiled from the seating plan published by the Leisure and Cultural Services Department, HKSAR Government.",
+  "note": "Two pages. Page 2 (Applicable to the events taking place on or after 1 Sep 2020) is the one read. Page 1 (before 1 Sep 2020) differs only at the wheelchair boxes and the V.I.P. boxes."
+ },
+ "references": [
+  {
+   "what": "Seat totals by tier",
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "url": "https://www.lcsd.gov.hk/en/tech/common/pdf/en/hkcc-ch-lfe.pdf",
+   "title": "Hong Kong Cultural Centre – Concert Hall, FULL Technical Information",
+   "document_version": "V. 2025.04.10",
+   "sha256": "5d7f9c1730b44081d1f98f494db1b3b86d347f81c1d5725781b68e17310c73d2",
+   "retrieved": "2026-10-03",
+   "quotes": [
+    "Max. Total Seating: 1971 Stalls: 1044 Balcony: 913 Box Seat: 14",
+    "Choir stalls on balcony behind with 186 seats in 3 sections, or used as additional audience seating."
+   ],
+   "note": "The plan prints no totals, so these are the figures checked. The sheet's Stalls are the plan's Stalls 1 and Stalls 2 together; its Balcony includes the choir rows behind the platform; its Box Seat is V.I.P. Boxes 1 and 2. The choir rows (Balcony rows A-F behind the platform) hold 184 boxes on the plan, not the sheet's 186; the plan is recorded as drawn."
+  }
+ ],
+ "location": {
+  "address_en": "10 Salisbury Road, Tsim Sha Tsui, Kowloon, Hong Kong",
+  "address_zh": "香港九龍尖沙咀梳士巴利道十號",
+  "district": "Yau Tsim Mong",
+  "latitude": 22.29386,
+  "longitude": 114.17053,
+  "coordinates_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "Cultural Programmes (DATA.GOV.HK): venue list with coordinates",
+   "dataset": "https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural",
+   "url": "https://www.lcsd.gov.hk/datagovhk/event/venues.xml",
+   "retrieved": "2026-09-26",
+   "venue_id": "50110014",
+   "name_in_source": "Hong Kong Cultural Centre (Concert Hall)"
+  },
+  "address_source": {
+   "publisher": "Leisure and Cultural Services Department (LCSD)",
+   "title": "LCSD venue list for DATA.GOV.HK: names, addresses and districts",
+   "url": "https://www.lcsd.gov.hk/datagovhk/venue/venue.json",
+   "retrieved": "2026-09-26",
+   "name_in_source": "Hong Kong Cultural Centre"
+  },
+  "note": "Coordinates are LCSD's published point for the building, reproduced as given."
+ },
+ "layout": {
+  "seat_1_side": "left",
+  "arrangement": "arc",
+  "arc": {
+   "stage_span": 70,
+   "rotate_seats": true,
+   "ring_gap": 1.6,
+   "scale": 1.75,
+   "centre": [
+    596,
+    360
+   ],
+   "row_labels": "along",
+   "stage": {
+    "shape": "circle",
+    "radius": 150
+   }
+  },
+  "stage_label": "STAGE 舞台",
+  "note": "A surround hall: the stage sits in the middle with seats all round it. Every block is drawn where the plan draws it, as straight runs. Blocks keep fixed number ranges, so numbers skip between them. Row letters restart in the Balcony; Stalls 2 doubles the letters (AA-MM). The plan prints no row letters for the wheelchair boxes or the V.I.P. boxes."
+ },
+ "marks": {
+  "W": "Wheelchair seat (in a box the plan labels 輪椅席 Wheel Chair Box; the boxes print numbers, not W)",
+  "X": "Management seat (crossed box, no number; the plan's 場館留座 Management Seats)"
+ },
+ "totals_source": "LCSD's technical sheet (V. 2025.04.10); the seating plan prints no totals",
+ "printed_totals": {
+  "Stalls": 1044,
+  "Balcony": 913,
+  "V.I.P. Boxes": 14,
+  "Total": 1971
+ },
+ "zones": [
+  {
+   "name": "Stalls 1",
+   "name_zh": "堂座1",
+   "rows": [
+    {
+     "row": "A",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ],
+       "runs": [
+        {
+         "count": 8,
+         "shape": "line",
+         "view": 53.97,
+         "offset": 201.79,
+         "start": 244.38,
+         "end": 225.41
+        },
+        {
+         "count": 4,
+         "shape": "line",
+         "view": 28.92,
+         "offset": 198.13,
+         "start": 222.29,
+         "end": 214.17
+        }
+       ],
+       "inner": 191.3,
+       "outer": 212.6
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 25.34,
+         "offset": 196.26,
+         "start": 205.0,
+         "end": 191.22
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 360.0,
+         "offset": 200.91,
+         "start": 188.08,
+         "end": 174.41
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 192.2,
+         "start": 171.3,
+         "end": 157.44
+        }
+       ],
+       "inner": 185.2,
+       "outer": 209.4
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57"
+       ],
+       "runs": [
+        {
+         "count": 4,
+         "shape": "line",
+         "view": 331.08,
+         "offset": 194.3,
+         "start": 146.71,
+         "end": 138.38
+        },
+        {
+         "count": 8,
+         "shape": "line",
+         "view": 305.91,
+         "offset": 196.7,
+         "start": 135.22,
+         "end": 115.76
+        }
+       ],
+       "inner": 187.2,
+       "outer": 207.3
+      }
+     ]
+    },
+    {
+     "row": "B",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15"
+       ],
+       "runs": [
+        {
+         "count": 10,
+         "shape": "line",
+         "view": 53.97,
+         "offset": 217.89,
+         "start": 248.51,
+         "end": 226.07
+        },
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 28.92,
+         "offset": 212.55,
+         "start": 223.18,
+         "end": 213.08
+        }
+       ],
+       "inner": 205.4,
+       "outer": 232.4
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 25.34,
+         "offset": 211.3,
+         "start": 204.76,
+         "end": 191.95
+        },
+        {
+         "count": 7,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 214.91,
+         "start": 189.02,
+         "end": 173.7
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 206.69,
+         "start": 170.73,
+         "end": 157.83
+        }
+       ],
+       "inner": 199.8,
+       "outer": 224.2
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60"
+       ],
+       "runs": [
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 331.08,
+         "offset": 208.43,
+         "start": 147.92,
+         "end": 137.57
+        },
+        {
+         "count": 10,
+         "shape": "line",
+         "view": 305.91,
+         "offset": 212.39,
+         "start": 134.61,
+         "end": 111.59
+        }
+       ],
+       "inner": 201.1,
+       "outer": 226.5
+      }
+     ]
+    },
+    {
+     "row": "C",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+       ],
+       "runs": [
+        {
+         "count": 11,
+         "shape": "line",
+         "view": 53.97,
+         "offset": 235.06,
+         "start": 250.21,
+         "end": 227.2
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 28.92,
+         "offset": 227.32,
+         "start": 224.47,
+         "end": 212.71
+        }
+       ],
+       "inner": 220.2,
+       "outer": 252.0
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 25.34,
+         "offset": 225.52,
+         "start": 204.35,
+         "end": 192.34
+        },
+        {
+         "count": 8,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 228.52,
+         "start": 189.59,
+         "end": 172.8
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 221.2,
+         "start": 170.01,
+         "end": 157.92
+        }
+       ],
+       "inner": 214.4,
+       "outer": 238.3
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 331.08,
+         "offset": 223.32,
+         "start": 148.57,
+         "end": 136.53
+        },
+        {
+         "count": 11,
+         "shape": "line",
+         "view": 305.91,
+         "offset": 229.23,
+         "start": 133.79,
+         "end": 110.16
+        }
+       ],
+       "inner": 215.9,
+       "outer": 245.4
+      }
+     ]
+    },
+    {
+     "row": "D",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "X1",
+        "X2"
+       ],
+       "runs": [
+        {
+         "count": 9,
+         "shape": "line",
+         "view": 53.97,
+         "offset": 250.58,
+         "start": 244.91,
+         "end": 227.44
+        },
+        {
+         "count": 7,
+         "shape": "line",
+         "view": 28.92,
+         "offset": 241.66,
+         "start": 224.93,
+         "end": 211.65
+        }
+       ],
+       "inner": 234.3,
+       "outer": 262.6
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61"
+       ],
+       "runs": [
+        {
+         "count": 7,
+         "shape": "line",
+         "view": 331.08,
+         "offset": 237.94,
+         "start": 149.76,
+         "end": 136.18
+        },
+        {
+         "count": 9,
+         "shape": "line",
+         "view": 305.91,
+         "offset": 244.76,
+         "start": 133.57,
+         "end": 115.68
+        }
+       ],
+       "inner": 230.4,
+       "outer": 256.2
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "note": "No centre block: the plan prints the row letter on both sides of an empty centre. The left block ends with two crossed management boxes after 14 (15-16 likely, not printed)."
+    },
+    {
+     "row": "E",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13"
+       ],
+       "runs": [
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 53.97,
+         "offset": 265.13,
+         "start": 235.38,
+         "end": 227.08
+        },
+        {
+         "count": 8,
+         "shape": "line",
+         "view": 28.92,
+         "offset": 256.22,
+         "start": 224.67,
+         "end": 209.99
+        }
+       ],
+       "inner": 248.7,
+       "outer": 274.9
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 25.34,
+         "offset": 257.09,
+         "start": 203.68,
+         "end": 193.12
+        },
+        {
+         "count": 10,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 258.58,
+         "start": 190.7,
+         "end": 171.67
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 251.93,
+         "start": 169.23,
+         "end": 158.6
+        }
+       ],
+       "inner": 245.4,
+       "outer": 269.9
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58"
+       ],
+       "runs": [
+        {
+         "count": 8,
+         "shape": "line",
+         "view": 331.08,
+         "offset": 252.23,
+         "start": 150.8,
+         "end": 135.85
+        },
+        {
+         "count": 5,
+         "shape": "line",
+         "view": 305.91,
+         "offset": 260.13,
+         "start": 133.41,
+         "end": 124.97
+        }
+       ],
+       "inner": 244.7,
+       "outer": 270.2
+      }
+     ]
+    },
+    {
+     "row": "F",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ],
+       "shape": "line",
+       "view": 28.92,
+       "offset": 269.12,
+       "start": 223.27,
+       "end": 209.21,
+       "inner": 261.6,
+       "outer": 285.6
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 25.34,
+         "offset": 271.36,
+         "start": 203.41,
+         "end": 193.41
+        },
+        {
+         "count": 11,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 272.38,
+         "start": 191.11,
+         "end": 171.05
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 266.59,
+         "start": 168.75,
+         "end": 158.69
+        }
+       ],
+       "inner": 260.1,
+       "outer": 284.3
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ],
+       "shape": "line",
+       "view": 331.08,
+       "offset": 266.06,
+       "start": 150.83,
+       "end": 136.62,
+       "inner": 258.5,
+       "outer": 282.6
+      }
+     ]
+    },
+    {
+     "row": "G",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+       ],
+       "shape": "line",
+       "view": 28.92,
+       "offset": 282.9,
+       "start": 223.68,
+       "end": 208.4,
+       "inner": 275.4,
+       "outer": 300.4
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 25.34,
+         "offset": 285.08,
+         "start": 203.27,
+         "end": 193.74
+        },
+        {
+         "count": 12,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 285.18,
+         "start": 191.51,
+         "end": 170.46
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 280.3,
+         "start": 168.29,
+         "end": 158.71
+        }
+       ],
+       "inner": 273.9,
+       "outer": 297.9
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54"
+       ],
+       "shape": "line",
+       "view": 331.08,
+       "offset": 279.37,
+       "start": 151.53,
+       "end": 136.07,
+       "inner": 271.9,
+       "outer": 297.0
+      }
+     ]
+    },
+    {
+     "row": "H",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ],
+       "shape": "line",
+       "view": 28.92,
+       "offset": 296.0,
+       "start": 221.05,
+       "end": 208.18,
+       "inner": 288.5,
+       "outer": 310.6
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 25.34,
+         "offset": 299.5,
+         "start": 203.01,
+         "end": 193.94
+        },
+        {
+         "count": 13,
+         "shape": "line",
+         "view": 360.0,
+         "offset": 298.97,
+         "start": 191.84,
+         "end": 169.95
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 294.96,
+         "start": 167.85,
+         "end": 158.73
+        }
+       ],
+       "inner": 288.6,
+       "outer": 312.4
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ],
+       "shape": "line",
+       "view": 331.08,
+       "offset": 292.19,
+       "start": 152.58,
+       "end": 139.51,
+       "inner": 284.6,
+       "outer": 306.0
+      }
+     ]
+    },
+    {
+     "row": "I",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "shape": "line",
+       "view": 28.92,
+       "offset": 311.09,
+       "start": 216.6,
+       "end": 207.77,
+       "inner": 303.5,
+       "outer": 321.6
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 25.34,
+         "offset": 313.51,
+         "start": 202.87,
+         "end": 194.2
+        },
+        {
+         "count": 14,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 312.03,
+         "start": 192.21,
+         "end": 169.51
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 308.95,
+         "start": 167.48,
+         "end": 158.76
+        }
+       ],
+       "inner": 302.6,
+       "outer": 326.4
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51"
+       ],
+       "shape": "line",
+       "view": 331.08,
+       "offset": 306.28,
+       "start": 152.72,
+       "end": 143.75,
+       "inner": 298.7,
+       "outer": 316.5
+      }
+     ]
+    },
+    {
+     "row": "J",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3"
+       ],
+       "shape": "line",
+       "view": 28.92,
+       "offset": 323.22,
+       "start": 211.35,
+       "end": 207.93,
+       "inner": 315.7,
+       "outer": 331.1
+      },
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 25.34,
+         "offset": 327.99,
+         "start": 202.81,
+         "end": 194.52
+        },
+        {
+         "count": 15,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 325.69,
+         "start": 192.61,
+         "end": 169.21
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 323.0,
+         "start": 167.28,
+         "end": 158.94
+        }
+       ],
+       "inner": 316.8,
+       "outer": 340.8
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48"
+       ],
+       "shape": "line",
+       "view": 331.08,
+       "offset": 320.85,
+       "start": 152.71,
+       "end": 149.27,
+       "inner": 313.3,
+       "outer": 328.6
+      }
+     ]
+    },
+    {
+     "row": "K",
+     "blocks": [
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "X1",
+        "X2"
+       ],
+       "runs": [
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 25.34,
+         "offset": 342.62,
+         "start": 202.76,
+         "end": 194.82
+        },
+        {
+         "count": 16,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 339.34,
+         "start": 192.97,
+         "end": 168.93
+        },
+        {
+         "count": 6,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 337.29,
+         "start": 167.08,
+         "end": 159.1
+        }
+       ],
+       "inner": 331.2,
+       "outer": 355.4
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "note": "Centre block only. It ends with two crossed management boxes after 43 (44-45 likely, not printed)."
+    },
+    {
+     "row": "L",
+     "blocks": [
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+       ],
+       "runs": [
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 26.01,
+         "offset": 355.86,
+         "start": 197.97,
+         "end": 194.95
+        },
+        {
+         "count": 17,
+         "shape": "line",
+         "view": 0.0,
+         "offset": 352.83,
+         "start": 193.19,
+         "end": 168.54
+        },
+        {
+         "count": 3,
+         "shape": "line",
+         "view": 334.41,
+         "offset": 351.58,
+         "start": 166.77,
+         "end": 163.74
+        }
+       ],
+       "inner": 347.0,
+       "outer": 369.5
+      }
+     ],
+     "note": "Centre block only."
+    },
+    {
+     "row": "M",
+     "blocks": [
+      {
+       "seats": [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 366.02,
+       "start": 191.93,
+       "end": 169.6,
+       "inner": 360.2,
+       "outer": 380.8
+      }
+     ],
+     "note": "Centre block only."
+    }
+   ],
+   "counted_in": "Stalls",
+   "arc": {
+    "label_at": [
+     13,
+     246
+    ]
+   }
+  },
+  {
+   "name": "Stalls 2",
+   "name_zh": "堂座2",
+   "rows": [
+    {
+     "row": "AA",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ],
+       "shape": "line",
+       "view": 76.66,
+       "offset": 267.03,
+       "start": 248.6,
+       "end": 228.35,
+       "inner": 262.5,
+       "outer": 311.1
+      },
+      {
+       "seats": [
+        "89",
+        "90",
+        "91",
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100"
+       ],
+       "shape": "line",
+       "view": 278.08,
+       "offset": 254.93,
+       "start": 131.34,
+       "end": 111.58,
+       "inner": 254.9,
+       "outer": 312.7
+      }
+     ],
+     "note": "Two upright side blocks only, one each side of Stalls 1."
+    },
+    {
+     "row": "BB",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13"
+       ],
+       "shape": "line",
+       "view": 76.66,
+       "offset": 280.56,
+       "start": 250.11,
+       "end": 228.87,
+       "inner": 275.3,
+       "outer": 324.9
+      },
+      {
+       "seats": [
+        "89",
+        "90",
+        "91",
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100",
+        "101"
+       ],
+       "shape": "line",
+       "view": 278.08,
+       "offset": 268.23,
+       "start": 130.71,
+       "end": 109.89,
+       "inner": 266.9,
+       "outer": 326.3
+      },
+      {
+       "seats": [
+        "X1",
+        "X2"
+       ],
+       "shape": "line",
+       "view": 79.67,
+       "offset": 289.36,
+       "start": 232.02,
+       "end": 230.55,
+       "inner": 318.9,
+       "outer": 339.0
+      }
+     ],
+     "marks": {
+      "X1": "X",
+      "X2": "X"
+     },
+     "note": "Two upright side blocks only. Two crossed management boxes stand in a column of their own beside the end of the left block (after 13); the plan prints no row letter or number for them."
+    },
+    {
+     "row": "CC",
+     "blocks": [
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26"
+       ],
+       "shape": "line",
+       "view": 57.61,
+       "offset": 334.37,
+       "start": 226.09,
+       "end": 208.81,
+       "inner": 333.4,
+       "outer": 389.1
+      },
+      {
+       "seats": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36"
+       ],
+       "shape": "line",
+       "view": 33.84,
+       "offset": 379.26,
+       "start": 205.76,
+       "end": 193.5,
+       "inner": 375.6,
+       "outer": 411.3
+      },
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 403.58,
+       "start": 188.79,
+       "end": 169.81,
+       "inner": 397.8,
+       "outer": 416.7
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 371.63,
+       "start": 167.59,
+       "end": 155.7,
+       "inner": 374.2,
+       "outer": 416.8
+      },
+      {
+       "seats": [
+        "76",
+        "77",
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87",
+        "88"
+       ],
+       "shape": "line",
+       "view": 301.27,
+       "offset": 321.12,
+       "start": 152.09,
+       "end": 134.57,
+       "inner": 322.2,
+       "outer": 381.5
+      },
+      {
+       "seats": [
+        "89",
+        "90"
+       ],
+       "shape": "line",
+       "view": 278.08,
+       "offset": 280.94,
+       "start": 129.68,
+       "end": 128.23,
+       "inner": 317.1,
+       "outer": 337.6
+      }
+     ],
+     "note": "89-90 stand at the foot of the right side block, under rows AA-BB's 89-."
+    },
+    {
+     "row": "DD",
+     "blocks": [
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23"
+       ],
+       "shape": "line",
+       "view": 57.61,
+       "offset": 348.5,
+       "start": 221.98,
+       "end": 209.74,
+       "inner": 354.1,
+       "outer": 401.8
+      },
+      {
+       "seats": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37"
+       ],
+       "shape": "line",
+       "view": 33.84,
+       "offset": 393.66,
+       "start": 207.02,
+       "end": 193.81,
+       "inner": 389.0,
+       "outer": 425.8
+      },
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 417.02,
+       "start": 189.09,
+       "end": 169.42,
+       "inner": 411.2,
+       "outer": 430.9
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 385.21,
+       "start": 167.4,
+       "end": 154.57,
+       "inner": 386.4,
+       "outer": 431.2
+      },
+      {
+       "seats": [
+        "76",
+        "77",
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87",
+        "88"
+       ],
+       "shape": "line",
+       "view": 301.27,
+       "offset": 335.03,
+       "start": 150.88,
+       "end": 133.85,
+       "inner": 335.5,
+       "outer": 392.9
+      }
+     ]
+    },
+    {
+     "row": "EE",
+     "blocks": [
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23"
+       ],
+       "shape": "line",
+       "view": 57.61,
+       "offset": 362.7,
+       "start": 221.79,
+       "end": 210.02,
+       "inner": 369.2,
+       "outer": 416.8
+      },
+      {
+       "seats": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38"
+       ],
+       "shape": "line",
+       "view": 33.84,
+       "offset": 407.07,
+       "start": 207.67,
+       "end": 193.61,
+       "inner": 401.9,
+       "outer": 440.7
+      },
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 430.45,
+       "start": 189.75,
+       "end": 169.45,
+       "inner": 424.6,
+       "outer": 444.5
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 398.79,
+       "start": 167.23,
+       "end": 153.51,
+       "inner": 398.7,
+       "outer": 445.5
+      },
+      {
+       "seats": [
+        "76",
+        "77",
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86"
+       ],
+       "shape": "line",
+       "view": 301.27,
+       "offset": 349.01,
+       "start": 150.57,
+       "end": 137.17,
+       "inner": 355.1,
+       "outer": 407.8
+      }
+     ]
+    },
+    {
+     "row": "FF",
+     "blocks": [
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25"
+       ],
+       "shape": "line",
+       "view": 57.61,
+       "offset": 376.29,
+       "start": 224.95,
+       "end": 210.75,
+       "inner": 377.9,
+       "outer": 429.4
+      },
+      {
+       "seats": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+       ],
+       "shape": "line",
+       "view": 33.84,
+       "offset": 422.15,
+       "start": 203.61,
+       "end": 193.88,
+       "inner": 421.6,
+       "outer": 456.0
+      },
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 443.88,
+       "start": 190.13,
+       "end": 169.22,
+       "inner": 438.1,
+       "outer": 458.5
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 412.42,
+       "start": 166.46,
+       "end": 153.09,
+       "inner": 412.0,
+       "outer": 457.8
+      },
+      {
+       "seats": [
+        "76",
+        "77",
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86"
+       ],
+       "shape": "line",
+       "view": 301.27,
+       "offset": 363.41,
+       "start": 149.62,
+       "end": 136.61,
+       "inner": 369.0,
+       "outer": 420.5
+      }
+     ]
+    },
+    {
+     "row": "GG",
+     "blocks": [
+      {
+       "seats": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+       ],
+       "shape": "line",
+       "view": 33.84,
+       "offset": 436.27,
+       "start": 203.62,
+       "end": 194.19,
+       "inner": 436.0,
+       "outer": 470.1
+      },
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 457.31,
+       "start": 190.85,
+       "end": 169.37,
+       "inner": 451.5,
+       "outer": 472.3
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 425.39,
+       "start": 166.44,
+       "end": 152.25,
+       "inner": 424.0,
+       "outer": 472.0
+      },
+      {
+       "seats": [
+        "76",
+        "77",
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87",
+        "88"
+       ],
+       "shape": "line",
+       "view": 301.27,
+       "offset": 376.95,
+       "start": 149.2,
+       "end": 133.86,
+       "inner": 378.4,
+       "outer": 434.3
+      }
+     ]
+    },
+    {
+     "row": "HH",
+     "blocks": [
+      {
+       "seats": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38"
+       ],
+       "shape": "line",
+       "view": 33.84,
+       "offset": 451.32,
+       "start": 206.64,
+       "end": 193.98,
+       "inner": 447.4,
+       "outer": 486.7
+      },
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57"
+       ],
+       "shape": "line",
+       "view": 360.0,
+       "offset": 470.74,
+       "start": 190.11,
+       "end": 169.23,
+       "inner": 464.9,
+       "outer": 485.8
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 438.97,
+       "start": 166.31,
+       "end": 151.35,
+       "inner": 436.6,
+       "outer": 486.3
+      },
+      {
+       "seats": [
+        "76",
+        "77",
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83",
+        "84"
+       ],
+       "shape": "line",
+       "view": 301.27,
+       "offset": 389.8,
+       "start": 148.35,
+       "end": 138.68,
+       "inner": 400.7,
+       "outer": 445.5
+      }
+     ]
+    },
+    {
+     "row": "II",
+     "blocks": [
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58"
+       ],
+       "shape": "line",
+       "view": 360.0,
+       "offset": 484.17,
+       "start": 190.67,
+       "end": 169.25,
+       "inner": 478.4,
+       "outer": 499.5
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 451.94,
+       "start": 166.3,
+       "end": 150.6,
+       "inner": 448.8,
+       "outer": 500.5
+      }
+     ]
+    },
+    {
+     "row": "JJ",
+     "blocks": [
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59"
+       ],
+       "shape": "line",
+       "view": 360.0,
+       "offset": 497.61,
+       "start": 190.76,
+       "end": 168.83,
+       "inner": 491.8,
+       "outer": 513.9
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 465.63,
+       "start": 166.12,
+       "end": 149.71,
+       "inner": 461.7,
+       "outer": 514.7
+      }
+     ]
+    },
+    {
+     "row": "KK",
+     "blocks": [
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 510.85,
+       "start": 186.65,
+       "end": 172.67,
+       "inner": 505.0,
+       "outer": 521.5
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 479.3,
+       "start": 162.58,
+       "end": 152.95,
+       "inner": 479.8,
+       "outer": 517.1
+      }
+     ]
+    },
+    {
+     "row": "LL",
+     "blocks": [
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 524.33,
+       "start": 187.41,
+       "end": 181.13,
+       "inner": 518.5,
+       "outer": 535.2
+      },
+      {
+       "seats": [
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 524.33,
+       "start": 178.08,
+       "end": 171.82,
+       "inner": 518.7,
+       "outer": 536.2
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 492.66,
+       "start": 161.47,
+       "end": 153.1,
+       "inner": 493.6,
+       "outer": 527.8
+      }
+     ],
+     "note": "The centre block breaks in two, between 45 and 46."
+    },
+    {
+     "row": "MM",
+     "blocks": [
+      {
+       "seats": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 537.8,
+       "start": 188.23,
+       "end": 181.1,
+       "inner": 532.0,
+       "outer": 549.9
+      },
+      {
+       "seats": [
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 537.8,
+       "start": 178.13,
+       "end": 170.02,
+       "inner": 532.1,
+       "outer": 552.7
+      },
+      {
+       "seats": [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74"
+       ],
+       "shape": "line",
+       "view": 322.58,
+       "offset": 505.97,
+       "start": 163.93,
+       "end": 149.66,
+       "inner": 502.3,
+       "outer": 550.2
+      }
+     ],
+     "note": "The centre block breaks in two, between 46 and 47."
+    },
+    {
+     "row": "Wheel Chair Box",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+       ],
+       "shape": "line",
+       "view": 33.8,
+       "offset": 481.08,
+       "start": 205.22,
+       "end": 196.43,
+       "inner": 479.1,
+       "outer": 511.0
+      }
+     ],
+     "marks": {
+      "1": "W",
+      "2": "W",
+      "3": "W",
+      "4": "W",
+      "5": "W",
+      "6": "W"
+     },
+     "note": "Six numbered places in a box labelled 輪椅席 Wheel Chair Box, on the left behind rows GG-HH; the plan prints no row letter. The boxes print numbers, not W; marked W as the plan names them wheelchair seats. Places 7-10 are the Balcony's wheelchair box."
+    }
+   ],
+   "counted_in": "Stalls",
+   "arc": {
+    "label_at": [
+     -3,
+     388
+    ]
+   }
+  },
+  {
+   "name": "Balcony",
+   "name_zh": "樓座",
+   "rows": [
+    {
+     "row": "A",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+       ],
+       "shape": "line",
+       "view": 229.32,
+       "offset": 203.4,
+       "start": 69.33,
+       "end": 43.38,
+       "inner": 195.7,
+       "outer": 223.7
+      },
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25"
+       ],
+       "shape": "line",
+       "view": 180.1,
+       "offset": 181.06,
+       "start": 21.97,
+       "end": 336.04,
+       "inner": 177.0,
+       "outer": 203.5
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37"
+       ],
+       "shape": "line",
+       "view": 129.72,
+       "offset": 211.33,
+       "start": 319.71,
+       "end": 294.37,
+       "inner": 203.6,
+       "outer": 226.5
+      }
+     ]
+    },
+    {
+     "row": "B",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+       ],
+       "shape": "line",
+       "view": 229.32,
+       "offset": 221.91,
+       "start": 69.66,
+       "end": 42.49,
+       "inner": 214.1,
+       "outer": 243.9
+      },
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25"
+       ],
+       "shape": "line",
+       "view": 180.1,
+       "offset": 200.83,
+       "start": 19.98,
+       "end": 338.16,
+       "inner": 196.7,
+       "outer": 221.6
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38"
+       ],
+       "shape": "line",
+       "view": 129.72,
+       "offset": 230.5,
+       "start": 320.27,
+       "end": 293.76,
+       "inner": 222.7,
+       "outer": 247.1
+      }
+     ]
+    },
+    {
+     "row": "C",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ],
+       "shape": "line",
+       "view": 229.32,
+       "offset": 240.47,
+       "start": 69.24,
+       "end": 40.96,
+       "inner": 232.7,
+       "outer": 263.0
+      },
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27"
+       ],
+       "shape": "line",
+       "view": 180.1,
+       "offset": 220.16,
+       "start": 21.48,
+       "end": 336.86,
+       "inner": 216.4,
+       "outer": 244.3
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39"
+       ],
+       "shape": "line",
+       "view": 129.72,
+       "offset": 249.98,
+       "start": 321.5,
+       "end": 294.0,
+       "inner": 242.2,
+       "outer": 267.1
+      },
+      {
+       "seats": [
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51"
+       ],
+       "shape": "line",
+       "view": 104.1,
+       "offset": 291.63,
+       "start": 278.47,
+       "end": 258.84,
+       "inner": 286.6,
+       "outer": 329.2
+      },
+      {
+       "seats": [
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62"
+       ],
+       "shape": "line",
+       "view": 80.23,
+       "offset": 337.32,
+       "start": 250.88,
+       "end": 234.25,
+       "inner": 334.8,
+       "outer": 383.0
+      },
+      {
+       "seats": [
+        "142",
+        "143",
+        "144",
+        "145",
+        "146",
+        "147",
+        "148",
+        "149",
+        "150"
+       ],
+       "shape": "line",
+       "view": 280.03,
+       "offset": 334.68,
+       "start": 126.05,
+       "end": 109.28,
+       "inner": 332.0,
+       "outer": 380.2
+      },
+      {
+       "seats": [
+        "154",
+        "155",
+        "156",
+        "157",
+        "158",
+        "159",
+        "160",
+        "161",
+        "162"
+       ],
+       "shape": "line",
+       "view": 254.92,
+       "offset": 271.98,
+       "start": 101.58,
+       "end": 80.74,
+       "inner": 266.9,
+       "outer": 311.0
+      }
+     ]
+    },
+    {
+     "row": "D",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11"
+       ],
+       "shape": "line",
+       "view": 229.32,
+       "offset": 259.05,
+       "start": 69.56,
+       "end": 40.43,
+       "inner": 251.3,
+       "outer": 283.3
+      },
+      {
+       "seats": [
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29"
+       ],
+       "shape": "line",
+       "view": 180.1,
+       "offset": 239.5,
+       "start": 22.71,
+       "end": 335.8,
+       "inner": 236.2,
+       "outer": 267.2
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+       ],
+       "shape": "line",
+       "view": 129.72,
+       "offset": 268.41,
+       "start": 322.0,
+       "end": 293.58,
+       "inner": 260.6,
+       "outer": 286.8
+      },
+      {
+       "seats": [
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51"
+       ],
+       "shape": "line",
+       "view": 104.1,
+       "offset": 312.11,
+       "start": 278.8,
+       "end": 260.28,
+       "inner": 307.0,
+       "outer": 347.8
+      },
+      {
+       "seats": [
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63"
+       ],
+       "shape": "line",
+       "view": 80.23,
+       "offset": 356.71,
+       "start": 253.32,
+       "end": 235.32,
+       "inner": 352.3,
+       "outer": 401.0
+      },
+      {
+       "seats": [
+        "142",
+        "143",
+        "144",
+        "145",
+        "146",
+        "147",
+        "148",
+        "149",
+        "150",
+        "151"
+       ],
+       "shape": "line",
+       "view": 280.03,
+       "offset": 355.06,
+       "start": 125.63,
+       "end": 107.67,
+       "inner": 351.2,
+       "outer": 401.4
+      },
+      {
+       "seats": [
+        "154",
+        "155",
+        "156",
+        "157",
+        "158",
+        "159",
+        "160",
+        "161",
+        "162"
+       ],
+       "shape": "line",
+       "view": 254.92,
+       "offset": 292.72,
+       "start": 99.82,
+       "end": 80.19,
+       "inner": 287.4,
+       "outer": 329.3
+      }
+     ]
+    },
+    {
+     "row": "E",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+       ],
+       "shape": "line",
+       "view": 229.32,
+       "offset": 278.75,
+       "start": 69.31,
+       "end": 39.49,
+       "inner": 271.0,
+       "outer": 303.8
+      },
+      {
+       "seats": [
+        "14",
+        "15"
+       ],
+       "shape": "line",
+       "view": 183.75,
+       "offset": 261.85,
+       "start": 22.37,
+       "end": 19.65,
+       "inner": 265.1,
+       "outer": 283.6
+      },
+      {
+       "seats": [
+        "28",
+        "29"
+       ],
+       "shape": "line",
+       "view": 176.46,
+       "offset": 261.77,
+       "start": 338.75,
+       "end": 336.09,
+       "inner": 267.6,
+       "outer": 286.6
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41"
+       ],
+       "shape": "line",
+       "view": 129.72,
+       "offset": 286.5,
+       "start": 323.1,
+       "end": 293.84,
+       "inner": 278.7,
+       "outer": 305.2
+      },
+      {
+       "seats": [
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52"
+       ],
+       "shape": "line",
+       "view": 104.1,
+       "offset": 332.55,
+       "start": 280.24,
+       "end": 260.56,
+       "inner": 326.7,
+       "outer": 369.3
+      },
+      {
+       "seats": [
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64"
+       ],
+       "shape": "line",
+       "view": 80.23,
+       "offset": 376.87,
+       "start": 253.73,
+       "end": 234.83,
+       "inner": 372.3,
+       "outer": 424.9
+      },
+      {
+       "seats": [
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76"
+       ],
+       "shape": "line",
+       "view": 58.71,
+       "offset": 440.89,
+       "start": 225.94,
+       "end": 211.94,
+       "inner": 444.3,
+       "outer": 501.4
+      },
+      {
+       "seats": [
+        "142",
+        "143",
+        "144",
+        "145",
+        "146",
+        "147",
+        "148",
+        "149",
+        "150",
+        "151",
+        "152"
+       ],
+       "shape": "line",
+       "view": 280.03,
+       "offset": 375.29,
+       "start": 125.44,
+       "end": 106.45,
+       "inner": 370.7,
+       "outer": 423.2
+      },
+      {
+       "seats": [
+        "154",
+        "155",
+        "156",
+        "157",
+        "158",
+        "159",
+        "160",
+        "161",
+        "162",
+        "163"
+       ],
+       "shape": "line",
+       "view": 254.92,
+       "offset": 312.99,
+       "start": 99.44,
+       "end": 78.64,
+       "inner": 307.0,
+       "outer": 350.6
+      }
+     ],
+     "note": "Behind the platform only the ends of the centre section are seated: 14-15 and 28-29."
+    },
+    {
+     "row": "F",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13"
+       ],
+       "shape": "line",
+       "view": 229.32,
+       "offset": 298.77,
+       "start": 69.11,
+       "end": 38.75,
+       "inner": 291.0,
+       "outer": 324.8
+      },
+      {
+       "seats": [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42"
+       ],
+       "shape": "line",
+       "view": 129.72,
+       "offset": 305.84,
+       "start": 323.6,
+       "end": 293.72,
+       "inner": 298.1,
+       "outer": 325.5
+      },
+      {
+       "seats": [
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ],
+       "shape": "line",
+       "view": 104.1,
+       "offset": 352.82,
+       "start": 282.06,
+       "end": 261.26,
+       "inner": 346.3,
+       "outer": 389.4
+      },
+      {
+       "seats": [
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64"
+       ],
+       "shape": "line",
+       "view": 80.23,
+       "offset": 397.17,
+       "start": 254.08,
+       "end": 235.99,
+       "inner": 392.5,
+       "outer": 443.3
+      },
+      {
+       "seats": [
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77"
+       ],
+       "shape": "line",
+       "view": 58.71,
+       "offset": 461.17,
+       "start": 227.36,
+       "end": 212.34,
+       "inner": 462.6,
+       "outer": 522.4
+      },
+      {
+       "seats": [
+        "129",
+        "130",
+        "131",
+        "132",
+        "133",
+        "134",
+        "135",
+        "136",
+        "137",
+        "138"
+       ],
+       "shape": "line",
+       "view": 299.18,
+       "offset": 461.95,
+       "start": 144.39,
+       "end": 130.81,
+       "inner": 463.8,
+       "outer": 518.3
+      },
+      {
+       "seats": [
+        "142",
+        "143",
+        "144",
+        "145",
+        "146",
+        "147",
+        "148",
+        "149",
+        "150",
+        "151",
+        "152"
+       ],
+       "shape": "line",
+       "view": 280.03,
+       "offset": 395.33,
+       "start": 124.52,
+       "end": 106.38,
+       "inner": 390.8,
+       "outer": 442.1
+      },
+      {
+       "seats": [
+        "154",
+        "155",
+        "156",
+        "157",
+        "158",
+        "159",
+        "160",
+        "161",
+        "162",
+        "163",
+        "164"
+       ],
+       "shape": "line",
+       "view": 254.92,
+       "offset": 333.79,
+       "start": 99.79,
+       "end": 78.11,
+       "inner": 327.6,
+       "outer": 374.5
+      }
+     ],
+     "note": "Behind the platform the row has no centre section."
+    },
+    {
+     "row": "G",
+     "blocks": [
+      {
+       "seats": [
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+       ],
+       "shape": "line",
+       "view": 104.1,
+       "offset": 373.69,
+       "start": 282.26,
+       "end": 262.49,
+       "inner": 367.2,
+       "outer": 408.4
+      },
+      {
+       "seats": [
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65"
+       ],
+       "shape": "line",
+       "view": 80.23,
+       "offset": 417.46,
+       "start": 255.34,
+       "end": 236.29,
+       "inner": 412.1,
+       "outer": 464.5
+      },
+      {
+       "seats": [
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77"
+       ],
+       "shape": "line",
+       "view": 58.71,
+       "offset": 481.01,
+       "start": 227.88,
+       "end": 213.34,
+       "inner": 481.9,
+       "outer": 540.0
+      },
+      {
+       "seats": [
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87"
+       ],
+       "shape": "line",
+       "view": 38.29,
+       "offset": 549.76,
+       "start": 203.38,
+       "end": 194.56,
+       "inner": 561.6,
+       "outer": 607.4
+      },
+      {
+       "seats": [
+        "129",
+        "130",
+        "131",
+        "132",
+        "133",
+        "134",
+        "135",
+        "136",
+        "137",
+        "138",
+        "139"
+       ],
+       "shape": "line",
+       "view": 299.18,
+       "offset": 482.28,
+       "start": 144.78,
+       "end": 130.32,
+       "inner": 483.8,
+       "outer": 542.5
+      },
+      {
+       "seats": [
+        "142",
+        "143",
+        "144",
+        "145",
+        "146",
+        "147",
+        "148",
+        "149",
+        "150",
+        "151",
+        "152",
+        "153"
+       ],
+       "shape": "line",
+       "view": 280.03,
+       "offset": 414.82,
+       "start": 124.47,
+       "end": 105.38,
+       "inner": 409.7,
+       "outer": 463.3
+      },
+      {
+       "seats": [
+        "154",
+        "155",
+        "156",
+        "157",
+        "158",
+        "159",
+        "160",
+        "161",
+        "162",
+        "163",
+        "164"
+       ],
+       "shape": "line",
+       "view": 254.92,
+       "offset": 354.62,
+       "start": 99.44,
+       "end": 79.07,
+       "inner": 348.9,
+       "outer": 396.3
+      }
+     ]
+    },
+    {
+     "row": "H",
+     "blocks": [
+      {
+       "seats": [
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65"
+       ],
+       "shape": "line",
+       "view": 80.23,
+       "offset": 437.36,
+       "start": 255.58,
+       "end": 237.27,
+       "inner": 432.0,
+       "outer": 482.6
+      },
+      {
+       "seats": [
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77",
+        "78"
+       ],
+       "shape": "line",
+       "view": 58.71,
+       "offset": 501.4,
+       "start": 229.12,
+       "end": 213.66,
+       "inner": 500.7,
+       "outer": 561.2
+      },
+      {
+       "seats": [
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87"
+       ],
+       "shape": "line",
+       "view": 38.29,
+       "offset": 569.94,
+       "start": 203.91,
+       "end": 195.34,
+       "inner": 581.0,
+       "outer": 625.9
+      },
+      {
+       "seats": [
+        "129",
+        "130",
+        "131",
+        "132",
+        "133",
+        "134",
+        "135",
+        "136",
+        "137",
+        "138",
+        "139",
+        "140"
+       ],
+       "shape": "line",
+       "view": 299.18,
+       "offset": 502.39,
+       "start": 144.7,
+       "end": 129.36,
+       "inner": 502.6,
+       "outer": 564.5
+      },
+      {
+       "seats": [
+        "142",
+        "143",
+        "144",
+        "145",
+        "146",
+        "147",
+        "148",
+        "149",
+        "150",
+        "151",
+        "152",
+        "153"
+       ],
+       "shape": "line",
+       "view": 280.03,
+       "offset": 435.12,
+       "start": 123.52,
+       "end": 105.2,
+       "inner": 430.0,
+       "outer": 482.1
+      }
+     ]
+    },
+    {
+     "row": "I",
+     "blocks": [
+      {
+       "seats": [
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66"
+       ],
+       "shape": "line",
+       "view": 80.23,
+       "offset": 456.79,
+       "start": 256.31,
+       "end": 237.15,
+       "inner": 451.1,
+       "outer": 504.2
+      },
+      {
+       "seats": [
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77",
+        "78"
+       ],
+       "shape": "line",
+       "view": 58.71,
+       "offset": 520.8,
+       "start": 229.54,
+       "end": 214.54,
+       "inner": 519.8,
+       "outer": 578.6
+      },
+      {
+       "seats": [
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87",
+        "88"
+       ],
+       "shape": "line",
+       "view": 38.29,
+       "offset": 589.51,
+       "start": 205.0,
+       "end": 195.46,
+       "inner": 598.4,
+       "outer": 646.6
+      },
+      {
+       "seats": [
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 637.88,
+       "start": 186.44,
+       "end": 172.73,
+       "inner": 631.2,
+       "outer": 650.5
+      },
+      {
+       "seats": [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121"
+       ],
+       "shape": "line",
+       "view": 325.42,
+       "offset": 582.19,
+       "start": 164.1,
+       "end": 155.17,
+       "inner": 583.3,
+       "outer": 625.5
+      },
+      {
+       "seats": [
+        "142",
+        "143",
+        "144",
+        "145",
+        "146",
+        "147",
+        "148",
+        "149",
+        "150",
+        "151",
+        "152",
+        "153"
+       ],
+       "shape": "line",
+       "view": 280.03,
+       "offset": 455.19,
+       "start": 123.08,
+       "end": 105.55,
+       "inner": 450.4,
+       "outer": 502.3
+      }
+     ]
+    },
+    {
+     "row": "J",
+     "blocks": [
+      {
+       "seats": [
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77",
+        "78",
+        "79"
+       ],
+       "shape": "line",
+       "view": 58.71,
+       "offset": 540.7,
+       "start": 230.87,
+       "end": 214.98,
+       "inner": 538.0,
+       "outer": 598.4
+      },
+      {
+       "seats": [
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87",
+        "88",
+        "89"
+       ],
+       "shape": "line",
+       "view": 38.29,
+       "offset": 610.07,
+       "start": 206.0,
+       "end": 195.58,
+       "inner": 616.9,
+       "outer": 668.3
+      },
+      {
+       "seats": [
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106"
+       ],
+       "shape": "line",
+       "view": 360.0,
+       "offset": 655.45,
+       "start": 186.92,
+       "end": 172.57,
+       "inner": 648.85,
+       "outer": 667.62
+      },
+      {
+       "seats": [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122"
+       ],
+       "shape": "line",
+       "view": 325.42,
+       "offset": 602.56,
+       "start": 163.99,
+       "end": 153.99,
+       "inner": 601.9,
+       "outer": 646.1
+      }
+     ]
+    },
+    {
+     "row": "K",
+     "blocks": [
+      {
+       "seats": [
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77",
+        "78",
+        "79",
+        "X1"
+       ],
+       "shape": "line",
+       "view": 58.71,
+       "offset": 560.5,
+       "start": 232.82,
+       "end": 215.98,
+       "inner": 555.7,
+       "outer": 615.4
+      },
+      {
+       "seats": [
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87",
+        "88",
+        "89",
+        "90"
+       ],
+       "shape": "line",
+       "view": 38.3,
+       "offset": 629.84,
+       "start": 206.99,
+       "end": 195.71,
+       "inner": 634.8,
+       "outer": 689.1
+      },
+      {
+       "seats": [
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107"
+       ],
+       "shape": "line",
+       "view": 360.0,
+       "offset": 673.98,
+       "start": 187.29,
+       "end": 172.33,
+       "inner": 667.25,
+       "outer": 685.78
+      },
+      {
+       "seats": [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123"
+       ],
+       "shape": "line",
+       "view": 325.42,
+       "offset": 625.1,
+       "start": 163.71,
+       "end": 153.2,
+       "inner": 623.4,
+       "outer": 670.1
+      }
+     ],
+     "marks": {
+      "X1": "X"
+     },
+     "note": "The left side block ends with a crossed management box after 79; the next block starts at 80, so the box carries no number."
+    },
+    {
+     "row": "L",
+     "blocks": [
+      {
+       "seats": [
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87",
+        "88",
+        "89",
+        "90",
+        "91"
+       ],
+       "shape": "line",
+       "view": 38.3,
+       "offset": 649.6,
+       "start": 207.92,
+       "end": 195.83,
+       "inner": 652.9,
+       "outer": 709.9
+      },
+      {
+       "seats": [
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107",
+        "108"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 693.92,
+       "start": 187.43,
+       "end": 172.25,
+       "inner": 686.51,
+       "outer": 706.48
+      },
+      {
+       "seats": [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124"
+       ],
+       "shape": "line",
+       "view": 325.42,
+       "offset": 644.82,
+       "start": 163.45,
+       "end": 152.17,
+       "inner": 641.8,
+       "outer": 690.2
+      }
+     ]
+    },
+    {
+     "row": "M",
+     "blocks": [
+      {
+       "seats": [
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87",
+        "88",
+        "89",
+        "90",
+        "91",
+        "X1"
+       ],
+       "shape": "line",
+       "view": 38.3,
+       "offset": 669.37,
+       "start": 208.8,
+       "end": 195.94,
+       "inner": 671.1,
+       "outer": 730.7
+      },
+      {
+       "seats": [
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107",
+        "108"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 715.39,
+       "start": 187.55,
+       "end": 172.25,
+       "inner": 707.49,
+       "outer": 728.99
+      },
+      {
+       "seats": [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125"
+       ],
+       "shape": "line",
+       "view": 325.42,
+       "offset": 662.98,
+       "start": 163.35,
+       "end": 151.27,
+       "inner": 658.9,
+       "outer": 709.1
+      }
+     ],
+     "marks": {
+      "X1": "X"
+     },
+     "note": "The left rear block ends with a crossed management box after 91; the next block starts at 92, so the box carries no number."
+    },
+    {
+     "row": "N",
+     "blocks": [
+      {
+       "seats": [
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107",
+        "108",
+        "109"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 736.92,
+       "start": 187.66,
+       "end": 171.84,
+       "inner": 729.25,
+       "outer": 749.87
+      },
+      {
+       "seats": [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125"
+       ],
+       "shape": "line",
+       "view": 325.42,
+       "offset": 681.28,
+       "start": 163.43,
+       "end": 151.03,
+       "inner": 677.0,
+       "outer": 726.1
+      }
+     ]
+    },
+    {
+     "row": "O",
+     "blocks": [
+      {
+       "seats": [
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107",
+        "108",
+        "109",
+        "110"
+       ],
+       "shape": "line",
+       "view": 360.0,
+       "offset": 757.43,
+       "start": 187.71,
+       "end": 171.61,
+       "inner": 751.01,
+       "outer": 769.96
+      },
+      {
+       "seats": [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125",
+        "126"
+       ],
+       "shape": "line",
+       "view": 325.42,
+       "offset": 700.47,
+       "start": 163.31,
+       "end": 150.56,
+       "inner": 695.7,
+       "outer": 747.4
+      }
+     ]
+    },
+    {
+     "row": "P",
+     "blocks": [
+      {
+       "seats": [
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107",
+        "108",
+        "109",
+        "110",
+        "111"
+       ],
+       "shape": "line",
+       "view": 360.0,
+       "offset": 777.81,
+       "start": 187.8,
+       "end": 171.28,
+       "inner": 770.83,
+       "outer": 791.2
+      },
+      {
+       "seats": [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125",
+        "126",
+        "127"
+       ],
+       "shape": "line",
+       "view": 325.42,
+       "offset": 721.44,
+       "start": 163.17,
+       "end": 149.78,
+       "inner": 715.9,
+       "outer": 769.0
+      }
+     ]
+    },
+    {
+     "row": "Q",
+     "blocks": [
+      {
+       "seats": [
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107",
+        "108",
+        "109",
+        "110",
+        "111",
+        "112"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 799.43,
+       "start": 187.8,
+       "end": 171.09,
+       "inner": 792.55,
+       "outer": 816.03
+      },
+      {
+       "seats": [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125",
+        "126",
+        "127",
+        "128"
+       ],
+       "shape": "line",
+       "view": 325.42,
+       "offset": 742.4,
+       "start": 163.18,
+       "end": 149.31,
+       "inner": 736.1,
+       "outer": 790.0
+      }
+     ]
+    },
+    {
+     "row": "R",
+     "blocks": [
+      {
+       "seats": [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125",
+        "126",
+        "127"
+       ],
+       "shape": "line",
+       "view": 325.42,
+       "offset": 763.31,
+       "start": 162.93,
+       "end": 149.19,
+       "inner": 757.4,
+       "outer": 807.4
+      }
+     ],
+     "note": "Right rear block only."
+    },
+    {
+     "row": "Wheel Chair Box",
+     "blocks": [
+      {
+       "seats": [
+        "7",
+        "8",
+        "9",
+        "10"
+       ],
+       "shape": "line",
+       "view": 299.1,
+       "offset": 535.96,
+       "start": 133.86,
+       "end": 129.11,
+       "inner": 536.5,
+       "outer": 562.1
+      }
+     ],
+     "marks": {
+      "7": "W",
+      "8": "W",
+      "9": "W",
+      "10": "W"
+     },
+     "note": "Four numbered places in a box labelled 輪椅席 Wheel Chair Box, on the right beside Balcony rows F-H; the plan prints no row letter. The boxes print numbers, not W, and follow on from the Stalls' wheelchair box (1-6); marked W as the plan names them wheelchair seats."
+    }
+   ],
+   "arc": {
+    "label_at": [
+     10,
+     891
+    ]
+   }
+  },
+  {
+   "name": "V.I.P. Boxes",
+   "name_zh": "貴賓廂座",
+   "rows": [
+    {
+     "row": "Box 1",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ],
+       "shape": "line",
+       "view": 0.0,
+       "offset": 832.6,
+       "start": 183.41,
+       "end": 176.63,
+       "inner": 823.84,
+       "outer": 842.9
+      }
+     ],
+     "note": "V.I.P. Box 1 (貴賓廂座1), at the rear of the hall behind Balcony row Q."
+    },
+    {
+     "row": "Box 2",
+     "blocks": [
+      {
+       "seats": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "shape": "line",
+       "view": 58.61,
+       "offset": 592.42,
+       "start": 226.9,
+       "end": 223.17,
+       "inner": 597.2,
+       "outer": 622.4
+      }
+     ],
+     "note": "V.I.P. Box 2 (貴賓廂座2), on the left behind Balcony row K."
+    }
+   ],
+   "arc": {
+    "label_at": [
+     10,
+     866
+    ]
+   }
+  }
+ ],
+ "count_check": {
+  "rule": "Printed total = boxes on the plan minus management seats (X). Wheelchair boxes (W) are counted. This rule matches every zone exactly; it is our reading, not printed on the plan.",
+  "Stalls 1": {
+   "boxes": 485,
+   "management_X": 4,
+   "wheelchair_W": 0,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 481,
+   "counted_in": "Stalls"
+  },
+  "Stalls 2": {
+   "boxes": 565,
+   "management_X": 2,
+   "wheelchair_W": 6,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 563,
+   "counted_in": "Stalls"
+  },
+  "Balcony": {
+   "boxes": 915,
+   "management_X": 2,
+   "wheelchair_W": 4,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 913,
+   "printed": 913
+  },
+  "V.I.P. Boxes": {
+   "boxes": 14,
+   "management_X": 0,
+   "wheelchair_W": 0,
+   "restricted_R": 0,
+   "limited_legroom_L": 0,
+   "boxes_minus_X": 14,
+   "printed": 14
+  },
+  "Stalls": {
+   "zones": [
+    "Stalls 1",
+    "Stalls 2"
+   ],
+   "boxes": 1050,
+   "management_X": 6,
+   "boxes_minus_X": 1044,
+   "printed": 1044
+  }
+ }
+}

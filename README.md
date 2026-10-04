@@ -48,6 +48,7 @@ and front-of-house teams.
 | Tai Po Civic Centre Black Box Theatre: thrust stage (`tpcc-bb-thrust`) | 123 | front + two side columns | no pit |
 | Hong Kong Film Archive Cinema (`hkfa-cinema`) | 125 (+4 wheelchair, +3 management) | single | no pit |
 | Hong Kong City Hall Concert Hall (`hkch-ch`) | 1,430 (+ 12 promenade, not counted) | Front Stalls 578 · Rear Stalls 465 · Balcony 387 · Promenade 12 (not counted) | 1,371 (rows A–B, stated) |
+| Hong Kong Cultural Centre Concert Hall (`hkcc-ch`) | 1,971 | Stalls 1,044 (Stalls 1 A–M + Stalls 2 AA–MM) · Balcony 913 (with the choir rows behind the platform) · V.I.P. Boxes 14 | no pit |
 
 Pit rows are inferred where LCSD states only the seats lost, and stated where it names the rows (Sheung Wan
 Civic Centre Theatre, Tuen Mun and Tsuen Wan Town Hall Auditoriums, Hong Kong City Hall Concert Hall). Each
@@ -307,6 +308,8 @@ python3 -m http.server 8770 --bind 127.0.0.1
   or the next build drops them. Block geometry is not in `venues/<id>.py`: `tools/derive_runs.py`
   writes it from the plan into `data/<id>.json`, so a hand-tuned file is overwritten by rebuilding the
   venue or rerunning that tool. Keep the downloaded file, and redo the tuning after either one.
+  Plans that draw their numbers as outlines, with no text layer (Hong Kong Cultural Centre Concert Hall),
+  use `tools/derive_glyph_runs.py <id>` instead: it reads the digits from their shapes.
 
 The editing logic is in `app/seatedit.js` (no page code), shared with the customiser and the planner
 (customisations: `applyCustom`, `recordChange`, the URL and file formats). Its tests read every venue file
