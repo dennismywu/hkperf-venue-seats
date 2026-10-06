@@ -44,6 +44,8 @@ select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .key.main { background: var(--acc-bg); border-color: var(--acc); grid-column: span 2; }
 .key.main b { font-size: 26px; color: var(--acc); }
 .key .ok { color: var(--ok); } .key .neg { color: var(--bad); }
+.key.alert { border-color: color-mix(in srgb, var(--bad) 45%, var(--line)); }
+.key.alert b { color: var(--bad); }
 .key.flash b { animation: flash .5s ease; }
 @keyframes flash { from { opacity: .3; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .key.flash b { animation: none; } }
@@ -157,6 +159,7 @@ table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-nu
 th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { color: var(--muted); font-weight: 600; font-size: 12px; }
 td.num { text-align: right; }
+td.num.alert { color: var(--bad); font-weight: 700; }
 .tablewrap { overflow-x: auto; }
 #tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); padding: 6px 9px; border-radius: 6px; font-size: 12px; max-width: 280px; display: none; z-index: 10; }
 #tip b { font-size: 13px; }

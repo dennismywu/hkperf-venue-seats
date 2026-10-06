@@ -826,7 +826,7 @@ function keys() {
     ["", f.avg ? money(f.avg) : "–", "Average ticket price"],
     ["", fmt(f.total), "Seats in configuration"],
     ["", fmt(f.assigned), "In price categories"],
-    ["", fmt(f.unpriced), "Not yet priced"],
+    [f.unpriced ? "alert" : "", fmt(f.unpriced), "Not yet priced"],
     ["", fmt(f.reserved), "Reserved"],
     ["", fmt(f.blocked), "Blocked"],
     ["", fmt(f.named), "Named seats"],
@@ -843,7 +843,7 @@ function summary() {
       <td class="num">${f.total ? Math.round(n / f.total * 100) : 0}%</td><td class="num">${f.gross ? Math.round(sub / f.gross * 100) : 0}%</td></tr>`;
   });
   rows.push(`<tr><td><span class="dot block-swatch" style="width:10px;height:10px"></span>Blocked / Not for Sale</td><td class="num">${fmt(f.blocked)}</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">${f.total ? Math.round(f.blocked / f.total * 100) : 0}%</td><td class="num">–</td></tr>`);
-  rows.push(`<tr><td>Not yet priced</td><td class="num">${fmt(f.unpriced)}</td><td class="num">${f.resUnpriced ? fmt(f.resUnpriced) : "–"}</td><td class="num">–</td><td class="num">–</td><td class="num">${f.total ? Math.round(f.unpriced / f.total * 100) : 0}%</td><td class="num">–</td></tr>`);
+  rows.push(`<tr><td>Not yet priced</td><td class="num${f.unpriced ? " alert" : ""}">${fmt(f.unpriced)}</td><td class="num">${f.resUnpriced ? fmt(f.resUnpriced) : "–"}</td><td class="num">–</td><td class="num">–</td><td class="num">${f.total ? Math.round(f.unpriced / f.total * 100) : 0}%</td><td class="num">–</td></tr>`);
   $("summary").innerHTML = `<thead><tr><th>Category</th><th class="num">Seats</th><th class="num">Reserved</th><th class="num">Price</th><th class="num">Subtotal</th><th class="num">Seats %</th><th class="num">Gross %</th></tr></thead>
     <tbody>${rows.join("")}</tbody>
     <tfoot><tr><td>Total</td><td class="num">${fmt(f.total)}</td><td class="num">${fmt(f.reserved)}</td><td class="num">${f.avg ? "avg " + money(f.avg) : "–"}</td><td class="num">${money(f.gross)}</td><td></td><td></td></tr></tfoot>`;
