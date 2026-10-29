@@ -19,6 +19,9 @@ const SEAT_PDF = (() => {
     regular: "fonts/NotoSansHK-Regular-subset.ttf",
     bold: "fonts/NotoSansHK-Bold-subset.ttf",
   };
+  // The planner's names and category names can be any text; this face is fetched only when the
+  // small subsets cannot draw it, and pdf-lib embeds just the glyphs the plan uses.
+  const USER_FONT_URL = "fonts/NotoSansHK-Regular-full.ttf";
   const PAPER = { A4: [595.28, 841.89], A3: [841.89, 1190.55] };   // points
   const MARGIN = 36;
   const BLOCK_GAP = 10;
@@ -27,6 +30,9 @@ const SEAT_PDF = (() => {
   // light-theme colours used by the legend swatches (common.css)
   const INK = [0.114, 0.114, 0.106], MUTED = [0.42, 0.416, 0.396];
   const LINE = [0.851, 0.843, 0.816], SOFT = [0.969, 0.965, 0.953];
+  const XBG = [0.933, 0.929, 0.914], RES = [0.486, 0.227, 0.929];
+  const OK = [0.18, 0.49, 0.31], ORANGE = [0.957, 0.635, 0.38];
+  const GRP = [0.96, 0.875, 0.78];
   const MARK_STYLE = {
     W: { fill: [0.89, 0.933, 0.98], stroke: [0.184, 0.435, 0.702], text: [0.184, 0.435, 0.702], letter: "W" },
     X: { fill: [0.933, 0.929, 0.914], stroke: [0.604, 0.596, 0.573], text: [0.604, 0.596, 0.573], cross: true },
@@ -34,9 +40,10 @@ const SEAT_PDF = (() => {
     L: { fill: [0.827, 0.824, 0.8], stroke: [0.227, 0.227, 0.212], text: [0.227, 0.227, 0.212] },
   };
 
-  let vendor = null;       // { PDFLib, fontkit }
-  let fontBuffers = null;  // [regular, bold]
-  let metrics = null;      // Noto Sans HK ascent/descent, for dominant-baseline: central
+  let vendor = null;         // { PDFLib, fontkit }
+  let fontBuffers = null;    // [regular, bold]
+  let userFontBuffer = null; // the full regular face, for planner names/categories
+  let metrics = null;        // Noto Sans HK ascent/descent, for dominant-baseline: central
 
   // ---------------------------------------------------------------- loading
 
@@ -67,6 +74,14 @@ const SEAT_PDF = (() => {
       })),
     ).catch(e => { fontBuffers = null; throw e; });
     return fontBuffers;
+  }
+
+  async function loadUserFont() {
+    if (!userFontBuffer) userFontBuffer = fetch(USER_FONT_URL).then(r => {
+      if (!r.ok) throw new Error(`${USER_FONT_URL}: HTTP ${r.status}`);
+      return r.arrayBuffer();
+    }).catch(e => { userFontBuffer = null; throw e; });
+    return userFontBuffer;
   }
 
   // ---------------------------------------------------------------- colours
@@ -105,7 +120,8 @@ const SEAT_PDF = (() => {
   // which is one less thing for a printer's RIP to interpret.
   function paint(colour, alpha, lib) {
     if (!colour) return undefined;
-    const a = Math.max(0, Math.min(1, colour[3] * alpha));
+    // colours parsed from CSS carry an alpha; the fixed light-theme swatches are RGB only
+    const a = Math.max(0, Math.min(1, (colour[3] ?? 1) * alpha));
     return lib.rgb(colour[0] * a + (1 - a), colour[1] * a + (1 - a), colour[2] * a + (1 - a));
   }
 
@@ -163,7 +179,8 @@ const SEAT_PDF = (() => {
     const fontSize = parseFloat(cs.fontSize);
     const st = {
       display: cs.display, visibility: cs.visibility, opacity: Number.isFinite(opacity) ? opacity : 1,
-      fill: parseColour(cs.fill), stroke: parseColour(cs.stroke),
+      fill: parseColour(cs.fill), pattern: /^url\(/i.test(cs.fill || "") ? "block" : null,
+      stroke: parseColour(cs.stroke),
       strokeWidth: Number.isFinite(strokeWidth) ? strokeWidth : 1, dash,
       fontSize: Number.isFinite(fontSize) ? fontSize : 12, weight,
       anchor: cs.textAnchor || "start", baseline: cs.dominantBaseline || "auto",
@@ -184,6 +201,16 @@ const SEAT_PDF = (() => {
     points.map((p, i) => `${i ? "L" : "M"} ${p[0]} ${p[1]}`).join(" ") + (closed ? " Z" : "");
 
   // A rounded rectangle as a polyline; six segments per corner is smooth at print sizes.
+  // 45° stripes for the planner's blocked seats, clipped to an axis-aligned local rectangle.
+  function hatchSegments(x, y, w, h, step = 4) {
+    const out = [];
+    for (let c = y - (x + w); c <= (y + h) - x; c += step) {
+      const x0 = Math.max(x, y - c), x1 = Math.min(x + w, y + h - c);
+      if (x1 > x0 + 0.01) out.push([[x0, x0 + c], [x1, x1 + c]]);
+    }
+    return out;
+  }
+
   function roundedRectPoints(x, y, w, h, r) {
     r = Math.max(0, Math.min(r, w / 2, h / 2));
     if (!r) return [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
@@ -209,8 +236,9 @@ const SEAT_PDF = (() => {
 
   // page-space mapping: root SVG (minX, minY) is the top-left of the map box
   // (map.x, map.y); +y in SVG runs down the page, so the PDF y is subtracted.
-  function makeWriter(page, lib, map, box) {
+  function makeWriter(page, lib, map, box, fontFor) {
     const s = map.scale, minX = map.minX, minY = map.minY;
+    const pick = fontFor || ((value, weight) => weight >= 600 ? page.pdfFonts.bold : page.pdfFonts.regular);
     const gx = box.x - s * minX, gy = box.y + s * minY;
 
     // a path whose coordinates are already in the SVG root's space (the viewBox)
@@ -243,7 +271,7 @@ const SEAT_PDF = (() => {
     function text(el, m, st, alpha) {
       const value = el.textContent;
       if (!value || !value.trim() || !st.fill) return;
-      const font = st.weight >= 600 ? page.pdfFonts.bold : page.pdfFonts.regular;
+      const font = pick(value, st.weight);
       const fs = st.fontSize;
       const w = font.widthOfTextAtSize(value, fs);
       let x = num(el, "x"), y = num(el, "y");
@@ -275,6 +303,7 @@ const SEAT_PDF = (() => {
     function walk(el, m, alpha) {
       const tag = el.tagName;
       if (tag === "defs" || tag === "title" || tag === "desc" || tag === "style") return;
+      if ((el.getAttribute("class") || "").split(/\s+/).includes("marquee")) return;
       const st = styleOf(el, root);
       if (st.display === "none" || st.visibility === "hidden" || alpha <= 0) return;
       // .seat.off is 22% on screen; lift it a little so faded boxes survive a printer
@@ -289,7 +318,17 @@ const SEAT_PDF = (() => {
         case "rect": {
           const x = num(el, "x"), y = num(el, "y"), w = num(el, "width"), h = num(el, "height");
           const rx = num(el, "rx") || num(el, "ry");
-          poly(roundedRectPoints(x, y, w, h, rx).map(p => apply(tm, p)), true, tm, st, a);
+          const points = roundedRectPoints(x, y, w, h, rx).map(p => apply(tm, p));
+          if (st.pattern === "block") {
+            // the planner's diagonal hatch: a pale base, then 45° stripes clipped to the box
+            poly(points, true, tm, { ...st, fill: XBG, pattern: null }, a);
+            const hatch = { fill: null, stroke: LINE, strokeWidth: 2, dash: [] };
+            for (const [p0, p1] of hatchSegments(x, y, w, h)) {
+              poly([apply(tm, p0), apply(tm, p1)], false, tm, hatch, a);
+            }
+          } else {
+            poly(points, true, tm, st, a);
+          }
           break;
         }
         case "line":
@@ -330,6 +369,20 @@ const SEAT_PDF = (() => {
     // the walker needs the root for the style-cache key; it is closed over here
     let root = null;
     return { walk: (svg, m, alpha) => { root = svg; walk(svg, m, alpha); } };
+  }
+
+  // Selection outlines, drag targets and config hovers are on-screen aids, not part of a saved
+  // map; take them off for the walk and put them back afterwards.
+  function stripClasses(svg) {
+    const names = ["sel", "drop-ok", "drop-bad", "gain", "lose"];
+    const touched = [];
+    for (const el of svg.querySelectorAll(".sel, .drop-ok, .drop-bad, .gain, .lose")) {
+      const had = names.filter(name => el.classList.contains(name));
+      if (!had.length) continue;
+      el.classList.remove(...had);
+      touched.push([el, had]);
+    }
+    return () => { for (const [el, had] of touched) el.classList.add(...had); };
   }
 
   // ---------------------------------------------------------------- text helpers
@@ -385,11 +438,12 @@ const SEAT_PDF = (() => {
 
   // ---------------------------------------------------------------- legend, stats, header
 
-  function legendLines(entries, font, width) {
+  function legendLines(entries, font, width, fontFor) {
     const lines = [[]];
     let x = 0;
     for (const entry of entries) {
-      const w = 10 + 4 + font.widthOfTextAtSize(entry.label, 8.5) + 14;
+      const f = fontFor ? fontFor(entry.label, 400) : font;
+      const w = 10 + 4 + f.widthOfTextAtSize(entry.label, 8.5) + 14;
       if (x && x + w > width) { lines.push([]); x = 0; }
       lines[lines.length - 1].push({ ...entry, w });
       x += w;
@@ -397,7 +451,7 @@ const SEAT_PDF = (() => {
     return lines;
   }
 
-  function drawSwatch(page, lib, kind, mark, x, top) {
+  function drawSwatch(page, lib, kind, mark, colour, x, top) {
     const y = top - 9;
     if (kind === "mark") {
       const s = MARK_STYLE[mark] || MARK_STYLE.L;
@@ -411,6 +465,30 @@ const SEAT_PDF = (() => {
         page.drawLine({ start: { x: x + 1.6, y: y + 1.6 }, end: { x: x + 7.4, y: y + 7.4 }, thickness: 0.6, color: lib.rgb(...s.text) });
         page.drawLine({ start: { x: x + 7.4, y: y + 1.6 }, end: { x: x + 1.6, y: y + 7.4 }, thickness: 0.6, color: lib.rgb(...s.text) });
       }
+    } else if (kind === "category") {
+      const c = parseColour(colour) || [0.8, 0.8, 0.8, 1];
+      page.drawRectangle({ x, y, width: 9, height: 9, color: lib.rgb(c[0], c[1], c[2]), borderColor: lib.rgb(...LINE), borderWidth: 0.6 });
+    } else if (kind === "block") {
+      page.drawRectangle({ x, y, width: 9, height: 9, color: lib.rgb(...XBG), borderColor: lib.rgb(...LINE), borderWidth: 0.6 });
+      for (const [p0, p1] of hatchSegments(x, y, 9, 9, 3)) {
+        page.drawLine({ start: { x: p0[0], y: p0[1] }, end: { x: p1[0], y: p1[1] }, thickness: 1.2, color: lib.rgb(...LINE) });
+      }
+    } else if (kind === "reserved") {
+      page.drawRectangle({ x, y, width: 9, height: 9, color: lib.rgb(1, 1, 1), borderColor: lib.rgb(...RES), borderWidth: 1, borderDashArray: [2, 1.2] });
+    } else if (kind === "public") {
+      page.drawRectangle({ x, y, width: 9, height: 9, color: lib.rgb(0.84, 0.93, 0.87), borderColor: lib.rgb(...OK), borderWidth: 0.7 });
+    } else if (kind === "reserved-fill") {
+      page.drawRectangle({ x, y, width: 9, height: 9, color: lib.rgb(0.91, 0.87, 0.99), borderColor: lib.rgb(...RES), borderWidth: 1, borderDashArray: [2, 1.2] });
+    } else if (kind === "grp") {
+      page.drawRectangle({ x, y, width: 9, height: 9, color: lib.rgb(...GRP), borderColor: lib.rgb(...LINE), borderWidth: 0.6 });
+      writeText(page, lib, "AB", { x: x + 2.4, y: y + 2.5, size: 4.5, font: page.pdfFonts.regular, color: lib.rgb(...MUTED) });
+    } else if (kind === "catline" || kind === "catdash") {
+      const c = parseColour(colour) || ORANGE;
+      page.drawRectangle({
+        x, y, width: 9, height: 9, color: lib.rgb(1, 1, 1),
+        borderColor: lib.rgb(c[0], c[1], c[2]),
+        borderWidth: 1.2, borderDashArray: kind === "catdash" ? [2, 1.2] : undefined,
+      });
     } else if (kind === "standing") {
       page.drawCircle({ x: x + 4.5, y: y + 4.5, size: 4.5, borderColor: lib.rgb(...MUTED), borderWidth: 0.6, borderDashArray: [1.5, 1.5] });
     } else if (kind === "pit") {
@@ -420,21 +498,22 @@ const SEAT_PDF = (() => {
     }
   }
 
-  function drawLegend(page, lib, entries, font, x, top, width) {
-    const lines = legendLines(entries, font, width);
+  function drawLegend(page, lib, entries, font, x, top, width, fontFor) {
+    const lines = legendLines(entries, font, width, fontFor);
     lines.forEach((line, row) => {
       let cx = x;
       const y = top - row * 14;
       for (const entry of line) {
-        drawSwatch(page, lib, entry.kind, entry.mark, cx, y);
-        writeText(page, lib, entry.label, { x: cx + 14, y: y - 1.5, size: 8.5, font, color: lib.rgb(...MUTED) });
+        drawSwatch(page, lib, entry.kind, entry.mark, entry.colour, cx, y);
+        const f = fontFor ? fontFor(entry.label, 400) : font;
+        writeText(page, lib, entry.label, { x: cx + 14, y: y - 1.5, size: 8.5, font: f, color: lib.rgb(...MUTED) });
         cx += entry.w;
       }
     });
     return lines.length * 14 + 6;
   }
 
-  function drawStats(page, lib, rows, font, bold, x, top, width) {
+  function drawStats(page, lib, rows, font, bold, x, top, width, fontFor) {
     const cols = rows.length > 5 ? 2 : 1;
     const per = Math.ceil(rows.length / cols), colW = width / cols, rowH = 14;
     const h = per * rowH + 12;
@@ -442,10 +521,12 @@ const SEAT_PDF = (() => {
     rows.forEach((row, i) => {
       const c = Math.floor(i / per), j = i % per;
       const rx = x + c * colW + 8, ry = top - 6 - (j + 1) * rowH + 4;
-      writeText(page, lib, row.label, { x: rx, y: ry, size: 8.5, font, color: lib.rgb(...MUTED) });
+      const lf = fontFor ? fontFor(row.label, 400) : font;
+      const vf = fontFor ? fontFor(row.value, 700) : bold;
+      writeText(page, lib, row.label, { x: rx, y: ry, size: 8.5, font: lf, color: lib.rgb(...MUTED) });
       const colour = row.tone === "bad" ? [0.702, 0.149, 0.118] : row.tone === "ok" ? [0.18, 0.49, 0.31] : INK;
-      const w = bold.widthOfTextAtSize(row.value, 9.5);
-      writeText(page, lib, row.value, { x: rx + colW - 16 - w, y: ry, size: 9.5, font: bold, color: lib.rgb(...colour) });
+      const w = vf.widthOfTextAtSize(row.value, 9.5);
+      writeText(page, lib, row.value, { x: rx + colW - 16 - w, y: ry, size: 9.5, font: vf, color: lib.rgb(...colour) });
     });
     if (cols > 1) page.drawLine({
       start: { x: x + colW, y: top - 6 }, end: { x: x + colW, y: top - h + 6 },
@@ -555,10 +636,7 @@ const SEAT_PDF = (() => {
     const previousTheme = root.getAttribute("data-theme");
     root.setAttribute("data-theme", "light");
     void svg.getBoundingClientRect();
-    // a config option's hover preview outlines seats in green/red on screen; not in a saved map
-    const previewed = [...svg.querySelectorAll(".gain, .lose")].map(el =>
-      [el, el.classList.contains("gain"), el.classList.contains("lose")]);
-    for (const [el] of previewed) el.classList.remove("gain", "lose");
+    const restoreClasses = stripClasses(svg);
     styleCache = new Map();
     try {
       const writer = makeWriter(page, PDFLib, map, { x: mapX, y: mapY + mapH });
@@ -568,10 +646,7 @@ const SEAT_PDF = (() => {
         borderColor: PDFLib.rgb(...LINE), borderWidth: 0.5,
       });
     } finally {
-      for (const [el, gain, lose] of previewed) {
-        if (gain) el.classList.add("gain");
-        if (lose) el.classList.add("lose");
-      }
+      restoreClasses();
       if (previousTheme === null) root.removeAttribute("data-theme");
       else root.setAttribute("data-theme", previousTheme);
       styleCache = null;
@@ -600,5 +675,250 @@ const SEAT_PDF = (() => {
     return { bytes, name: `${doc.venue.id}-seat-map-${paper}${suffix}.pdf` };
   }
 
-  return { build };
+  // The planner's PDF: the same map, then the ballpark, gap analysis and (optionally) the people
+  // list. content() returns the figures and tables after the libraries have loaded, so a change
+  // during the first download cannot mix an old map with new numbers.
+  async function buildPlan({ doc, svg, summary, stats, legend, content, paper = "A3", orientation = "auto",
+    generated = new Date(), onProgress, prepare, restore }) {
+    const { PDFLib, fontkit } = await loadVendor();
+    const [regularBytes, boldBytes] = await loadFonts();
+    const data = content ? content() : { summary, stats, legend, tables: [], notes: [], userText: [] };
+    if (!data) throw new Error("The plan is not ready yet.");
+    if (!svg?.viewBox?.baseVal?.width || !svg.viewBox.baseVal.height) throw new Error("The seat map is not ready yet.");
+    if (!svg.isConnected) throw new Error("The seat map changed while the PDF was being prepared; try again.");
+
+    const vb = svg.viewBox.baseVal;
+    const map = { minX: vb.x, minY: vb.y, width: vb.width, height: vb.height, scale: 1 };
+    const pdf = await PDFLib.PDFDocument.create();
+    pdf.registerFontkit(fontkit);
+    const regular = await pdf.embedFont(regularBytes, { subset: false });
+    const bold = await pdf.embedFont(boldBytes, { subset: false });
+    const smallFk = fontkit.create(new Uint8Array(regularBytes));
+    const coveredCache = new Map();
+    const covered = value => {
+      const text = String(value ?? "");
+      if (!text) return true;
+      if (coveredCache.has(text)) return coveredCache.get(text);
+      let ok = true;
+      for (const ch of text) if (!smallFk.hasGlyphForCodePoint(ch.codePointAt(0))) { ok = false; break; }
+      coveredCache.set(text, ok);
+      return ok;
+    };
+    let userFont = null;
+    if ((data.userText || []).some(text => !covered(text))) {
+      onProgress?.("Loading the full font for names…");
+      const fullBytes = await loadUserFont();
+      // pdf-lib's subsetter mis-maps this CJK font's glyphs, so embed the whole (6.7 MB) face,
+      // once, when a plan actually needs characters outside the small subsets.
+      userFont = await pdf.embedFont(fullBytes, { subset: false });
+    }
+    const fontFor = (value, weight) => userFont && !covered(value) ? userFont : weight >= 600 ? bold : regular;
+
+    if (!metrics) {
+      const fk = fontkit.create(new Uint8Array(regularBytes));
+      metrics = { central: (fk.ascent + fk.descent) / 2 / fk.unitsPerEm, middle: (fk.xHeight || 0) / 2 / fk.unitsPerEm };
+    }
+
+    const pageFontKeys = new Map();
+    function selectFonts(page) {
+      const keys = pageFontKeys.get(page);
+      if (!keys) return;
+      regular.pdfKey = keys.regular;
+      bold.pdfKey = keys.bold;
+      if (userFont) userFont.pdfKey = keys.user;
+    }
+    function useFonts(page) {
+      page.setFont(regular); const rk = page.fontKey;
+      page.setFont(bold); const bk = page.fontKey;
+      const keys = { regular: rk, bold: bk, user: null };
+      if (userFont) { page.setFont(userFont); keys.user = page.fontKey; }
+      pageFontKeys.set(page, keys);
+      page.pdfFonts = { regular, bold, user: userFont };
+      selectFonts(page);
+      return page;
+    }
+
+    const [pw0, ph0] = PAPER[paper] || PAPER.A3;
+    const candidates = orientation === "portrait" ? [{ pageW: pw0, pageH: ph0, kind: "portrait" }]
+      : orientation === "landscape" ? [{ pageW: ph0, pageH: pw0, kind: "landscape" }]
+      : [{ pageW: pw0, pageH: ph0, kind: "portrait" }, { pageW: ph0, pageH: pw0, kind: "landscape" }];
+
+    const subtitleText = data.subtitle ?? [doc.venue.name_zh, "Planner"].filter(Boolean).join(" · ");
+    const measured = [];
+    for (const candidate of candidates) {
+      const { pageW, pageH } = candidate;
+      const contentW = pageW - 2 * MARGIN;
+      const title = wrap(doc.venue.name_en, bold, 18, contentW);
+      const subtitle = wrap(subtitleText, regular, 11, contentW);
+      const summaryLines = wrap(data.summary, regular, 9.5, contentW);
+      const cols = data.stats.length > 5 ? 2 : 1;
+      const statsH = Math.ceil(data.stats.length / cols) * 14 + 12;
+      const legendH = legendLines(data.legend, regular, contentW, fontFor).length * 14 + 6;
+      const parts = { title, subtitle, summary: summaryLines, statsH, legendH };
+      measured.push({ ...candidate, parts, scale: fitScale(parts, pageW, pageH, map) });
+    }
+    let chosen = measured.reduce((a, b) => b.scale > a.scale ? b : a);
+    if (orientation === "auto") {
+      const preferred = map.width > map.height ? "landscape" : "portrait";
+      const candidate = measured.find(c => c.kind === preferred);
+      if (candidate && candidate.scale >= chosen.scale * 0.95) chosen = candidate;
+    }
+    if (chosen.scale <= 0) throw new Error("The plan does not fit on that page.");
+    const { pageW, pageH, parts } = chosen;
+    map.scale = chosen.scale;
+
+    const page1 = useFonts(pdf.addPage([pageW, pageH]));
+    page1.drawRectangle({ x: 0, y: 0, width: pageW, height: pageH, color: PDFLib.rgb(1, 1, 1) });
+    let y = pageH - MARGIN;
+    y = drawLines(page1, PDFLib, parts.title, { x: MARGIN, top: y, size: 18, leading: 22, font: bold, colour: PDFLib.rgb(...INK) });
+    y = drawLines(page1, PDFLib, parts.subtitle, { x: MARGIN, top: y, size: 11, leading: 14, font: regular, colour: PDFLib.rgb(...MUTED) });
+    y = drawLines(page1, PDFLib, parts.summary, { x: MARGIN, top: y, size: 9.5, leading: 12, font: regular, colour: PDFLib.rgb(...MUTED) });
+    y -= 6;
+    y -= drawStats(page1, PDFLib, data.stats, regular, bold, MARGIN, y, pageW - 2 * MARGIN, fontFor);
+    y -= BLOCK_GAP;
+    y -= drawLegend(page1, PDFLib, data.legend, regular, MARGIN, y, pageW - 2 * MARGIN, fontFor);
+
+    const box = mapBox(pageW, pageH, parts);
+    const mapW = map.width * map.scale, mapH = map.height * map.scale;
+    const mapX = MARGIN + (pageW - 2 * MARGIN - mapW) / 2;
+    const mapY = box.bottom + (box.height - mapH) / 2;
+
+    const root = document.documentElement;
+    const previousTheme = root.getAttribute("data-theme");
+    root.setAttribute("data-theme", "light");
+    void svg.getBoundingClientRect();
+    const restoreClasses = stripClasses(svg);
+    styleCache = new Map();
+    try {
+      prepare?.();
+      const writer = makeWriter(page1, PDFLib, map, { x: mapX, y: mapY + mapH }, fontFor);
+      writer.walk(svg, IDENT, 1);
+      page1.drawRectangle({
+        x: mapX, y: mapY, width: mapW, height: mapH,
+        borderColor: PDFLib.rgb(...LINE), borderWidth: 0.5,
+      });
+    } finally {
+      restore?.();
+      restoreClasses();
+      if (previousTheme === null) root.removeAttribute("data-theme");
+      else root.setAttribute("data-theme", previousTheme);
+      styleCache = null;
+    }
+
+    const pages = [page1];
+    const width = pageW - 2 * MARGIN;
+    const bottom = MARGIN + FOOTER_H + 8;
+    let page = null;
+    let cy = 0;
+
+    function tableLayout(spec) {
+      const columns = spec.columns || [];
+      const weights = spec.weights || columns.map(() => 1);
+      const total = weights.reduce((a, b) => a + b, 0) || 1;
+      const widths = weights.map(w => width * w / total);
+      const xs = widths.map((_, i) => MARGIN + widths.slice(0, i).reduce((a, b) => a + b, 0));
+      return { columns, widths, xs, aligns: spec.aligns || columns.map(() => "left") };
+    }
+    function rowLayout(row, layout) {
+      const cells = layout.columns.map((_, i) => {
+        const value = String(row[i] ?? "");
+        const font = fontFor(value, 400);
+        const lines = wrap(value, font, 8.5, Math.max(8, layout.widths[i] - 4));
+        return { lines, font };
+      });
+      return { cells, height: Math.max(1, ...cells.map(c => c.lines.length)) * 10.5 + 4 };
+    }
+    function drawHeader(spec, layout) {
+      layout.columns.forEach((label, i) => {
+        const w = bold.widthOfTextAtSize(label, 8.5);
+        const x = layout.xs[i] + (layout.aligns[i] === "right" ? layout.widths[i] - 2 - w : 2);
+        writeText(page, PDFLib, label, { x, y: cy - 10, size: 8.5, font: bold, color: PDFLib.rgb(...MUTED) });
+      });
+      page.drawLine({ start: { x: MARGIN, y: cy }, end: { x: pageW - MARGIN, y: cy }, thickness: 0.6, color: PDFLib.rgb(...LINE) });
+      cy -= 15;
+    }
+    function startPage(title, continued, spec) {
+      page = useFonts(pdf.addPage([pageW, pageH]));
+      page.drawRectangle({ x: 0, y: 0, width: pageW, height: pageH, color: PDFLib.rgb(1, 1, 1) });
+      pages.push(page);
+      cy = pageH - MARGIN;
+      writeText(page, PDFLib, `${doc.venue.name_en} · Planner`, { x: MARGIN, y: cy - 8, size: 8.5, font: regular, color: PDFLib.rgb(...MUTED) });
+      cy -= 20;
+      writeText(page, PDFLib, title + (continued ? " (continued)" : ""), { x: MARGIN, y: cy - 12, size: 12, font: bold, color: PDFLib.rgb(...INK) });
+      cy -= 20;
+      if (spec) drawHeader(spec, spec.layout);
+    }
+
+    for (const spec of data.tables || []) {
+      spec.layout = tableLayout(spec);
+      const firstHeight = spec.rows.length ? rowLayout(spec.rows[0], spec.layout).height : 0;
+      if (!page || cy - (20 + 15 + firstHeight) < bottom) {
+        startPage(spec.title, false, spec);
+      } else {
+        cy -= 12;
+        writeText(page, PDFLib, spec.title, { x: MARGIN, y: cy - 12, size: 12, font: bold, color: PDFLib.rgb(...INK) });
+        cy -= 20;
+        drawHeader(spec, spec.layout);
+      }
+      for (const row of spec.rows) {
+        const layout = rowLayout(row, spec.layout);
+        if (cy - layout.height < bottom) startPage(spec.title, true, spec);
+        layout.cells.forEach((cell, i) => {
+          cell.lines.forEach((line, k) => {
+            const w = cell.font.widthOfTextAtSize(line, 8.5);
+            const tx = spec.layout.xs[i] + (spec.layout.aligns[i] === "right" ? spec.layout.widths[i] - 2 - w : 2);
+            writeText(page, PDFLib, line, { x: tx, y: cy - 10 - k * 10.5, size: 8.5, font: cell.font, color: PDFLib.rgb(...INK) });
+          });
+        });
+        cy -= layout.height;
+        page.drawLine({ start: { x: MARGIN, y: cy }, end: { x: pageW - MARGIN, y: cy }, thickness: 0.4, color: PDFLib.rgb(...LINE) });
+      }
+    }
+
+    const notes = data.notes || [];
+    if (notes.length) {
+      const noteLines = notes.flatMap(note => wrap(note, regular, 8.5, width));
+      const height = noteLines.length * 11 + 18;
+      if (!page || cy - height < bottom) startPage("Notes", false, null);
+      else {
+        cy -= 12;
+        writeText(page, PDFLib, "Notes", { x: MARGIN, y: cy - 12, size: 12, font: bold, color: PDFLib.rgb(...INK) });
+        cy -= 20;
+      }
+      for (const line of noteLines) {
+        writeText(page, PDFLib, line, { x: MARGIN, y: cy - 9, size: 8.5, font: regular, color: PDFLib.rgb(...MUTED) });
+        cy -= 11;
+      }
+    }
+
+    const totalPages = pages.length;
+    pages.forEach((p, i) => {
+      selectFonts(p);
+      p.drawLine({ start: { x: MARGIN, y: MARGIN + FOOTER_H }, end: { x: pageW - MARGIN, y: MARGIN + FOOTER_H }, thickness: 0.5, color: PDFLib.rgb(...LINE) });
+      const date = generated.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+      writeText(p, PDFLib, `Generated ${date} · HK Venue Seats planner · Not the venue's seat plan`,
+        { x: MARGIN, y: MARGIN + 13, size: 7.5, font: regular, color: PDFLib.rgb(...MUTED) });
+      const pageLabel = `Page ${i + 1} of ${totalPages}`;
+      writeText(p, PDFLib, pageLabel, {
+        x: pageW - MARGIN - regular.widthOfTextAtSize(pageLabel, 7.5), y: MARGIN + 13,
+        size: 7.5, font: regular, color: PDFLib.rgb(...MUTED),
+      });
+      writeText(p, PDFLib, data.namesIncluded ? "Contains names you entered." : "Seat data CC BY 4.0.",
+        { x: MARGIN, y: MARGIN + 4, size: 7, font: regular, color: PDFLib.rgb(...(data.namesIncluded ? [0.7, 0.15, 0.12] : MUTED)) });
+    });
+
+    pdf.setTitle(`${doc.venue.name_en} — plan`);
+    pdf.setSubject(data.summary);
+    pdf.setAuthor("HK Venue Seats");
+    pdf.setCreator("HK Venue Seats");
+    pdf.setProducer("pdf-lib");
+    pdf.setCreationDate(generated);
+    pdf.setModificationDate(generated);
+
+    const bytes = await pdf.save({ useObjectStreams: true });
+    const suffix = orientation === "auto" ? "" : `-${orientation}`;
+    return { bytes, name: `${doc.venue.id}-plan-${paper}${suffix}.pdf` };
+  }
+
+  return { build, buildPlan };
 })();

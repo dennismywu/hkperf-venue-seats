@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""Build the small Noto Sans HK subset embedded in the seat-plan PDF.
+"""Build the Noto Sans HK subsets used by the seat-map PDF.
 
-The PDF has to look the same on any printer, so it embeds the font rather than relying on the
-fonts installed there. The subset covers every character in the seat lists plus the labels in
-the viewer and the PDF builder; it is a few tens of KB per weight, not the 11 MB variable font.
+The viewer embeds two small subsets covering every character in the seat lists plus its labels;
+they are a few tens of KB per weight, not the 11 MB variable font. The planner adds a full regular
+font, loaded only when it exports a PDF that contains a name or category outside that small set. It is
+embedded whole (pdf-lib's subsetter mis-maps this CJK font), so such a PDF is about 4–5 MB.
 
-Run after adding a venue or changing a PDF label, then check coverage:
+Run after adding a venue, changing a PDF label, or changing the full-font fallback:
 
     python3 tools/subset_font.py
     python3 tools/check_font.py
 
 Requires fonttools (see requirements.txt). The source font is Noto Sans HK, OFL 1.1; its licence
-is written to app/fonts/OFL.txt beside the subsets.
+is written to app/fonts/OFL.txt beside the fonts.
 """
 from __future__ import annotations
 
@@ -33,7 +34,7 @@ WEIGHTS = [(400, "Regular"), (700, "Bold")]
 
 # The text the viewer can put in the PDF. app/pdf.js and app/index.html are read whole (a few
 # harmless code characters do not matter); data/*.json supplies every venue and part-of-house name.
-SOURCES = ["app/pdf.js", "app/seatmap.js", "app/index.html"]
+SOURCES = ["app/pdf.js", "app/seatmap.js", "app/index.html", "app/planner.html"]
 EXTRA = (
     " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`"
     "abcdefghijklmnopqrstuvwxyz{|}~"
@@ -63,7 +64,10 @@ def drawn_text() -> set[str]:
         path = ROOT / relative
         if path.exists():
             chars.update(path.read_text(encoding="utf-8"))
-    # line breaks and other controls are layout, not glyphs
+    # line breaks and other controls are layout, not glyphs; the planner's JS regex uses the
+    # first and last CJK code points, which are not drawn
+    chars.discard("㐀")
+    chars.discard("鿿")
     return {c for c in chars if ord(c) >= 32 and ord(c) != 127}
 
 
@@ -119,6 +123,31 @@ def build(weight: int, style: str, source: Path, text: str) -> Path:
     return path
 
 
+def build_full(source: Path) -> Path:
+    """The regular face used for planner names and category names, subset per PDF at export."""
+    font = TTFont(source)
+    instantiateVariableFont(font, {"wght": 400}, inplace=True)
+    family = "Noto Sans HK Seat Plan Full"
+    for name_id, value in (
+        (1, family), (2, "Regular"), (3, f"{family} Regular"),
+        (4, f"{family} Regular"), (6, "NotoSansHKSeatPlan-Full"),
+        (16, family), (17, "Regular"),
+    ):
+        font["name"].setName(value, name_id, 3, 1, 0x409)
+    font["OS/2"].usWeightClass = 400
+    font["head"].macStyle &= ~0x01
+    # Drop the OpenType substitution tables for the same reason as the small subsets: fontkit's
+    # substitutions give glyphs with no cmap entry, and pdf-lib's ToUnicode then maps the text to
+    # the wrong characters (search/copy). Names need no ligatures or kerning.
+    for table in ("GSUB", "GPOS", "GDEF", "morx", "mort", "kerx", "kern"):
+        if table in font:
+            del font[table]
+    OUT.mkdir(parents=True, exist_ok=True)
+    path = OUT / "NotoSansHK-Regular-full.ttf"
+    font.save(path)
+    return path
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--source", type=Path, help="NotoSansHK[wght].ttf; downloaded if omitted")
@@ -132,6 +161,9 @@ def main() -> None:
     for weight, style in WEIGHTS:
         path = build(weight, style, source, text)
         print(f"wrote {path.relative_to(ROOT)} ({path.stat().st_size / 1024:.0f} KB)")
+
+    full = build_full(source)
+    print(f"wrote {full.relative_to(ROOT)} ({full.stat().st_size / 1024 / 1024:.1f} MB)")
 
     licence = OUT / "OFL.txt"
     if not licence.exists():

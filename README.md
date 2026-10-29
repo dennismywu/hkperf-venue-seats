@@ -97,13 +97,13 @@ customisation (`&u=…`) shows a banner and passes it on, but never draws it.
 landscape or (by default) whichever orientation suits the map. It contains the venue and its Chinese
 name, the configuration and key figures, a legend, the map with its own "not the venue's seat plan"
 notice and source link, and the date it was made. Text is real text, so it stays searchable and
-selectable; the two Noto Sans HK subsets are embedded, so a printer without Chinese fonts still prints
+selectable; the Noto Sans HK subsets are embedded, so a printer without Chinese fonts still prints
 it correctly. The page is painted white and the faded seats are pre-blended, so the result does not
 depend on a print dialog's background or scaling settings.
 
 A3 is the sensible default for the big halls. `hkcc-ch`, with 1,971 seats, still prints its seat
 numbers at about 3 pt on A3; A4 is better left to the smaller rooms. The PDF is made in the browser
-by `app/pdf.js` from the same SVG the viewer draws; nothing is uploaded. `app/vendor/` holds pdf-lib
+by `app/pdf.js` from the same SVG the viewer draws; the planner reuses it (see [Exports](#exports)). Nothing is uploaded. `app/vendor/` holds pdf-lib
 and fontkit (MIT), and `app/fonts/` holds the Noto Sans HK subsets (OFL). The adapter covers the
 primitives `drawSeatMap()` emits; a path inside a rotated or scaled group is skipped rather than drawn
 in the wrong place, which the current maps do not use.
@@ -155,8 +155,9 @@ base64url JSON of short tuples (`["+", zone, row, at, "<"|">", id, marks]`, `["-
 - **Consent first.** It opens behind a statement of how it treats what you enter; nothing loads until you
   agree. Because nothing is stored, it asks again on every visit.
 - **Nothing sent, nothing stored.** No cookies, no browser storage, no uploads. Close or reload the page and
-  the plan is gone, unless you save it: the plan file is saved on your own device and can only be reopened in
-  the planner. There is no spreadsheet export; to share a plan, take a screen capture.
+  the plan is gone, unless you save or export it. Saved and exported files are on your own device; a saved
+  plan can be reopened here, and protected with a passphrase. You can export a PDF, a seat-level CSV or a
+  plain JSON copy.
 - **Configuration from the viewer.** The viewer passes its settings in the URL fragment (`#c=…`), which
   browsers never send to the server. Only the seats counted in that configuration can be planned.
 - **A customised version from the customiser** (`&u=…`) is applied, and the planner says it is working on
@@ -174,6 +175,25 @@ What it does:
 - names on seats, one per seat or one for a group; in the People view each name has its own light shade and
   each seat's border shows its price category (dashed if reserved); drag names to move or swap them, or drag
   a selected group to move it in shape; plus a list of who sits where;
+- export the plan as a PDF, a seat-level CSV or a plain JSON copy. Names are left out unless you tick
+  **Include names**; the PDF map is the view on screen, so switch away from People if you do not want initials.
+
+### Exports
+
+All three are made in the browser and saved to the device; nothing is uploaded. **Include names** is off by
+default.
+
+- **PDF**: A4 or A3, portrait, landscape or auto. The first page carries the venue, the configuration, the
+  key figures, the legend and the map in the current view (price, status or people); later pages carry the
+  ballpark by category, the gap analysis and, if names are included, the people list. The map is vector and
+  the fonts are embedded. The small Noto Sans HK subsets cover the chrome; a name or category outside them
+  makes the planner fetch the full regular face (6.7 MB, once) and embed it. A plan with names is therefore
+  about 4–5 MB; without names it is about 300 KB.
+- **CSV**: one row per seat of the venue, not just the assigned ones, with `in_configuration` and
+  `not_counted_reason` alongside the category, price, reserved, blocked and optional name. UTF-8 with a
+  byte-order mark and CRLF, so spreadsheet apps read the Chinese names.
+- **JSON**: the same `plan@0.3` object as a saved plan (including a customisation, if one is in use), with
+  names omitted unless included. Save plan still offers the passphrase-protected file for reopening.
 
 ### Plan files
 
@@ -323,7 +343,7 @@ the build fails if any part of house stops matching it.
 5. Check the rows (and, for a round hall, the geometry) in the [row reviewer](#row-reviewer).
 6. `python tools/check_locations.py` confirms each address and coordinate against LCSD's open data.
 7. If the venue or its parts of house introduce a character the PDF font subset does not have, run
-   `python tools/subset_font.py` and then `python tools/check_font.py`; commit the updated subsets in
+   `python tools/subset_font.py` and then `python tools/check_font.py`; commit the updated fonts in
    `app/fonts/`. The second command fails rather than let a PDF print blank boxes.
 
 Python 3.11+ with the packages in `requirements.txt`. The row drafter's OCR uses Apple Vision (macOS).
@@ -425,7 +445,7 @@ and publishing.
   its plans.
 - **Bundled PDF libraries** (`app/vendor/`): [pdf-lib](https://github.com/Hopding/pdf-lib) and
   [@pdf-lib/fontkit](https://github.com/Hopding/fontkit), both MIT; see the licence files beside them.
-  **Fonts** (`app/fonts/`): subsets of Noto Sans HK, SIL Open Font License 1.1, see
+  **Fonts** (`app/fonts/`): Noto Sans HK subsets and the full regular face used by planner names, SIL Open Font License 1.1, see
   [`app/fonts/OFL.txt`](app/fonts/OFL.txt).
 
 ## Credits

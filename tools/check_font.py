@@ -16,6 +16,7 @@ from fontTools.ttLib import TTFont
 from subset_font import OUT, ROOT, drawn_text
 
 FONTS = ["NotoSansHK-Regular-subset.ttf", "NotoSansHK-Bold-subset.ttf"]
+FULL = "NotoSansHK-Regular-full.ttf"
 
 
 def main() -> int:
@@ -34,6 +35,12 @@ def main() -> int:
             failed = True
         else:
             print(f"{name}: covers all {len(chars)} characters")
+    full = OUT / FULL
+    if not full.exists():
+        print(f"missing {full.relative_to(ROOT)}; run tools/subset_font.py", file=sys.stderr)
+        failed = True
+    else:
+        print(f"{FULL}: present ({full.stat().st_size / 1024 / 1024:.1f} MB)")
     return 1 if failed else 0
 
 

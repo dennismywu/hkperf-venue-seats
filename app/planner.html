@@ -96,6 +96,10 @@ tfoot td { font-weight: 700; border-top: 2px solid var(--line); }
 .gap-out .short b { color: var(--bad); } .gap-out .ok b { color: var(--ok); }
 .files { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .files input[type="file"] { display: none; }
+.pdfopt { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+.pdfopt select { padding: 3px 6px; font-size: 12px; }
+.exportopt { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+.exportopt input { margin-top: 2px; accent-color: var(--acc); }
 .notice { font-size: 13px; padding: 8px 10px; border-radius: 8px; background: var(--r-bg); color: var(--ink); border: 1px solid color-mix(in srgb, var(--r) 40%, transparent); margin: 0 0 12px; }
 .notice.ok { background: var(--acc-bg); border-color: color-mix(in srgb, var(--acc) 40%, transparent); }
 /* consent */
@@ -125,9 +129,10 @@ dialog.small { max-width: 460px; }
       <li><b>It runs entirely in your browser.</b> Nothing you enter here — price categories, prices, targets,
         people's names, which seats you choose — is sent anywhere or saved by this site. No cookies, no browser
         storage.</li>
-      <li><b>Your plan disappears when you close or reload this page</b>, unless you save it. A saved plan is a file on
-        your own device that you can open here again later. You can protect it with a passphrase, or leave names out.
-        To share a plan, take a screen capture.</li>
+      <li><b>Your plan disappears when you close or reload this page</b>, unless you save or export it. Saved and
+        exported files are on your own device; a saved plan can be reopened here, and protected with a passphrase.
+        You can export a PDF, a seat-level CSV or a plain JSON copy; names are included only if you tick
+        <b>Include names</b>.</li>
       <li><b>Names are personal data.</b> Only add people's names you are entitled to use.</li>
       <li id="consent-stats"></li>
       <li><b>Estimates only.</b> The seat map is a schematic drawn from the seat data, not the venue's seat plan, and
@@ -246,7 +251,33 @@ dialog.small { max-width: 460px; }
         <input type="file" id="upload" accept="application/json,.json">
       </div>
       <p class="help" id="filenote">Saves your work as a file on your device, for reopening here; the site keeps no copy.
-        Plans with names can be protected with a passphrase. To share a plan, take a screen capture of the map and figures.</p>
+        Plans with names can be protected with a passphrase. Use Export for a PDF, a seat-level CSV or a plain JSON copy.</p>
+    </div>
+    <div class="group">
+      <h3>Export</h3>
+      <div class="row-btns">
+        <button class="btn small" id="export-pdf" type="button">PDF</button>
+        <button class="btn small" id="export-csv" type="button">CSV</button>
+        <button class="btn small" id="export-json" type="button">JSON</button>
+      </div>
+      <div class="files" style="margin-top:8px">
+        <label class="pdfopt">Paper
+          <select id="pdf-paper" aria-label="PDF paper size">
+            <option value="A3" selected>A3</option>
+            <option value="A4">A4</option>
+          </select>
+        </label>
+        <label class="pdfopt">Orientation
+          <select id="pdf-orient" aria-label="PDF orientation">
+            <option value="auto" selected>Auto</option>
+            <option value="portrait">Portrait</option>
+            <option value="landscape">Landscape</option>
+          </select>
+        </label>
+      </div>
+      <label class="exportopt"><input type="checkbox" id="export-names"> Include names in the export</label>
+      <p class="help" id="export-note">PDF: the view on screen and the figures. CSV: one row per seat. JSON: the plan
+        file. Names are left out unless you tick the box; everything is made on this device.</p>
     </div>
   </aside>
 
@@ -314,6 +345,7 @@ dialog.small { max-width: 460px; }
 
 <script src="config.js"></script>
 <script src="seatmap.js"></script>
+<script src="pdf.js"></script>
 <script src="seatedit.js"></script>
 <script src="analytics.js"></script>
 <script src="theme.js"></script>
@@ -515,11 +547,11 @@ function paint() {
 }
 
 // A light shade for each name, stable while you edit (derived from the name itself).
-function groupShade(name) {
+function groupShade(name, light = !isDark()) {
   let h = 2166136261;
   for (const ch of name) h = Math.imul(h ^ ch.codePointAt(0), 16777619) >>> 0;
-  const hue = (h % 36) * 10, dark = isDark();
-  return dark ? `hsl(${hue} 38% ${26 + (h >> 8) % 3 * 4}%)` : `hsl(${hue} 78% ${84 + (h >> 8) % 3 * 3}%)`;
+  const hue = (h % 36) * 10;
+  return light ? `hsl(${hue} 78% ${84 + (h >> 8) % 3 * 3}%)` : `hsl(${hue} 38% ${26 + (h >> 8) % 3 * 4}%)`;
 }
 const isDark = () => document.documentElement.dataset.theme === "dark" ||
   (document.documentElement.dataset.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
@@ -896,9 +928,13 @@ function people() {
 
 function namedCount() { $("namedcount").textContent = names.size ? `${fmt(names.size)} named` : ""; }
 
+const EXPORT_HELP = "PDF: the view on screen and the figures. CSV: one row per seat. JSON: the plan file. " +
+  "Names are left out unless you tick the box; everything is made on this device.";
+
 function render() {
   $("selcount").textContent = sel.size ? `${fmt(sel.size)} selected` : "none";
   catList(); nameBox(); paint(); keys(); summary(); gap(); people(); namedCount();
+  if (!$("export-pdf").disabled) $("export-note").textContent = EXPORT_HELP;
 }
 
 // ---------------------------------------------------------------- plan files (on the visitor's own device)
@@ -930,6 +966,148 @@ function save(blob, name) {
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+// ---- exports: PDF, a seat-level CSV, and a plain JSON copy
+const csvCell = v => /[",\n\r]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
+
+function planCSV(withNames) {
+  const byId = Object.fromEntries(cats.map(c => [c.id, c]));
+  const pit = doc.orchestra_pits?.[cfg.pit];
+  const lines = [["venue_id", "customised", "orchestra_pit", "part_of_house", "part_of_house_zh", "row",
+    "seat", "mark", "in_configuration", "not_counted_reason", "category_id", "category_name", "price_hkd",
+    "reserved", "blocked", "name"]];
+  for (const { zone, row, seat, mark } of seatList()) {
+    const k = keyOf(zone, row, seat), a = assign.get(k), c = byId[a], blocked = a === "blocked";
+    const counted = counts(zone, row, mark, seat);
+    const z = doc.zones.find(item => item.name === zone);
+    lines.push([
+      doc.venue.id, custom ? 1 : 0, pit?.name || "", zone, z?.name_zh || "", row, seat, mark,
+      counted ? 1 : 0, counted ? "" : excludedIn(doc, cfg, zone, row, mark, seat),
+      a || "", blocked ? "Blocked / Not for Sale" : c?.name || "", c?.price ?? "",
+      reserved.has(k) ? 1 : 0, blocked ? 1 : 0, withNames ? names.get(k) || "" : "",
+    ].map(csvCell).join(","));
+  }
+  return lines.join("\r\n") + "\r\n";
+}
+
+// The tables the PDF puts after the map: the same rows the screen shows, read from the DOM so
+// the export cannot drift from the figures.
+function tableRows(table, selector = "tbody tr, tfoot tr") {
+  return [...table.querySelectorAll(selector)].map(tr => [...tr.children].map(td => td.textContent.trim()));
+}
+
+function pdfExportContent(withNames) {
+  const f = figures();
+  const stats = [
+    { label: "Ballpark gross (all sold)", value: money(f.gross), tone: f.gross ? "ok" : "" },
+    { label: "Average ticket price", value: f.avg ? money(f.avg) : "–" },
+    { label: "Seats in configuration", value: fmt(f.total) },
+    { label: "In price categories", value: fmt(f.assigned) },
+    { label: "Not yet priced", value: fmt(f.unpriced), tone: f.unpriced ? "bad" : "" },
+    { label: "Reserved", value: fmt(f.reserved) },
+    { label: "Blocked", value: fmt(f.blocked) },
+    { label: "Named seats", value: fmt(f.named) },
+  ];
+  let legend;
+  if (view === "price") {
+    legend = cats.map(c => ({ kind: "category", colour: c.colour, label: `${c.name}${c.price ? " · " + money(c.price) : ""}` }));
+    legend.push({ kind: "block", label: "Blocked / Not for Sale" },
+      { kind: "reserved", label: "Reserved / Not for Public" },
+      { kind: "off", label: "Not in this configuration" });
+  } else if (view === "status") {
+    legend = [{ kind: "public", label: "Public (for sale)" },
+      { kind: "reserved-fill", label: "Reserved / Not for Public" },
+      { kind: "block", label: "Blocked / Not for Sale" },
+      { kind: "off", label: "Not in this configuration" }];
+  } else {
+    legend = [{ kind: "grp", label: "Fill: one light shade per name" },
+      { kind: "catline", colour: cats[0]?.colour, label: "Border: price category colour" },
+      { kind: "catdash", colour: cats[0]?.colour, label: "Dashed border: reserved" },
+      { kind: "off", label: "Not in this configuration" }];
+  }
+  const tables = [
+    { title: "Ballpark by category", columns: ["Category", "Seats", "Reserved", "Price", "Subtotal", "Seats %", "Gross %"],
+      weights: [2.2, .8, .9, .9, 1.1, .8, .8], aligns: ["left", "right", "right", "right", "right", "right", "right"],
+      rows: tableRows($("summary")) },
+    { title: "Gap analysis", columns: ["Measure", "Figure"], weights: [4, 1], aligns: ["left", "right"],
+      rows: [...$("gap").children].map(d => [d.querySelector("span")?.textContent || "", d.querySelector("b")?.textContent || ""]) },
+  ];
+  if (withNames && names.size)
+    tables.push({ title: "People", columns: ["Name", "Seats", "Where", "Category", "Status"],
+      weights: [1.5, .6, 2.4, 1.2, .9], aligns: ["left", "right", "left", "left", "left"],
+      rows: tableRows($("people")) });
+
+  const notes = [];
+  if (names.size && !withNames) notes.push(`${fmt(names.size)} names are not included in this export. Tick “Include names” to add them.`);
+  if (!withNames && view === "people" && names.size) notes.push("The map shows the People view with initials; full names are not included.");
+  if (withNames && names.size) notes.push(`This export contains the ${fmt(names.size)} names you entered; keep the file private.`);
+  const userText = cats.map(c => c.name);
+  if (withNames || view === "people") userText.push(...names.values());
+  return {
+    summary: `${custom ? "Your customised version · " : "Your plan · "}${describe()}`,
+    subtitle: [doc.venue.name_zh, "Planner", custom ? "your customised version" : ""].filter(Boolean).join(" · "),
+    stats, legend, tables, notes, userText,
+    namesIncluded: withNames && names.size > 0,
+  };
+}
+
+const exportButtons = () => ["export-pdf", "export-csv", "export-json"].map(id => $(id));
+
+$("export-pdf").onclick = async () => {
+  const withNames = $("export-names").checked, paper = $("pdf-paper").value, orientation = $("pdf-orient").value;
+  const note = $("export-note"), buttons = exportButtons(), savedGrp = [];
+  const options = [$("export-names"), $("pdf-paper"), $("pdf-orient")];
+  const prepare = () => {
+    if (view !== "people") return;
+    for (const [k, seat] of seatsByKey) {
+      const name = names.get(k);
+      if (!name) continue;
+      savedGrp.push([seat.g, seat.g.style.getPropertyValue("--grp")]);
+      seat.g.style.setProperty("--grp", groupShade(name, true));
+    }
+  };
+  const restore = () => {
+    for (const [g, shade] of savedGrp) shade ? g.style.setProperty("--grp", shade) : g.style.removeProperty("--grp");
+  };
+  buttons.forEach(b => b.disabled = true);
+  options.forEach(o => o.disabled = true);
+  note.textContent = "Preparing…";
+  try {
+    const out = await SEAT_PDF.buildPlan({
+      doc, svg: document.querySelector("#map > svg"),
+      content: () => pdfExportContent(withNames),
+      paper, orientation, generated: new Date(),
+      onProgress: message => { note.textContent = message; },
+      prepare, restore,
+    });
+    save(new Blob([out.bytes], { type: "application/pdf" }), out.name);
+    note.textContent = `Saved ${out.name}.${withNames && names.size ? " It contains the names you entered." : ""}`;
+    track("planner-export-pdf");
+  } catch (e) {
+    console.error(e);
+    note.textContent = `Could not make the PDF: ${e.message}`;
+  } finally {
+    buttons.forEach(b => b.disabled = false);
+    options.forEach(o => o.disabled = false);
+  }
+};
+
+$("export-csv").onclick = () => {
+  const withNames = $("export-names").checked;
+  const name = `${doc.venue.id}-plan.csv`;
+  save(new Blob(["\ufeff" + planCSV(withNames)], { type: "text/csv" }), name);
+  $("export-note").textContent = `Saved ${name}.${names.size && !withNames ? " Names were left out." : withNames && names.size ? " It contains the names you entered." : ""}`;
+  track("planner-export-csv");
+};
+
+$("export-json").onclick = () => {
+  const withNames = $("export-names").checked;
+  const name = `${doc.venue.id}-plan-export.json`;
+  save(new Blob([JSON.stringify(planJSON({ withNames }), null, 1)], { type: "application/json" }), name);
+  $("export-note").textContent = `Saved ${name}.${names.size && !withNames ? " Names were left out." : withNames && names.size ? " It contains the names you entered." : ""}`;
+  track("planner-export-json");
+};
+
 // ---- saving: optionally encrypted with a passphrase, optionally without names
 const PLAN_SCHEMAS = ["hkperf-venue-seats/plan@0.1", "hkperf-venue-seats/plan@0.2", "hkperf-venue-seats/plan@0.3"];
 const LOCKED_SCHEMA = "hkperf-venue-seats/plan-protected@0.1";

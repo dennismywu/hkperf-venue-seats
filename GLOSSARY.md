@@ -58,6 +58,10 @@ The seat list as released in this repo, unchanged by any user.
 A vector PDF of the viewer's drawing, with the configuration and figures, made in the browser; not the venue's seat plan.
 _Avoid_: Seat plan PDF
 
+**Plan export**:
+A PDF, seat-level CSV or plain JSON copy of a plan, made in the browser; names only when chosen.
+_Avoid_: Plan download
+
 ## Customising
 
 **Customisation**:
