@@ -8,6 +8,7 @@ rm -rf dist
 mkdir -p "$out/viewer" "$out/data"
 cp site/*.html site/*.png "$out/"
 cp app/*.html app/*.js app/*.css "$out/viewer/"
+cp -R app/vendor app/fonts "$out/viewer/"
 cp data/*.json data/*.csv "$out/data/"
 # world-readable for the web server; publish.sh copies these modes as they are
 find "$out" -type d -exec chmod 755 {} +

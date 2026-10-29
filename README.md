@@ -81,8 +81,8 @@ Wan Ho and four at Ngau Chi Wan — so each layout is its own seat list.
   standing places; each option shows the seats it would add (+) or remove (−), and outlines them on the map;
 - key figures that follow the configuration, compared with LCSD's own figure for it;
 - facts from the plan, including the venue's address and coordinates, each with its source;
-- downloads: the seat list as JSON or CSV (linked to this repository), and the current configuration as
-  JSON or CSV;
+- downloads: the seat list as JSON or CSV (linked to this repository), the current configuration as
+  JSON or CSV, and the seat map as a PDF;
 - credits, and a note on the map itself that it is a schematic, not the venue's seat plan.
 - the map sits in its own frame: zoom in and out (buttons, or Ctrl/⌘ + wheel or a trackpad pinch), fit the
   whole plan, or view it at actual size.
@@ -90,6 +90,23 @@ Wan Ho and four at Ngau Chi Wan — so each layout is its own seat list.
 "Plan with this configuration" opens the planner with the viewer's current settings, and "Customise this
 configuration" opens the customiser. The viewer always shows the published seat list: a link that carries a
 customisation (`&u=…`) shows a banner and passes it on, but never draws it.
+
+### Seat-map PDF
+
+**Download PDF** writes the current map as a vector PDF on a fixed A4 or A3 page, in portrait,
+landscape or (by default) whichever orientation suits the map. It contains the venue and its Chinese
+name, the configuration and key figures, a legend, the map with its own "not the venue's seat plan"
+notice and source link, and the date it was made. Text is real text, so it stays searchable and
+selectable; the two Noto Sans HK subsets are embedded, so a printer without Chinese fonts still prints
+it correctly. The page is painted white and the faded seats are pre-blended, so the result does not
+depend on a print dialog's background or scaling settings.
+
+A3 is the sensible default for the big halls. `hkcc-ch`, with 1,971 seats, still prints its seat
+numbers at about 3 pt on A3; A4 is better left to the smaller rooms. The PDF is made in the browser
+by `app/pdf.js` from the same SVG the viewer draws; nothing is uploaded. `app/vendor/` holds pdf-lib
+and fontkit (MIT), and `app/fonts/` holds the Noto Sans HK subsets (OFL). The adapter covers the
+primitives `drawSeatMap()` emits; a path inside a rotated or scaled group is skipped rather than drawn
+in the wrong place, which the current maps do not use.
 
 ## Customiser
 
@@ -305,6 +322,9 @@ the build fails if any part of house stops matching it.
    and the date it was `added`.
 5. Check the rows (and, for a round hall, the geometry) in the [row reviewer](#row-reviewer).
 6. `python tools/check_locations.py` confirms each address and coordinate against LCSD's open data.
+7. If the venue or its parts of house introduce a character the PDF font subset does not have, run
+   `python tools/subset_font.py` and then `python tools/check_font.py`; commit the updated subsets in
+   `app/fonts/`. The second command fails rather than let a PDF print blank boxes.
 
 Python 3.11+ with the packages in `requirements.txt`. The row drafter's OCR uses Apple Vision (macOS).
 
@@ -403,6 +423,10 @@ and publishing.
   [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), see [LICENSE-DATA](LICENSE-DATA).
   Keep the credit line and sources recorded in each file. Neither licence grants rights LCSD holds in
   its plans.
+- **Bundled PDF libraries** (`app/vendor/`): [pdf-lib](https://github.com/Hopding/pdf-lib) and
+  [@pdf-lib/fontkit](https://github.com/Hopding/fontkit), both MIT; see the licence files beside them.
+  **Fonts** (`app/fonts/`): subsets of Noto Sans HK, SIL Open Font License 1.1, see
+  [`app/fonts/OFL.txt`](app/fonts/OFL.txt).
 
 ## Credits
 

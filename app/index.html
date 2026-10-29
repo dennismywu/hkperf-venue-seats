@@ -65,6 +65,9 @@
 .dlrow .what { flex: 1 1 260px; min-width: 0; }
 .dlrow .what b { display: block; font-size: 13.5px; }
 .dlrow .what span { color: var(--muted); font-size: 12.5px; }
+.pdfopt { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--muted); }
+.pdfopt select { padding: 3px 6px; font-size: 12.5px; }
+.pdfnote { margin: -2px 2px 0; color: var(--muted); font-size: 12px; min-height: 1.2em; }
 .rule { font-size: 12.5px; color: var(--muted); margin: 12px 0 0; }
 details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .07em; font-weight: 650; }
 .sources { margin: 0; padding-left: 18px; font-size: 13px; }
@@ -160,6 +163,25 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
         <button class="btn primary" id="dl-config" type="button">Download JSON</button>
         <button class="btn" id="dl-config-csv" type="button">Download CSV</button>
       </div>
+      <div class="dlrow">
+        <div class="what"><b>Seat map (PDF)</b><span>Vector drawing with embedded fonts, on a fixed page.
+          A3 is easier to read for large halls.</span></div>
+        <label class="pdfopt">Paper
+          <select id="pdf-paper" aria-label="PDF paper size">
+            <option value="A3" selected>A3</option>
+            <option value="A4">A4</option>
+          </select>
+        </label>
+        <label class="pdfopt">Orientation
+          <select id="pdf-orient" aria-label="PDF orientation">
+            <option value="auto" selected>Auto</option>
+            <option value="portrait">Portrait</option>
+            <option value="landscape">Landscape</option>
+          </select>
+        </label>
+        <button class="btn primary" id="dl-pdf" type="button">Download PDF</button>
+      </div>
+      <p class="pdfnote" id="dl-pdf-note" aria-live="polite"></p>
     </div>
   </section>
   <section class="card">
@@ -203,6 +225,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; text-tr
 
 <script src="config.js"></script>
 <script src="seatmap.js"></script>
+<script src="pdf.js"></script>
 <script src="analytics.js"></script>
 <script src="theme.js"></script>
 <script>
@@ -464,6 +487,7 @@ function keys(t, flash) {
 
 function update(flash = true) {
   const t = tally();
+  $("dl-pdf-note").textContent = "";
   keys(t, flash);
   for (const g of document.querySelectorAll("#map .seat")) {
     const why = excluded(g.dataset.zone, g.dataset.row, g.dataset.mark, g.dataset.seat);
@@ -688,6 +712,68 @@ function configSummary(t) {
     offMarks.length ? `${offMarks.join(", ")} not counted` : "all seat types counted",
     ...closed.length ? [`${closed.join(", ")} closed`] : [], ...t.standing ? [`+ ${t.standing} standing`] : []].join(" · ");
 }
+
+// ---------------------------------------------------------------- seat-map PDF
+
+// The figures the PDF puts above the map, as short label/value rows (the PDF has no hover, so
+// each row has to stand on its own). The LCSD adjustment is part of the summary line.
+function pdfStats(t) {
+  const pit = doc.orchestra_pits?.[state.pit];
+  const printed = pit ? pit.total_with_pit : doc.printed_totals?.Total;
+  const extra = lcsdAdjust();
+  const diff = t.total + extra.n - printed;
+  return {
+    rows: [
+      { label: "Seats in this configuration", value: fmt(t.total) + (t.standing ? ` + ${fmt(t.standing)} standing` : "") },
+      ...doc.zones.map(z => ({ label: z.name, value: state.zones[z.name] ? fmt(t.zones[z.name]) : "closed" })),
+      ...Object.keys(doc.marks || {}).filter(m => m === "W").map(m =>
+        ({ label: MARK_NAMES[m], value: state.marks[m] ? fmt(t.marks[m]) : "0" })),
+      { label: "LCSD figure", value: fmt(printed) },
+      { label: diff === 0 ? "Matches LCSD" : "Difference from LCSD",
+        value: diff === 0 ? "=" : `${diff > 0 ? "+" : "−"}${fmt(Math.abs(diff))}`,
+        tone: diff === 0 ? "ok" : diff < 0 ? "bad" : "" },
+      { label: "Seat boxes not counted", value: fmt(t.off) },
+    ],
+    note: extra.notes.length ? `LCSD ${extra.notes.join("; ")}` : "",
+  };
+}
+
+function pdfLegend() {
+  const entries = Object.keys(doc.marks || {}).map(m => ({ kind: "mark", mark: m, label: MARK_NAMES[m] || m }));
+  entries.push({ kind: "off", label: "Not counted in this configuration" });
+  if (doc.standing?.places?.length) entries.push({ kind: "standing", label: "Standing places" });
+  if (state.pit >= 0) entries.push({ kind: "pit", label: doc.orchestra_pits[state.pit].name });
+  return entries;
+}
+
+$("dl-pdf").onclick = async () => {
+  const btn = $("dl-pdf"), note = $("dl-pdf-note");
+  if (!doc) return;
+  const paper = $("pdf-paper").value, orientation = $("pdf-orient").value;
+  const label = btn.textContent;
+  btn.disabled = true; btn.textContent = "Preparing…"; note.textContent = "";
+  try {
+    const out = await SEAT_PDF.build({
+      doc, svg: document.querySelector("#map > svg"),
+      content: () => {
+        const t = tally(), s = pdfStats(t);
+        return {
+          summary: `${isDefault() ? "Printed configuration" : "Your configuration"}: ${configSummary(t)}${s.note ? ` · ${s.note}` : ""}`,
+          stats: s.rows, legend: pdfLegend(),
+        };
+      },
+      paper, orientation, generated: new Date(),
+    });
+    save(new Blob([out.bytes], { type: "application/pdf" }), out.name);
+    note.textContent = `Saved ${out.name}. The PDF has a fixed ${paper} page and embedded fonts.`;
+    track("viewer-download-seat-map-pdf");
+  } catch (e) {
+    console.error(e);
+    note.textContent = `Could not make the PDF: ${e.message}`;
+  } finally {
+    btn.disabled = false; btn.textContent = label;
+  }
+};
 
 function configJSON() {
   const t = tally(), pit = doc.orchestra_pits?.[state.pit];

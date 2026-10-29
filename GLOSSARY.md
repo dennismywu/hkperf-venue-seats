@@ -54,6 +54,10 @@ _Avoid_: Enabled seat, available seat
 **Published data**:
 The seat list as released in this repo, unchanged by any user.
 
+**Seat-map PDF**:
+A vector PDF of the viewer's drawing, with the configuration and figures, made in the browser; not the venue's seat plan.
+_Avoid_: Seat plan PDF
+
 ## Customising
 
 **Customisation**:

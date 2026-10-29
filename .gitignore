@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 .venv/
 .DS_Store
+# the full 11 MB Noto Sans HK source, downloaded by tools/subset_font.py
+tools/.font-cache/
 # LCSD drawings and anything with positions stay local
 sources/
 work/
